@@ -1,95 +1,81 @@
 {% extends 'climate/base.html' %}
+{% load staticfiles %}
 {% block content %}
-
 <div class="jumbotron">
-			<h1>Idõjárás adatok</h1>
+	<h1>IdÅ‘jÃ¡rÃ¡s adatok</h1>
 			
-			<!-- CAROUSEL ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-			<div id="myCarousel" class="carousel slide" data-ride="carousel">
-			<!-- Indicators -->
-			<ol class="carousel-indicators">
-				<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-				<li data-target="#myCarousel" data-slide-to="1"></li>
-				<li data-target="#myCarousel" data-slide-to="2"></li>
-			</ol>
-			<!-- Wrapper for slides -->
-			<div class="carousel-inner" role="listbox">
-    <div class="item active">
-      <img src="img/1.jpg" alt="Chania">
-    </div>
+	<!-- CAROUSEL ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<div id="myCarousel" class="carousel slide" data-ride="carousel">
+		<!-- Indicators -->
+		<ol class="carousel-indicators">
+			<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+			<li data-target="#myCarousel" data-slide-to="1"></li>
+			<li data-target="#myCarousel" data-slide-to="2"></li>
+		</ol>
+		<!-- Wrapper for slides -->
+		<div class="carousel-inner" role="listbox">
+			<div class="item active">
+				<img src="{% static 'img/1.jpg' %}" alt="Chania">
+			</div>
+			<div class="item">
+				<img src="{% static 'img/2.jpg' %}" alt="Chania">
+			</div>
+			<div class="item">
+				<img src="{% static 'img/3.jpg' %}" alt="Flower">
+			</div>
+		</div>
 
-    <div class="item">
-      <img src="img/2.jpg" alt="Chania">
-    </div>
-
-    <div class="item">
-      <img src="img/3.jpg" alt="Flower">
-    </div>
-
-  </div>
-
-  <!-- Left and right controls -->
-  <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
+		<!-- Left and right controls -->
+		<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+			<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+			<span class="sr-only">Previous</span>
+		</a>
+		<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+			<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+			<span class="sr-only">Next</span>
+		</a>
+	</div>
+	<!-- /CAROUSEL +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 </div>
-		
-		<!-- /CAROUSEL +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-		
-      </div>
 
-      <div class="row marketing">
-        <div class="col-lg-6">
-			<h3>Adatok rögzítése</i></h3>
+<div class="row marketing">
+	<div class="col-lg-6">
+		<h3>Adatok rÃ¶gzÃ­tÃ©se</i></h3>
 		
-			<div class="item">
-          <h4><span class="glyphicon glyphicon-map-marker"></span> Saját mérõhelyek</h4>
-          <p><strong>Hol mérsz?</strong> Saját mérõhelyek felvitele, módosítása, törlése.</p>
-			</div>
-		  
-		  <div class="item">
-          <h4><span class="glyphicon glyphicon-scale"></span> Mérõmûszerek</h4>
-          <p><strong>Mivel mérsz?</strong> Saját mérõmûszerek rögzítése, lezárása.</p>
-			</div>
-		  
-		  <div class="item">
-		  <h4><span class="glyphicon glyphicon-cloud-upload"></span> Mért adatok feltöltése</h4>
-		  </div>
-		  
-		  <div class="item">
-          <h4><span class="glyphicon glyphicon-list-alt"></span> Éghajlati adatok rögzítése</h4>
-          <p><strong>Mit mértél? Mit láttál?</strong> Éghajlati napló vezetése. Aktuális és összefoglaló adatok feltöltése.</p>
-		  </div>
-		  
-		  <div class="item">
-		  <h4><span class="glyphicon glyphicon-cloud"></span> Aktuális idõjárás rögzítése</h4>
-		  </div>
-        </div>
-
-        <div class="col-lg-6">
-			<h3>Adatok lekérése</h3>
-			
-			<div class="item">
-			<h4><span class="glyphicon glyphicon-map-marker"></span> Publikus mérõhelyek</h4>
-          <p>Publikus mérõhelyek megjelenítése térképen</p>
-		  </div>
-		
+		<a href="{% url 'my_sites' %}"><div class="item">
+			<h4><span class="glyphicon glyphicon-map-marker"></span> SajÃ¡t mÃ©rÅ‘helyek</h4>
+			<p><strong>Hol mÃ©rsz?</strong> SajÃ¡t mÃ©rÅ‘helyek felvitele, mÃ³dosÃ­tÃ¡sa, tÃ¶rlÃ©se.</p>
+		</div></a>
 		<div class="item">
-          <h4><span class="glyphicon glyphicon-stats"></span> Éghajlati adatok lekérése</h4>
-          <p>Az összegyûjtött adatok lekérése egy kiválasztott helyre és idõtartamra. Havi és éves statisztikák készítése, ha rendelkezésre állnak a megfelelõ adatok. Ábrák és		  grafikonok.</p>
+			<h4><span class="glyphicon glyphicon-scale"></span> MÃ©rÅ‘mÅ±szerek</h4>
+			<p><strong>Mivel mÃ©rsz?</strong> SajÃ¡t mÃ©rÅ‘mÅ±szerek rÃ¶gzÃ­tÃ©se, lezÃ¡rÃ¡sa.</p>
 		</div>
-		  
-		  <div class="item">
-          <h4><span class="glyphicon glyphicon-blackboard"></span> Észlelési segédlet</h4>
-          <p>Segédlet az adatok rögzítéséhez és értelmezéséhez.</p>
+		<div class="item">
+			<h4><span class="glyphicon glyphicon-cloud-upload"></span> MÃ©rt adatok feltÃ¶ltÃ©se</h4>
 		</div>
-		  
-        </div>
-      </div>
+		<div class="item">
+			<h4><span class="glyphicon glyphicon-list-alt"></span> Ã‰ghajlati adatok rÃ¶gzÃ­tÃ©se</h4>
+			<p><strong>Mit mÃ©rtÃ©l? Mit lÃ¡ttÃ¡l?</strong> Ã‰ghajlati naplÃ³ vezetÃ©se. AktuÃ¡lis Ã©s Ã¶sszefoglalÃ³ adatok feltÃ¶ltÃ©se.</p>
+		</div>
+		<div class="item">
+			<h4><span class="glyphicon glyphicon-cloud"></span> AktuÃ¡lis idÅ‘jÃ¡rÃ¡s rÃ¶gzÃ­tÃ©se</h4>
+		</div>
+	</div>
 
+    <div class="col-lg-6">
+		<h3>Adatok lekÃ©rÃ©se</h3>
+		<a href="{% url 'site_list' %}"><div class="item">
+			<h4><span class="glyphicon glyphicon-map-marker"></span> Publikus mÃ©rÅ‘helyek</h4>
+			<p>Publikus mÃ©rÅ‘helyek megjelenÃ­tÃ©se tÃ©rkÃ©pen</p>
+		</div></a>
+		<div class="item">
+			<h4><span class="glyphicon glyphicon-stats"></span> Ã‰ghajlati adatok lekÃ©rÃ©se</h4>
+			<p>Az Ã¶sszegyÅ±jtÃ¶tt adatok lekÃ©rÃ©se egy kivÃ¡lasztott helyre Ã©s idÅ‘tartamra. Havi Ã©s Ã©ves statisztikÃ¡k kÃ©szÃ­tÃ©se, ha rendelkezÃ©sre Ã¡llnak a megfelelÅ‘ adatok. ÃbrÃ¡k Ã©s grafikonok.</p>
+		</div>
+		<div class="item">
+			<h4><span class="glyphicon glyphicon-blackboard"></span> Ã‰szlelÃ©si segÃ©dlet</h4>
+			<p>SegÃ©dlet az adatok rÃ¶gzÃ­tÃ©sÃ©hez Ã©s Ã©rtelmezÃ©sÃ©hez.</p>
+		</div>
+	</div>
+</div>
 {% endblock content %}

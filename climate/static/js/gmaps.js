@@ -19,18 +19,18 @@ function GMselectOneStation() {
 }
 
 function GMallStations() {
-  var mapCanvas = document.getElementById("google_maps_all_stations");
-  
-  var mapOptions = {
-    mapTypeId: google.maps.MapTypeId.TERRAIN
-  }
-  var map = new google.maps.Map(mapCanvas, mapOptions);
-  var pos1 = { position: {lat: 47.5, lng: 19.0}, title: 'egyik', map: map };
-  var pos2 = { position: {lat: 47.4, lng: 18.9}, title: 'masik', map: map };
-  marker2 = new google.maps.Marker(pos1);
-  marker2 = new google.maps.Marker(pos2);
+	var positions = getPos();
+	var mapCanvas = document.getElementById("google_maps_all_stations");
+	var mapOptions = { mapTypeId: google.maps.MapTypeId.TERRAIN, maxZoom: 14, };
+	var map = new google.maps.Map(mapCanvas, mapOptions);
 	var bounds = new google.maps.LatLngBounds();
-	bounds.extend(pos1.position);
-	bounds.extend(pos2.position);
+  
+	for ( var i = 0; i < positions.length; i++ ) {
+		var pos = positions[i];
+		pos.map = map;
+		new google.maps.Marker(pos);
+		bounds.extend(pos.position);
+	}
+
 	map.fitBounds(bounds);
 }

@@ -16,7 +16,7 @@
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	
-	<link href="css/jumbotron-narrow.css" rel="stylesheet">
+	<link href="{%static 'css/jumbotron-narrow.css' %}" rel="stylesheet">
 	<!-- /BOOTSTRAP +++++++++++++++++++++++++++++ -->
 	
 	<!-- LIBS ++++++++++++++++ -->
@@ -40,13 +40,13 @@
 </head>
 
 <body>
-	<nav class="navbar navbar-inverse noradius">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="#">Zivatar.hu Éghajlati Adatbázis</a>
+<nav class="navbar navbar-inverse noradius">
+	<div class="container-fluid">
+	<div class="navbar-header">
+				<a class="navbar-brand" href="{% url 'main' %}">Zivatar.hu Éghajlati Adatbázis</a>
 			</div>
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="index.html">Főoldal</a></li>
+				<li class="active"><a href="{% url 'main' %}">Főoldal</a></li>
 				<li><a href="#">Adatok</a></li>
 			</ul>
 			
@@ -88,25 +88,24 @@
                   </li>
                </ul>
 			
-		</div>
-	</nav>
-	<div class="container">
-
-{% block content %}
-{% endblock %}
+	</div>
+</nav>
+	
+<div class="container">
+	{% block content %}
+	{% endblock %}
 </div> <!-- / narrow container -->
+	
 <footer class="navbar navbar-inverse noradius">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="#">Lernerné Lelovics Enikő Alexandra: Meteorológiai adatok nyilvántartása, megjelenítése és elemzése webes felületen</a>
-			</div>
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="index.html">Főoldal</a></li>
-			</ul>
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand">Lernerné Lelovics Enikő Alexandra: Meteorológiai adatok nyilvántartása, megjelenítése és elemzése webes felületen</a>
 		</div>
-	</footer>
-
- </div> <!-- /container -->
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="{% url 'main' %}">Főoldal</a></li>
+		</ul>
+	</div>
+</footer>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCT8nqIVYJhuI5INrAwkzYMzEBAOIhKt60&callback=GMselectOneStation"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlx5Dw6cC5yonCBvGN7PehKnmirniYyxU&callback=GMallStations"></script>
