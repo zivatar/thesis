@@ -15,8 +15,8 @@ WIDE_AREA = (
 class Site(models.Model):
 	id = models.AutoField(primary_key = True)
 	owner = models.ForeignKey('auth.user')
-	title = models.CharField(max_length = 100)
-	comment = models.TextField()
+	title = models.CharField(max_length = 100, unique = True)
+	comment = models.TextField(blank = True)
 	createdDate = models.DateTimeField(default = timezone.now)
 	isActive = models.BooleanField(default = True)
 	isPublic = models.BooleanField(default = True)
