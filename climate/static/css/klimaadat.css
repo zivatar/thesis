@@ -1,0 +1,104 @@
+body {
+	font-family: 'Roboto', sans-serif;
+}
+
+div#google_maps_one_marker {
+	/*width:20vw;
+    height: 20vw;*/
+	/*height: 300px;*/
+	/*width: 30%;
+	padding-top: 30%;*/
+	padding-top: 30%;
+	background-color: silver;
+	border: 1px solid #bbb;
+
+}
+
+div#google_maps_all_stations {
+	border: 1px solid #bbb;
+	padding-top: 65%;
+}
+
+@media (max-width: 767px) {
+	div#google_map {
+		padding-top: 100%;
+	}
+}
+
+.carousel-inner > .item > img,
+  .carousel-inner > .item > a > img {
+      width: 70%;
+      margin: auto;
+  }
+  
+div.carousel-inner {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+div.graph {
+	background-color: white;
+	padding: 20px;
+	border: 1px solid #bbb;
+	margin-bottom: 15px;
+}
+
+div.item {
+	border-radius: 10px;
+	padding: 5px;
+}
+
+div.item:hover {
+	background: white;
+}
+
+table.table-striped  td, table.table-striped th {
+	border: 1px solid #bbb !important;
+}
+
+/*
+COLORS
+https://designschool.canva.com/wp-content/uploads/sites/2/cache/2016/01/Palette_1/Palette_1-662x382.jpg
+*/
+
+div.header {
+	padding: 10px;
+
+}
+
+body {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.noradius {
+	border-radius: 0;
+}
+
+footer.navbar {
+	margin-bottom: 0;
+}
+
+div.nav-inside {
+	background-color: white;
+	border-radius: 5px;
+	margin-bottom: 10px;
+}
+
+div.panel.panel-primary, div.jumbotron {
+	background-color: #DDD;
+	border: 0;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+body {
+	background-color: #5CE6D1;
+}
+
+div.panel.panel-primary > div.panel-heading {
+	background-image: linear-gradient(to bottom,#F7B733 0,#FC4A1A 100%);
+	border: 0;
+}
+
+span.right {
+	float: right;
+}

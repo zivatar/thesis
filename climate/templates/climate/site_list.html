@@ -1,0 +1,6 @@
+{% extends 'climate/base.html' %}
+{% block content %}
+{% for post in sites %}
+    {{ post.title }}
+{% endfor %}
+{% endblock content %}

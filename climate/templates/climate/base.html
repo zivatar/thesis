@@ -1,0 +1,115 @@
+﻿{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!-- BOOTSTRAP +++++++++++++++++++++++++++++ -->
+	
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	
+	<link href="css/jumbotron-narrow.css" rel="stylesheet">
+	<!-- /BOOTSTRAP +++++++++++++++++++++++++++++ -->
+	
+	<!-- LIBS ++++++++++++++++ -->
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> <!-- google charts -->
+	<!-- /LIBS ++++++++++++++++++++ -->
+	
+	<!-- FONTS ++++++++++++++++++++++++++++++++++ -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<!-- /FONTS +++++++++++++++++++++++++++++++++ -->
+	
+	<!-- CSS FILES ++++++++++++++++++++++++++++++ -->
+	<!--<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" /> <!-- https://ghinda.net/css-toggle-switch/bootstrap.html -->
+	<link rel="stylesheet" href="{% static 'css/klimaadat.css' %}">
+	<link href="{%static 'css/weather-icons.min.css' %}" rel="stylesheet">
+	<link href="{% static 'css/weather-icons-wind.min.css' %}" rel="stylesheet">
+	<!-- /CSS FILES +++++++++++++++++++++++++++++ -->
+	
+	<script src="{% static 'js/gmaps.js' %}"></script>
+	
+	<script src="{% static 'js/charts.js' %}"></script>
+</head>
+
+<body>
+	<nav class="navbar navbar-inverse noradius">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Zivatar.hu Éghajlati Adatbázis</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="index.html">Főoldal</a></li>
+				<li><a href="#">Adatok</a></li>
+			</ul>
+			
+			<ul class="nav navbar-nav navbar-right">
+                  <li><a href="http://www.jquery2dotnet.com">Regisztráció</a></li>
+                  <li class="dropdown">
+                     <a href="http://www.jquery2dotnet.com" class="dropdown-toggle" data-toggle="dropdown">Belépés <b class="caret"></b></a>
+                     <ul class="dropdown-menu" style="padding: 15px;min-width: 250px;">
+                        <li>
+                           <div class="row">
+                              <div class="col-md-12">
+                                 <form class="form" role="form" method="post" action="login" accept-charset="UTF-8" id="login-nav">
+                                    <div class="form-group">
+                                       <label class="sr-only" for="exampleInputEmail2">Felhasználónév</label>
+                                       <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Felhasználónév" required>
+                                    </div>
+                                    <div class="form-group">
+                                       <label class="sr-only" for="exampleInputPassword2">Jelszó</label>
+                                       <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Jelszó" required>
+                                    </div>
+                                    <div class="checkbox">
+                                       <label>
+                                       <input type="checkbox"> Jegyezz meg
+                                       </label>
+                                    </div>
+                                    <div class="form-group">
+                                       <button type="submit" class="btn btn-success btn-block">Belépés</button>
+                                    </div>
+                                 </form>
+                              </div>
+                           </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                           <input class="btn btn-primary btn-block" type="button" id="sign-in-google" value="Sign In with Google">
+                           <input class="btn btn-primary btn-block" type="button" id="sign-in-twitter" value="Sign In with Facebook">
+                        </li>
+                     </ul>
+                  </li>
+               </ul>
+			
+		</div>
+	</nav>
+	<div class="container">
+
+{% block content %}
+{% endblock %}
+</div> <!-- / narrow container -->
+<footer class="navbar navbar-inverse noradius">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Lernerné Lelovics Enikő Alexandra: Meteorológiai adatok nyilvántartása, megjelenítése és elemzése webes felületen</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="index.html">Főoldal</a></li>
+			</ul>
+		</div>
+	</footer>
+
+ </div> <!-- /container -->
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCT8nqIVYJhuI5INrAwkzYMzEBAOIhKt60&callback=GMselectOneStation"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlx5Dw6cC5yonCBvGN7PehKnmirniYyxU&callback=GMallStations"></script>
+
+</body>
+</html>
