@@ -18,6 +18,8 @@ function GMselectOneStation() {
   });
 }
 
+function getPos() { /* only placeholder	*/ }
+
 function GMallStations() {
 	var positions = getPos();
 	var mapCanvas = document.getElementById("google_maps_all_stations");
