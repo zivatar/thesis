@@ -20,18 +20,15 @@
 		<div class="panel-body"><form>
 			<div class="nav-inside">
 				<ul class="nav nav-pills">
+					<li class="active" role="presentation"><a data-toggle="pill" href="#add_new">+1</a></li>
 					{% for site in sites %}
 						<li role="presentation"><a data-toggle="pill" href="#{{ site.id }}">{{ site.title }}</a></li> <!-- class="active" -->
 					{% endfor %}
-					<li role="presentation"><a data-toggle="pill" href="#add_new">+1</a></li>
 				</ul>
 			</div>
 			
 			<div class="tab-content">
-				<div id="default" class="tab-pane fade in active">
-					<h3>Válassz egy mérőhelyet</h3>
-					<p>Új mérőhely létrehozása a +1 gombbal történik.</p>
-				</div>
+
 				{% for site in sites %}
 					<div id="{{ site.id }}" class="tab-pane fade">
 						<h1>{{ site.title }}</h1>
@@ -97,7 +94,7 @@
 					</div>
 				{% endfor %}
 				
-				<div id="add_new" class="tab-pane fade">
+				<div id="add_new" class="tab-pane fade in active">
 						<h1>Új mérőhely</h1>
 						<div id="google_maps_one_marker" class="col-12 col-sm-4"></div>
 						<div class="form-group col-sm-2">
