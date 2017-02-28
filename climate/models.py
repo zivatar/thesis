@@ -20,8 +20,8 @@ class Site(models.Model):
 	createdDate = models.DateTimeField(default = timezone.now)
 	isActive = models.BooleanField(default = True)
 	isPublic = models.BooleanField(default = True)
-	lat = models.DecimalField(max_digits = 9, decimal_places = 6)
-	lon = models.DecimalField(max_digits = 9, decimal_places = 6)
+	lat = models.DecimalField(max_digits = 20, decimal_places = 15)
+	lon = models.DecimalField(max_digits = 20, decimal_places = 15)
 	narrowArea = models.IntegerField(choices = NARROW_AREA, default = 1)
 	wideArea = models.IntegerField(choices = WIDE_AREA, default = 1) # site.wideArea; site.get_wideArea_display() https://docs.djangoproject.com/en/1.9/topics/db/models/#field-options
 	

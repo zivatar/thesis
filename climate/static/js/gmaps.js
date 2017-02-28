@@ -1,5 +1,7 @@
 var marker;
 
+function setLatLon() { /* only placeholder */ }
+
 function GMselectOneStation() {
   var mapCanvas = document.getElementById("google_maps_one_marker");
   var mapOptions = {
@@ -13,8 +15,9 @@ function GMselectOneStation() {
   	var location = event.latLng;
   	if(!marker) { marker = new google.maps.Marker({ position: location, map: map }); }
   	else {marker.setPosition(location)}
-  	document.getElementById("lat").value = location.lat();
-  	document.getElementById("lon").value = location.lng();
+  	//document.getElementById("lat").value = location.lat();
+  	//document.getElementById("lon").value = location.lng();
+	setLatLon(location.lat(), location.lng());
   });
 }
 

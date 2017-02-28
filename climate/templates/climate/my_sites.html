@@ -1,5 +1,6 @@
 {% extends 'climate/base.html' %}
 {% load staticfiles %}
+{% load widget_tweaks %}
 {% block content %}
 <script>
 	var activeSite;
@@ -32,6 +33,10 @@
 				{% for site in sites %}
 					<div id="{{ site.id }}" class="tab-pane fade">
 						<h1>{{ site.title }}</h1>
+						
+						<form method="POST" class="post-form">{% csrf_token %}
+						{{ form.non_field_errors }}
+						
 						<div id="google_maps_one_marker" class="col-12 col-sm-4"></div>
 						<div class="form-group col-sm-2">
 							<label><input type="checkbox" {% if site.isActive %}checked{% endif %} data-toggle="toggle" class="form-control">Aktív</label>
@@ -41,16 +46,20 @@
 						<div class="col-sm-6">
 			
 							<div class="form-group">
-								<label for="megnevezes">Megnevezés:</label>
-								<input type="email" class="form-control" id="megnevezes" placeholder="Pl. Kékestető, kilátó" value="{{ site.title }}">
+								<label for="{{ form.title.id_for_label }}">Megnevezés:</label>
+								{% render_field form.title class+="form-control" placeholder="Pl. Kékestető, kilátó" value=site.title %}
 							</div>
 							<div class="form-group">
+								<!--
 								<label for="kornyezet">Tágabb környezet:</label>
 								<select class="form-control" id="exampleSelect1">
 									{% for w in wide_area %}
 										<option {% if site.wideArea == w.0 %}selected="selected"{% endif %}>{{ w.1 }}</option>
 									{% endfor %}
 								</select>
+								-->
+								<label for="{{ form.wideArea.id_for_label }}">Megnevezés:</label>
+								{% render_field form.wideArea class+="form-control" %}
 							</div>
 							<div class="form-group">
 								<label for="kornyezet">Szűkebb környezet:</label>
@@ -80,6 +89,7 @@
 						<div class="col-12 visible-xs visible-sm">
 							<div class="btn-group btn-group-vertical">
 								<a href="#" class="btn btn-success">Módosítások mentése</a>
+								<!--<button type="submit" class="save btn btn-default btn-group-justified">Módosítások mentése</button>-->
 								<a href="#" class="{% url 'my_sites' %}">Módosítások elvetése</a>
 								<a href="#" class="btn btn-danger">Mérőhely törlése</a>
 							</div>
@@ -91,12 +101,18 @@
 							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="23%">
 							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="23%">
 						</div>
+						
+						</form>
 					</div>
 				{% endfor %}
 				
 				<div id="add_new" class="tab-pane fade in active">
 						<h1>Új mérőhely</h1>
+						
+						<form method="POST" class="post-form">{% csrf_token %}
+						
 						<div id="google_maps_one_marker" class="col-12 col-sm-4"></div>
+						
 						<div class="form-group col-sm-2">
 							<label><input type="checkbox" checked data-toggle="toggle" class="form-control">Aktív</label>
 							<label><input type="checkbox" checked data-toggle="toggle" class="form-control">Publikus</label>
@@ -134,10 +150,13 @@
 						</div>
 		
 						<div class="col-12">
-							<div class="btn-group btn-group-justified">
+							<button type="submit" class="save btn btn-success btn-group-justified">Új mérőhely mentése</button>
+							<!--<div class="btn-group btn-group-justified">
 								<a href="#" class="btn btn-success">Új mérőhely mentése</a>
-							</div>
+							</div>-->
 						</div>
+						
+						</form>
 					</div>
 				
 			</div>

@@ -21,7 +21,7 @@
 					</tr>
 					{% for site in sites %}
 						<tr>
-							<td>{{ site.title }}</td>
+							<td><a href="{% url 'site_details' pk=site.pk %}">{{ site.title }}</a></td>
 							<td>{{ site.owner }}</td>
 						</tr>
 					{% endfor %}
