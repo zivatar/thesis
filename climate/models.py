@@ -1,9 +1,17 @@
 from django.db import models
 from django.utils import timezone
 
-WEATHER_CODE = {
-	(0, '-'),
-}
+WEATHER_CODE = (
+(0, '-'),
+(1, 'füst'), (2, 'homály'), (3, 'párásság'), (4, 'köd'), (19, 'nyílt köd'), (13, 'homokvihar'), (14, 'porforgatag'), 
+(5, '22-es halo'), (6, 'melléknap'), (7, 'érintő ív'), (8, 'ritkább halo'),
+(9, 'villámlás'), (10, 'dörgés'), (11, 'szivárvány'), (12, 'csapadéksáv'),
+(15, 'szitálás'), (16, 'szemcsés hó'), (17, 'ónos szitálás'), (34, 'ónos eső'),
+(18, 'eső'), (20, 'havazás'), (22, 'havas eső'),
+(24, 'zápor'), (25, 'hózápor'), (26, 'havas eső zápor'), (27, 'jégeső'),
+(29, 'tuba'), (30, 'tornádó'), (31, 'zivatar'), (32, 'hódara-zápor'), (33, 'fagyott eső'),
+(34, 'harmat'), (35, 'dér'), (36, 'zúzmara'), (37, 'hófúvás')
+)
 
 class Site(models.Model):
 	NARROW_AREA = (
