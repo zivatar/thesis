@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
-from .models import WIDE_AREA, NARROW_AREA
 from .models import Site
 from .forms import SiteForm
 
@@ -27,7 +26,7 @@ def new_site(request):
 	else:
 		form = SiteForm()
 		sites = Site.objects.filter(owner=request.user)
-	return render(request, 'climate/new_site.html', {'sites': sites, 'wide_area': WIDE_AREA, 'narrow_area': NARROW_AREA, 'form': form})
+	return render(request, 'climate/new_site.html', {'sites': sites, 'wide_area': Site.WIDE_AREA, 'narrow_area': Site.NARROW_AREA, 'form': form})
 	
 def main(request):
 	return render(request, 'climate/main.html', {})
@@ -48,4 +47,4 @@ def site_edit(request, pk):
 	else:
 		form = SiteForm()
 		sites = Site.objects.filter(owner=request.user)
-	return render(request, 'climate/site_edit.html', {'sites': sites, 'wide_area': WIDE_AREA, 'narrow_area': NARROW_AREA, 'form': form, 'site': site})
+	return render(request, 'climate/site_edit.html', {'sites': sites, 'wide_area': Site.WIDE_AREA, 'narrow_area': SiteNARROW_AREA, 'form': form, 'site': site})

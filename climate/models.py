@@ -1,22 +1,32 @@
 from django.db import models
 from django.utils import timezone
 
-NARROW_AREA = (
-	(1, 'kert'),
-	(2, 'parkoló'),
-)
-
-WIDE_AREA = (
-	(1, 'belváros'),
-	(2, 'kertváros'),
-	(3, 'lakótelep'),
-)
-
 WEATHER_CODE = {
 	(0, '-'),
 }
 
 class Site(models.Model):
+	NARROW_AREA = (
+		(1, 'kert'),
+		(2, 'parkoló'),
+		(3, 'tető'),
+		(4, 'udvar'),
+		(5, 'füves terület'),
+		(6, 'fás terület'),
+		(7, 'vízpart'),
+		(8, 'utca')
+	)
+
+	WIDE_AREA = (
+		(1, 'belváros'),
+		(2, 'kertváros'),
+		(3, 'lakótelep'),
+		(4, 'ipari terület'),
+		(5, 'hegyvidék'),
+		(6, 'vízpart'),
+		(7, 'külterület')
+	)
+
 	id = models.AutoField(primary_key = True)
 	owner = models.ForeignKey('auth.user')
 	title = models.CharField(max_length = 100, unique = True)
