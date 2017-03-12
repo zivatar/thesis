@@ -51,6 +51,10 @@ div.item:hover {
 	background: white;
 }
 
+div.item h4 a {
+	color: black; /* nem mukod */
+}
+
 table.table-striped  td, table.table-striped th {
 	border: 1px solid #bbb !important;
 }
@@ -106,4 +110,9 @@ span.right {
 div.small_images.col-12 {
 	text-align: center;
 	margin-top: 10px;
+}
+
+div.highlighted:hover {
+	background-color: #FFF;
+	border-radius: 10px;
 }

@@ -9,4 +9,5 @@ urlpatterns = [
 	#url(r'^new_sites/', views.new_sites, name='new_sites'),
 	url(r'^site/(?P<pk>[0-9]+)/details$', views.site_details, name='site_details'),
 	url(r'^site/(?P<pk>[0-9]+)/edit$', views.site_edit, name='site_edit'),
+	url(r'^new_observation/', views.new_observation, name='new_observation')
 ]
