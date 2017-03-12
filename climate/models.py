@@ -19,6 +19,9 @@ class Weather(models.Model):
 	(7, '7: gallyak letörnek'), (8, '8: ágak letörnek'), (9, '9: gyengébb fák kidőlnek, épületekben kisebb károk'),
 	(10, '10: fák gyökerestül kidőlnek'), (11, '11: súlyos károk'), (12, '12: súlyos pusztítás')
 	)
+	
+	def getWeatherCodeText(ndx):
+		return[x[1] for x in WEATHER_CODE if x[0] == ndx][0]
 
 class Site(models.Model):
 	NARROW_AREA = (
@@ -78,15 +81,21 @@ class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
 	createdDate = models.DateTimeField(default = timezone.now())
 	comment = models.TextField(blank = True)
-	weatherCode = models.CommaSeparatedIntegerField(max_length = 200, choices = Weather.WEATHER_CODE, blank = True)
+	_weatherCode = models.CommaSeparatedIntegerField(max_length = 200, choices = Weather.WEATHER_CODE, blank = True)
 	windSpeed = models.IntegerField(choices = Weather.BEAUFORT_SCALE, default = 0)
 	# jelenség regisztrálása a statisztikákba
 	def populateWeatherCode(self, arr):
 		wc = ''
 		for a in arr:
 			wc = wc + a + ','
-		print(wc)
-		self.weatherCode = wc
+		self._weatherCode = wc
+		self.save()
+	@property
+	def weatherCode(self):
+		return self._weatherCode.split(',')
+	@weatherCode.setter
+	def weatherCode(self, value):
+		self._weatherCode = value
 
 class RawManualData(models.Model):
 	siteId = models.ForeignKey('climate.Site')

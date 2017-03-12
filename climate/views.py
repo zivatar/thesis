@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
-from .models import Site, Weather
+from .models import Site, Weather, RawObservation
 from .forms import SiteForm, ObservationForm
 
 def site_list(request):
@@ -46,7 +46,8 @@ def main(request):
 	
 def site_details(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	return render(request, 'climate/site_details.html', {'site' : site})
+	observations = RawObservation.objects.filter(siteId = site)
+	return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE})
 
 def site_edit(request, pk):
 	site = get_object_or_404(Site, pk=pk)
