@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+import calendar
 
 class Weather(models.Model):
 	WEATHER_CODE = (
@@ -14,6 +15,7 @@ class Weather(models.Model):
 	)
 
 	BEAUFORT_SCALE = (
+	(-1, 'nem észlelt'),
 	(0, '0: szélcsend'), (1, '1: füst lengedezik'), (2, '2: arcon érezhető'), (3, '3: vékony gallyak mozognak'),
 	(4, '4: kisebb ágak mozognak'), (5, '5: nagyobb ágak mozognak, suhog'), (6, '6: drótkötelek zúgnak, vastag ágak mozognak'),
 	(7, '7: gallyak letörnek'), (8, '8: ágak letörnek'), (9, '9: gyengébb fák kidőlnek, épületekben kisebb károk'),
@@ -22,6 +24,27 @@ class Weather(models.Model):
 	
 	def getWeatherCodeText(ndx):
 		return[x[1] for x in WEATHER_CODE if x[0] == ndx][0]
+		
+class Month:
+	def __init__(self, now=timezone.now()):
+		self.year = now.year
+		self.month = now.month
+	def isInMonth(self, dt):
+		return self.year == dt.year and self.month == dt.month
+	def daysOfMonth(self):
+		lastDay = calendar.monthrange(self.year, self.month)[1]
+		a = []
+		[a.append(i) for i in range(1, lastDay)]
+		return a
+	def daysOfMonthTillToday(self):
+		lastDay = timezone.now().day
+		a = []
+		[a.append(i) for i in range(1, lastDay)]
+		return a
+	def getMonth(self):
+		return str(self.month).zfill(2) 
+		
+# -----------------------------------------------------------------------------------------
 
 class Site(models.Model):
 	NARROW_AREA = (
@@ -73,13 +96,13 @@ class Instrument(models.Model):
 class RawData(models.Model):
 	siteId = models.ForeignKey('climate.Site')
 	instrumentId = models.ForeignKey('climate.Instrument')
-	createdDate = models.DateTimeField()
+	createdDate = models.DateTimeField(default = timezone.now)
 	# T, Rh, p, stb
 	# vagy relacios tablaval
 
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
-	createdDate = models.DateTimeField(default = timezone.now())
+	createdDate = models.DateTimeField(default = timezone.now)
 	comment = models.TextField(blank = True)
 	_weatherCode = models.CommaSeparatedIntegerField(max_length = 200, choices = Weather.WEATHER_CODE, blank = True)
 	windSpeed = models.IntegerField(choices = Weather.BEAUFORT_SCALE, default = 0)
@@ -99,8 +122,24 @@ class RawObservation(models.Model):
 
 class RawManualData(models.Model):
 	siteId = models.ForeignKey('climate.Site')
-	date = models.DateField()
-	# Tmin, Tmax, csapadek, jelensegek
+	year = models.IntegerField(default = -1)
+	month = models.IntegerField(default = -1) # TODO year,month,siteId legyen unique
+	tMin = models.FloatField(null = True)
+	tMax = models.FloatField(null = True)
+	precAmount = models.FloatField(null = True)
+	_weatherCode = models.CommaSeparatedIntegerField(max_length = 200, choices = Weather.WEATHER_CODE, blank = True)
+	def populateWeatherCode(self, arr):
+		wc = ''
+		for a in arr:
+			wc = wc + a + ','
+		self._weatherCode = wc
+		self.save()
+	@property
+	def weatherCode(self):
+		return self._weatherCode.split(',')
+	@weatherCode.setter
+	def weatherCode(self, value):
+		self._weatherCode = value
 	
 class DailyStat(models.Model):
 	siteId = models.ForeignKey('climate.Site')

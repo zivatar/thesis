@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
-from .models import Site, Weather, RawObservation
-from .forms import SiteForm, ObservationForm
+from .models import Site, Weather, RawObservation, RawManualData, Month
+from .forms import SiteForm, ObservationForm, DiaryForm
+from django.utils import timezone
 
 def site_list(request):
 	sites = Site.objects.filter(isPublic=True).order_by('title')
@@ -50,16 +51,31 @@ def site_details(request, pk):
 	observations = RawObservation.objects.filter(siteId = site)
 	return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE})
 
+@login_required
 def site_edit(request, pk):
 	site = get_object_or_404(Site, pk=pk)
 	if request.method == "POST":
 		form = SiteForm(request.POST, instance=site)
 		if form.is_valid():
 			site = form.save(commit=False)
-			#site.owner = request.user
 			site.save()
 			return redirect(site_edit, pk=site.pk)
 	else:
 		form = SiteForm()
 		sites = Site.objects.filter(owner=request.user)
 	return render(request, 'climate/site_edit.html', {'sites': sites, 'wide_area': Site.WIDE_AREA, 'narrow_area': Site.NARROW_AREA, 'form': form, 'site': site})
+
+@login_required
+def actual_month(request, pk):
+	site = get_object_or_404(Site, pk=pk)
+	thisMonth = Month()
+	#actuals = RawManualData.objects.filter(siteId = site, year = thisMonth.year, month = thisMonth.month)
+	if request.method == "POST":
+		form = DiaryForm(request.POST)
+		if form.is_valid():
+			diary = form.save(commit=False)
+			diary.save()
+			return redirect(actual_month, pk)
+	else:
+		form = DiaryForm()
+	return render(request, 'climate/actual_month.html', {'site' : site, 'month': thisMonth, 'weather_code': Weather.WEATHER_CODE, 'form': form})

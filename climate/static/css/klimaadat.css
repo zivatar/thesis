@@ -116,3 +116,7 @@ div.highlighted:hover {
 	background-color: #FFF;
 	border-radius: 10px;
 }
+
+.table.valign-center > tbody > tr > td, .table.valign-center > thead > tr > th {
+     vertical-align: middle;
+}
