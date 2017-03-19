@@ -31,6 +31,7 @@ def new_site(request):
 
 @login_required
 def new_observation(request):
+	sites = Site.objects.filter(owner=request.user)
 	if request.method == "POST":
 		form = ObservationForm(request.POST)
 		if form.is_valid():
@@ -40,7 +41,6 @@ def new_observation(request):
 			return redirect(main)
 	else:
 		form = ObservationForm()
-		sites = Site.objects.filter(owner=request.user)
 	return render(request, 'climate/new_observation.html', {'sites': sites, 'form': form, 'wind_speed': Weather.BEAUFORT_SCALE, 'weather_code': Weather.WEATHER_CODE})
 	
 def main(request):

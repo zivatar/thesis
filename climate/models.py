@@ -72,7 +72,7 @@ class Site(models.Model):
 	owner = models.ForeignKey('auth.user')
 	title = models.CharField(max_length = 100, unique = True)
 	comment = models.TextField(blank = True)
-	createdDate = models.DateTimeField(default = timezone.now)
+	createdDate = models.DateTimeField(default = timezone.now())
 	isActive = models.BooleanField(default = True)
 	isPublic = models.BooleanField(default = True)
 	isDeleted = models.BooleanField(default = False)
@@ -96,13 +96,13 @@ class Instrument(models.Model):
 class RawData(models.Model):
 	siteId = models.ForeignKey('climate.Site')
 	instrumentId = models.ForeignKey('climate.Instrument')
-	createdDate = models.DateTimeField(default = timezone.now)
+	createdDate = models.DateTimeField(default = timezone.now())
 	# T, Rh, p, stb
 	# vagy relacios tablaval
 
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
-	createdDate = models.DateTimeField(default = timezone.now)
+	createdDate = models.DateTimeField(default = timezone.now())
 	comment = models.TextField(blank = True)
 	_weatherCode = models.CommaSeparatedIntegerField(max_length = 200, choices = Weather.WEATHER_CODE, blank = True)
 	windSpeed = models.IntegerField(choices = Weather.BEAUFORT_SCALE, default = 0)
