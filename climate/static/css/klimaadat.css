@@ -120,3 +120,8 @@ div.highlighted:hover {
 .table.valign-center > tbody > tr > td, .table.valign-center > thead > tr > th {
      vertical-align: middle;
 }
+
+table.observation span.label {
+	font-size: medium;
+	margin: 3px;
+}

@@ -22,8 +22,12 @@ class Weather(models.Model):
 	(10, '10: fák gyökerestül kidőlnek'), (11, '11: súlyos károk'), (12, '12: súlyos pusztítás')
 	)
 	
-	def getWeatherCodeText(ndx):
-		return[x[1] for x in WEATHER_CODE if x[0] == ndx][0]
+	def getWeatherCodeText(self, ndx):
+		if type(ndx) == str and ndx != '':
+			ndx = int(ndx)
+		find = [x[1] for x in self.WEATHER_CODE if x[0] == ndx]
+		if len(find) > 0:
+			return find[0]
 		
 class Month:
 	def __init__(self, now=timezone.now()):
@@ -115,10 +119,18 @@ class RawObservation(models.Model):
 		self.save()
 	@property
 	def weatherCode(self):
-		return self._weatherCode.split(',')
+		return self.convertToReadables(self._weatherCode.split(','))
+		#return self._weatherCode.split(',')
 	@weatherCode.setter
 	def weatherCode(self, value):
 		self._weatherCode = value
+	def convertToReadables(self, codes):
+		out = []
+		for o in codes:
+			out.append(self.convertToReadable(o))
+		return out
+	def convertToReadable(self, code):
+		return Weather.getWeatherCodeText(Weather(), code)
 
 class RawManualData(models.Model):
 	siteId = models.ForeignKey('climate.Site')

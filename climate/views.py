@@ -79,3 +79,21 @@ def actual_month(request, pk):
 	else:
 		form = DiaryForm()
 	return render(request, 'climate/actual_month.html', {'site' : site, 'month': thisMonth, 'weather_code': Weather.WEATHER_CODE, 'form': form})
+
+def handle_uploaded_file(f):
+	lineNumber = 0
+	for line in f:
+		lineNumber = lineNumber + 1
+		if lineNumber == 1:
+			print(line)
+			print(line.split())
+	
+@login_required
+def upload(request, pk):
+	site = get_object_or_404(Site, pk=pk)
+	if request.method == "POST":
+		print("UPLOAD")
+		handle_uploaded_file(request.FILES['myfile'])
+		return redirect(site_details, pk)
+	else:
+		return render(request, 'climate/upload.html', {'site': site})
