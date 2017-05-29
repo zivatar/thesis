@@ -48,8 +48,13 @@ def main(request):
 	
 def site_details(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	observations = RawObservation.objects.filter(siteId = site)
+	observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')[:3]  
 	return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE})
+	
+def observations(request, pk):
+	site = get_object_or_404(Site, pk=pk)
+	observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')
+	return render(request, 'climate/site_observations.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE})
 
 @login_required
 def site_edit(request, pk):
