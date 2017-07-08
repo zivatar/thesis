@@ -98,12 +98,22 @@ class Instrument(models.Model):
 	# melyik szenzor mikor uzemelt
 
 class RawData(models.Model):
-	siteId = models.ForeignKey('climate.Site')
-	instrumentId = models.ForeignKey('climate.Instrument')
-	createdDate = models.DateTimeField(default = timezone.now())
-	# T, Rh, p, stb
-	# vagy relacios tablaval
-
+	class Meta:
+		unique_together = (('siteId', 'createdDate'),)
+	siteId = models.ForeignKey('climate.Site', primary_key = True)
+	createdDate = models.DateTimeField()
+	pressure = models.DecimalField(blank = True, null = True, max_digits = 5, decimal_places = 1)
+	tempIn = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	humidityIn = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	temperature = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	humidity = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	dewpoint = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	windChill = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	windSpeed = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
+	windDir = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
+	gust = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
+	precipitation = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
+	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
 	createdDate = models.DateTimeField(default = timezone.now())
@@ -136,9 +146,10 @@ class RawManualData(models.Model):
 	siteId = models.ForeignKey('climate.Site')
 	year = models.IntegerField(default = -1)
 	month = models.IntegerField(default = -1) # TODO year,month,siteId legyen unique
-	tMin = models.FloatField(null = True)
-	tMax = models.FloatField(null = True)
-	precAmount = models.FloatField(null = True)
+	day = models.IntegerField(default = -1)
+	tMin = models.FloatField(blank = True, null = True)
+	tMax = models.FloatField(blank = True, null = True)
+	precAmount = models.FloatField(blank = True, null = True)
 	_weatherCode = models.CommaSeparatedIntegerField(max_length = 200, choices = Weather.WEATHER_CODE, blank = True)
 	def populateWeatherCode(self, arr):
 		wc = ''
