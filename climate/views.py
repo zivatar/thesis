@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
 from .models import Site, Weather, RawObservation, RawManualData, Month, RawData
+from .models import DailyStatistics
 from .forms import SiteForm, ObservationForm, DiaryForm
 from django.utils import timezone
 from re import sub
@@ -99,16 +100,24 @@ def process(var):
 def handle_uploaded_file(f, site):
 	lineNumber = 0
 	for line in f:
-		#line = line.decode('utf-8')
 		line = line.decode('cp437')
 		lineNumber = lineNumber + 1
 		if lineNumber > 1:
 			data = RawData()
-			data.siteId = site
+			
 			line = sub('"', '', line).split(';')
 			date = line[1]
-			#data.createdDate = datetime.strptime(date, '%d.%m.%Y %H:%M')
+			print(date, site)
+			
+			data.siteId = site
 			data.createdDate = dtparser.parse(date + "+0100")
+			
+			#data = RawData(site, dtparser.parse(date + "+0100"))
+			#data = RawData.objects.create(site, dtparser.parse(date + "+0100"))
+			print(data.createdDate)
+			if lineNumber == 2:
+				firstDate = dtparser.parse(date + "+0100")
+			lastDate = dtparser.parse(date + "+0100")
 			if process(line[2]):
 				data.pressure = process(line[2])
 			if process(line[3]):
@@ -132,13 +141,26 @@ def handle_uploaded_file(f, site):
 			if process(line[12]):
 				data.precipitation = process(line[12])
 			data.save()
+			print("save")
+	return firstDate, lastDate
+
+def create_daily_statistics(firstDate, lastDate, siteId):
+	# Tmin, Tmax, Tatlag
+	# csapadekosszeg
+	# nyari nap, hosegnap, stb
+	# fel oras csapadekosszeg maximuma
+	# jelentos csapadek volt-el
+	#
+	DailyStatistics(firstDate, lastDate, siteId)
+	return 1
 	
 @login_required
 def upload(request, pk):
 	site = get_object_or_404(Site, pk=pk)
 	if request.method == "POST":
 		#print("UPLOAD")
-		handle_uploaded_file(request.FILES['myfile'], site)
+		firstDate, lastDate = handle_uploaded_file(request.FILES['myfile'], site)
+		create_daily_statistics(firstDate, lastDate, site)
 		return redirect(site_details, pk)
 	else:
 		return render(request, 'climate/upload.html', {'site': site})

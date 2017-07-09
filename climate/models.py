@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 import calendar
+import datetime
 
 class Weather(models.Model):
 	WEATHER_CODE = (
@@ -100,6 +101,7 @@ class Instrument(models.Model):
 class RawData(models.Model):
 	class Meta:
 		unique_together = (('siteId', 'createdDate'),)
+	
 	siteId = models.ForeignKey('climate.Site', primary_key = True)
 	createdDate = models.DateTimeField()
 	pressure = models.DecimalField(blank = True, null = True, max_digits = 5, decimal_places = 1)
@@ -113,6 +115,39 @@ class RawData(models.Model):
 	windDir = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
 	gust = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
 	precipitation = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
+	
+	#def __init__(self, siteId, createdDate):
+	#	self.siteId = siteId
+	#	self.createdDate = createdDate
+	
+class DailyStatistics(models.Model):
+	class Meta:
+		unique_together = (('siteId', 'date'),)
+	siteId = models.ForeignKey('climate.Site', primary_key = True)
+	date = models.DateTimeField()
+	dataAvailable = models.IntegerField(default = 0)
+	tempMin = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	tempMax = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	tempAvg = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	precipitation = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
+	precipHalfHour = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
+	
+	def __init__(self, fromDate, toDate, siteId):
+		#sites = RawData.objects.filter(isPublic=True).order_by('title')
+		fromDate = fromDate.replace(hour=0, minute=0, second=0)
+		delta = toDate - fromDate
+		print("populate")
+		print(siteId)
+		for i in range(delta.days + 1):
+			print(fromDate + datetime.timedelta(days=i))
+			f = fromDate + datetime.timedelta(days = i)
+			t = fromDate + datetime.timedelta(days = i + 1)
+			rawDataSet1 = RawData.objects.filter(siteId = siteId)
+			rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
+                         createdDate__month=f.month, 
+                         createdDate__day=f.day).filter(siteId = siteId)
+			#print(rawDataSet)
+			print(rawDataSet.count())
 	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
