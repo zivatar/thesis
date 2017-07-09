@@ -107,14 +107,10 @@ def handle_uploaded_file(f, site):
 			
 			line = sub('"', '', line).split(';')
 			date = line[1]
-			print(date, site)
 			
 			data.siteId = site
 			data.createdDate = dtparser.parse(date + "+0100")
 			
-			#data = RawData(site, dtparser.parse(date + "+0100"))
-			#data = RawData.objects.create(site, dtparser.parse(date + "+0100"))
-			print(data.createdDate)
 			if lineNumber == 2:
 				firstDate = dtparser.parse(date + "+0100")
 			lastDate = dtparser.parse(date + "+0100")
@@ -141,7 +137,6 @@ def handle_uploaded_file(f, site):
 			if process(line[12]):
 				data.precipitation = process(line[12])
 			data.save()
-			print("save")
 	return firstDate, lastDate
 
 def create_daily_statistics(firstDate, lastDate, siteId):
@@ -151,14 +146,16 @@ def create_daily_statistics(firstDate, lastDate, siteId):
 	# fel oras csapadekosszeg maximuma
 	# jelentos csapadek volt-el
 	#
-	DailyStatistics(firstDate, lastDate, siteId)
+	#d = DailyStatistics(firstDate, lastDate, siteId)#.save()
+	d = DailyStatistics()
+	d.calc(firstDate, lastDate, siteId)
+	d.save()
 	return 1
 	
 @login_required
 def upload(request, pk):
 	site = get_object_or_404(Site, pk=pk)
 	if request.method == "POST":
-		#print("UPLOAD")
 		firstDate, lastDate = handle_uploaded_file(request.FILES['myfile'], site)
 		create_daily_statistics(firstDate, lastDate, site)
 		return redirect(site_details, pk)

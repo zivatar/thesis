@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 import calendar
 import datetime
+import decimal
 
 class Weather(models.Model):
 	WEATHER_CODE = (
@@ -102,7 +103,7 @@ class RawData(models.Model):
 	class Meta:
 		unique_together = (('siteId', 'createdDate'),)
 	
-	siteId = models.ForeignKey('climate.Site', primary_key = True)
+	siteId = models.ForeignKey('climate.Site')
 	createdDate = models.DateTimeField()
 	pressure = models.DecimalField(blank = True, null = True, max_digits = 5, decimal_places = 1)
 	tempIn = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
@@ -132,12 +133,11 @@ class DailyStatistics(models.Model):
 	precipitation = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
 	precipHalfHour = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
 	
-	def __init__(self, fromDate, toDate, siteId):
+	def calc(self, fromDate, toDate, siteId):
 		#sites = RawData.objects.filter(isPublic=True).order_by('title')
 		fromDate = fromDate.replace(hour=0, minute=0, second=0)
+		self.date = fromDate
 		delta = toDate - fromDate
-		print("populate")
-		print(siteId)
 		for i in range(delta.days + 1):
 			print(fromDate + datetime.timedelta(days=i))
 			f = fromDate + datetime.timedelta(days = i)
@@ -146,8 +146,26 @@ class DailyStatistics(models.Model):
 			rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
                          createdDate__month=f.month, 
                          createdDate__day=f.day).filter(siteId = siteId)
-			#print(rawDataSet)
-			print(rawDataSet.count())
+			self.dataAvailable = rawDataSet.count()
+			tempMin = decimal.Decimal(99.9)
+			tempMax = decimal.Decimal(-99.9)
+			tempSum = decimal.Decimal(0.0)
+			tempNum = decimal.Decimal(0.0)
+			precipitation = decimal.Decimal(0.0)
+			for j in rawDataSet:
+				if j.temperature is not None:
+					tempSum = tempSum + j.temperature
+					tempNum = tempNum + 1
+					if j.temperature < tempMin:
+						tempMin = j.temperature
+					if j.temperature > tempMax:
+						tempMax = j.temperature
+				if j.precipitation is not None:
+					precipitation = precipitation + j.precipitation
+			self.tempMin = tempMin
+			self.tempMax = tempMax
+			self.tempAvg = tempSum / tempNum
+			self.precipitation = precipitation
 	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
