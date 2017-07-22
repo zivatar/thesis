@@ -132,40 +132,18 @@ class DailyStatistics(models.Model):
 	tempAvg = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
 	precipitation = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
 	precipHalfHour = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
-	
-	def calc(self, fromDate, toDate, siteId):
-		#sites = RawData.objects.filter(isPublic=True).order_by('title')
-		fromDate = fromDate.replace(hour=0, minute=0, second=0)
-		self.date = fromDate
-		delta = toDate - fromDate
-		for i in range(delta.days + 1):
-			print(fromDate + datetime.timedelta(days=i))
-			f = fromDate + datetime.timedelta(days = i)
-			t = fromDate + datetime.timedelta(days = i + 1)
-			rawDataSet1 = RawData.objects.filter(siteId = siteId)
-			rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
-                         createdDate__month=f.month, 
-                         createdDate__day=f.day).filter(siteId = siteId)
-			self.dataAvailable = rawDataSet.count()
-			tempMin = decimal.Decimal(99.9)
-			tempMax = decimal.Decimal(-99.9)
-			tempSum = decimal.Decimal(0.0)
-			tempNum = decimal.Decimal(0.0)
-			precipitation = decimal.Decimal(0.0)
-			for j in rawDataSet:
-				if j.temperature is not None:
-					tempSum = tempSum + j.temperature
-					tempNum = tempNum + 1
-					if j.temperature < tempMin:
-						tempMin = j.temperature
-					if j.temperature > tempMax:
-						tempMax = j.temperature
-				if j.precipitation is not None:
-					precipitation = precipitation + j.precipitation
-			self.tempMin = tempMin
-			self.tempMax = tempMax
-			self.tempAvg = tempSum / tempNum
-			self.precipitation = precipitation
+
+class MonthlyStatistics(models.Model):
+	class Meta:
+		unique_together = (('year', 'month', 'siteId'),)
+	siteId = models.ForeignKey('climate.Site', primary_key = True)
+	year = models.IntegerField()
+	month = models.IntegerField()
+	dataAvailable = models.IntegerField(default = 0)
+	tempMin = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	tempMax = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	tempAvg = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	summerDays = models.IntegerField()
 	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')

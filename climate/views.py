@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
 from .models import Site, Weather, RawObservation, RawManualData, Month, RawData
-from .models import DailyStatistics
+from .models import DailyStatistics, MonthlyStatistics
 from .forms import SiteForm, ObservationForm, DiaryForm
 from django.utils import timezone
 from re import sub
@@ -191,7 +191,26 @@ def create_daily_statistics(fromDate, toDate, siteId):
 		d.save()
 	return 1
 
-def create_monthly_statistics(firstDate, lastDate, siteId):
+def create_monthly_statistics(fromDate, toDate, siteId):
+	fromDate = fromDate.replace(hour=0, minute=0, second=0, day=1)
+	delta = toDate - fromDate
+	for i in range(delta.days + 1):
+		newObj = False
+		f = fromDate + datetime.timedelta(days = i)
+		d = MonthlyStatistics.objects.filter(siteId = siteId, month = f.month, year = f.year)
+		if len(d) == 0:
+			d = MonthlyStatistics()
+			d.month = f.month
+			d.year = f.year
+			d.siteId = siteId
+		else:
+			d = d[0]
+		t = fromDate + datetime.timedelta(days = i + 1)
+		rawDataSet = DailyStatistics.objects.filter(date__year=f.year, 
+							date__month=f.month).filter(siteId = siteId)
+		d.dataAvailable = rawDataSet.count()
+		d.summerDays = 0
+		d.save()
 	return 1
 	
 @login_required
@@ -200,6 +219,7 @@ def upload(request, pk):
 	if request.method == "POST":
 		firstDate, lastDate = handle_uploaded_file(request.FILES['myfile'], site)
 		create_daily_statistics(firstDate, lastDate, site)
+		create_monthly_statistics(firstDate, lastDate, site)
 		return redirect(site_details, pk)
 	else:
 		return render(request, 'climate/upload.html', {'site': site})
