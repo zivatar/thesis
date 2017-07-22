@@ -8,6 +8,9 @@ from django.utils import timezone
 from re import sub
 from datetime import datetime
 import dateutil.parser as dtparser
+import calendar
+import datetime
+import decimal
 
 def site_list(request):
 	sites = Site.objects.filter(isPublic=True).order_by('title')
@@ -103,53 +106,92 @@ def handle_uploaded_file(f, site):
 		line = line.decode('cp437')
 		lineNumber = lineNumber + 1
 		if lineNumber > 1:
-			data = RawData()
+			#data = RawData()
 			
 			line = sub('"', '', line).split(';')
 			date = line[1]
 			
-			data.siteId = site
-			data.createdDate = dtparser.parse(date + "+0100")
+			#data.siteId = site
+			#data.createdDate = dtparser.parse(date + "+0100")
+			
+			#book = Book.objects.create(title="Ulysses")
+			data, created = RawData.objects.get_or_create(siteId = site, createdDate = dtparser.parse(date + "+0100"))
 			
 			if lineNumber == 2:
 				firstDate = dtparser.parse(date + "+0100")
 			lastDate = dtparser.parse(date + "+0100")
-			if process(line[2]):
-				data.pressure = process(line[2])
-			if process(line[3]):
-				data.tempIn = process(line[3])
-			if process(line[4]):
-				data.humidityIn = process(line[4])
-			if process(line[5]):
-				data.temperature = process(line[5])
-			if process(line[6]):
-				data.humidity = process(line[6])
-			if process(line[7]):
-				data.dewpoint = process(line[7])
-			if process(line[8]):
-				data.windChill = process(line[8])
-			if process(line[9]):
-				data.windSpeed = process(line[9])
-			if process(line[10]):
-				data.windDir = process(line[10])
-			if process(line[11]):
-				data.gust = process(line[11])
-			if process(line[12]):
-				data.precipitation = process(line[12])
-			data.save()
+			
+			if created:
+				if process(line[2]):
+					data.pressure = process(line[2])
+				if process(line[3]):
+					data.tempIn = process(line[3])
+				if process(line[4]):
+					data.humidityIn = process(line[4])
+				if process(line[5]):
+					data.temperature = process(line[5])
+				if process(line[6]):
+					data.humidity = process(line[6])
+				if process(line[7]):
+					data.dewpoint = process(line[7])
+				if process(line[8]):
+					data.windChill = process(line[8])
+				if process(line[9]):
+					data.windSpeed = process(line[9])
+				if process(line[10]):
+					data.windDir = process(line[10])
+				if process(line[11]):
+					data.gust = process(line[11])
+				if process(line[12]):
+					data.precipitation = process(line[12])
+				data.save()
 	return firstDate, lastDate
 
-def create_daily_statistics(firstDate, lastDate, siteId):
-	# Tmin, Tmax, Tatlag
-	# csapadekosszeg
+def create_daily_statistics(fromDate, toDate, siteId):
 	# nyari nap, hosegnap, stb
 	# fel oras csapadekosszeg maximuma
 	# jelentos csapadek volt-el
 	#
-	#d = DailyStatistics(firstDate, lastDate, siteId)#.save()
-	d = DailyStatistics()
-	d.calc(firstDate, lastDate, siteId)
-	d.save()
+	fromDate = fromDate.replace(hour=0, minute=0, second=0)
+	delta = toDate - fromDate
+	for i in range(delta.days + 1):
+		newObj = False
+		f = fromDate + datetime.timedelta(days = i)
+		d = DailyStatistics.objects.filter(siteId = siteId, date=f)
+		if len(d) == 0:
+			d = DailyStatistics()
+		else:
+			d = d[0]
+		d.date = f
+		t = fromDate + datetime.timedelta(days = i + 1)
+		rawDataSet1 = RawData.objects.filter(siteId = siteId)
+		rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
+							createdDate__month=f.month, 
+							createdDate__day=f.day).filter(siteId = siteId)
+		d.dataAvailable = rawDataSet.count()
+		tempMin = decimal.Decimal(99.9)
+		tempMax = decimal.Decimal(-99.9)
+		tempSum = decimal.Decimal(0.0)
+		tempNum = decimal.Decimal(0.0)
+		precipitation = decimal.Decimal(0.0)
+		for j in rawDataSet:
+			if j.temperature is not None:
+				tempSum = tempSum + j.temperature
+				tempNum = tempNum + 1
+				if j.temperature < tempMin:
+					tempMin = j.temperature
+				if j.temperature > tempMax:
+					tempMax = j.temperature
+			if j.precipitation is not None:
+				precipitation = precipitation + j.precipitation
+		d.tempMin = tempMin
+		d.tempMax = tempMax
+		d.tempAvg = tempSum / tempNum
+		d.precipitation = precipitation
+		d.save()
+	return 1
+
+def create_monthly_statistics(firstDate, lastDate, siteId):
 	return 1
 	
 @login_required
