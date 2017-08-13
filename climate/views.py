@@ -72,6 +72,11 @@ def site_details(request, pk):
 	#print(yearly)
 	#print(monthly)
 	return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE, 'ym': ym})
+
+def yearly_view(request, pk, year):
+	site = get_object_or_404(Site, pk=pk)
+	yearObj = YearlyStatistics.objects.filter(siteId = site).filter(year = year)[0]
+	return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearObj})
 	
 def observations(request, pk):
 	site = get_object_or_404(Site, pk=pk)
