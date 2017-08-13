@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
 from .models import Site, Weather, RawObservation, RawManualData, Month, RawData
-from .models import DailyStatistics, MonthlyStatistics
+from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
 from .forms import SiteForm, ObservationForm, DiaryForm
 from django.utils import timezone
 from re import sub
@@ -53,10 +53,25 @@ def new_observation(request):
 def main(request):
 	return render(request, 'climate/main.html', {})
 	
+def createYearlyMonthly(yearly, monthly):
+	com = []
+	for y in yearly:
+		mo = []
+		for m in monthly:
+			if (m.year == y.year):
+				mo.append(m)
+		com.append({'year': y, 'months': mo})
+	return com
+
 def site_details(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')[:3]  
-	return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE})
+	observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')[:3]
+	yearly = YearlyStatistics.objects.filter(siteId = site)
+	monthly = MonthlyStatistics.objects.filter(siteId = site)
+	ym = createYearlyMonthly(yearly, monthly)
+	#print(yearly)
+	#print(monthly)
+	return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE, 'ym': ym})
 	
 def observations(request, pk):
 	site = get_object_or_404(Site, pk=pk)
@@ -193,10 +208,9 @@ def create_daily_statistics(fromDate, toDate, siteId):
 
 def create_monthly_statistics(fromDate, toDate, siteId):
 	fromDate = fromDate.replace(hour=0, minute=0, second=0, day=1)
-	delta = toDate - fromDate
-	for i in range(delta.days + 1):
-		newObj = False
-		f = fromDate + datetime.timedelta(days = i)
+	toDate = toDate.replace(month=toDate.month+1, day=1, hour=0, minute=0, second=0)
+	f = fromDate
+	while f < toDate:
 		d = MonthlyStatistics.objects.filter(siteId = siteId, month = f.month, year = f.year)
 		if len(d) == 0:
 			d = MonthlyStatistics()
@@ -205,12 +219,29 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 			d.siteId = siteId
 		else:
 			d = d[0]
-		t = fromDate + datetime.timedelta(days = i + 1)
 		rawDataSet = DailyStatistics.objects.filter(date__year=f.year, 
 							date__month=f.month).filter(siteId = siteId)
 		d.dataAvailable = rawDataSet.count()
 		d.summerDays = 0
 		d.save()
+		f = f.replace(month = f.month + 1)
+	return 1
+
+def create_yearly_statistics(fromDate, toDate, siteId):
+	fromDate = fromDate.replace(month = 1, day = 1, hour = 0, minute = 0, second = 0)
+	toDate = toDate.replace(month = 12, day = 31, hour = 23, minute = 59, second = 59)
+	f = fromDate
+	while f < toDate:
+		print(f)
+		d = YearlyStatistics.objects.filter(siteId = siteId, year = f.year)
+		if len(d) == 0:
+			d = YearlyStatistics()
+			d.year = f.year
+			d.siteId = siteId
+		else:
+			d = d[0]
+		d.save()
+		f = f.replace(year = f.year + 1)
 	return 1
 	
 @login_required
@@ -220,6 +251,7 @@ def upload(request, pk):
 		firstDate, lastDate = handle_uploaded_file(request.FILES['myfile'], site)
 		create_daily_statistics(firstDate, lastDate, site)
 		create_monthly_statistics(firstDate, lastDate, site)
+		create_yearly_statistics(firstDate, lastDate, site)
 		return redirect(site_details, pk)
 	else:
 		return render(request, 'climate/upload.html', {'site': site})

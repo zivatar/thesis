@@ -144,6 +144,12 @@ class MonthlyStatistics(models.Model):
 	tempMax = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
 	tempAvg = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
 	summerDays = models.IntegerField()
+
+class YearlyStatistics(models.Model):
+	class Meta:
+		unique_together = (('siteId', 'year'),)
+	siteId = models.ForeignKey('climate.Site', primary_key = True)
+	year = models.IntegerField()
 	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
