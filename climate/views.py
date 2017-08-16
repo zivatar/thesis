@@ -12,10 +12,12 @@ import calendar
 import datetime
 import decimal
 
+monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
+
 def site_list(request):
 	sites = Site.objects.filter(isPublic=True).order_by('title')
 	return render(request, 'climate/site_list.html', {'sites': sites})
-	
+
 #@login_required
 #def my_sites(request):
 #	sites = Site.objects.filter(owner=request.user)
@@ -75,8 +77,19 @@ def site_details(request, pk):
 
 def yearly_view(request, pk, year):
 	site = get_object_or_404(Site, pk=pk)
-	yearObj = YearlyStatistics.objects.filter(siteId = site).filter(year = year)[0]
-	return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearObj})
+	yearly = YearlyStatistics.objects.filter(siteId = site).filter(year = year)[0]
+	monthly = MonthlyStatistics.objects.filter(siteId = site).filter(year = year)
+	datasetNum = []
+	for i in range(12):
+		added = False
+		for j in monthly:
+			if j.month == i + 1:
+				datasetNum.append(j.dataAvailable)
+				added = True
+		if not added:
+			datasetNum.append(0)
+
+	return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 'monthNames': monthList, 'num': datasetNum})
 	
 def observations(request, pk):
 	site = get_object_or_404(Site, pk=pk)

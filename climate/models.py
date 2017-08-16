@@ -4,6 +4,8 @@ import calendar
 import datetime
 import decimal
 
+monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
+
 class Weather(models.Model):
 	WEATHER_CODE = (
 	(1, 'füst'), (2, 'homály'), (3, 'párásság'), (4, 'köd'), (19, 'nyílt köd'), (13, 'homokvihar'), (14, 'porforgatag'), 
@@ -208,3 +210,7 @@ class DailyStat(models.Model):
 class MonthlyStat(models.Model):
 	siteId = models.ForeignKey('climate.Site')
 	date = models.DateField()
+
+class YearlyReport(models.Model):
+	siteId = models.ForeignKey('climate.Site')
+	year = models.IntegerField(default = -1)

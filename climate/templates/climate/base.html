@@ -46,8 +46,8 @@
 			<a class="navbar-brand" href="{% url 'main' %}">Zivatar.hu Éghajlati Adatbázis</a>
 		</div>
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="{% url 'main' %}">Főoldal</a></li>
-				<li><a href="#">Adatok</a></li>
+				<li><a href="{% url 'main' %}">Főoldal</a></li>
+				<li><a href="{% url 'site_list' %}">Adatok</a></li>
 			</ul>
 			
 			{% if user.is_authenticated %}
@@ -73,7 +73,8 @@
 			<a class="navbar-brand">Lernerné Lelovics Enikő Alexandra: Meteorológiai adatok nyilvántartása, megjelenítése és elemzése webes felületen</a>
 		</div>
 		<ul class="nav navbar-nav">
-			<li class="active"><a href="{% url 'main' %}">Főoldal</a></li>
+			<li><a href="{% url 'main' %}">Főoldal</a></li>
+			<li><a href="{% url 'site_list' %}">Adatok</a></li>
 		</ul>
 	</div>
 </footer>
