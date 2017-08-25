@@ -3,6 +3,7 @@ from django.utils import timezone
 import calendar
 import datetime
 import decimal
+import simplejson as json
 
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
@@ -34,23 +35,43 @@ class Weather(models.Model):
 			return find[0]
 		
 class Month:
-	def __init__(self, now=timezone.now()):
-		self.year = now.year
-		self.month = now.month
+	def __init__(self, now=timezone.now(), year=0, month=0):
+		if year == 0 or month == 0:
+			self.year = now.year
+			self.month = now.month
+		else:
+			self.year = int(year)
+			self.month = int(month)
+		print(type(self.month))
 	def isInMonth(self, dt):
 		return self.year == dt.year and self.month == dt.month
 	def daysOfMonth(self):
 		lastDay = calendar.monthrange(self.year, self.month)[1]
+		print(lastDay)
 		a = []
-		[a.append(i) for i in range(1, lastDay)]
+		[a.append(i) for i in range(1, lastDay + 1)]
 		return a
 	def daysOfMonthTillToday(self):
 		lastDay = timezone.now().day
 		a = []
-		[a.append(i) for i in range(1, lastDay)]
+		[a.append(i) for i in range(1, lastDay + 1)]
 		return a
 	def getMonth(self):
 		return str(self.month).zfill(2) 
+
+class Climate:
+	def getNrFrostDays(self, minTemps):
+		return [len(x for x in minTemps if x < 0)]
+	def getNrColdDays(self, minTemps):
+		return [len(x for x in minTemps if x < -10)]
+	def getNrWarmNights(self, minTemps):
+		return [len(x for x in minTemps if x > 20)]
+	def getNrSummerDays(self, maxTemps):
+		return [len(x for x in maxTemps if x > 25)]
+	def getNrWarmDays(self, maxTemps):
+		return [len(x for x in maxTemps if x >= 30)]
+	def getNrHotDays(self, maxTemps):
+		return [len(x for x in maxTemps if x >= 35)]
 		
 # -----------------------------------------------------------------------------------------
 
@@ -152,6 +173,36 @@ class YearlyStatistics(models.Model):
 		unique_together = (('siteId', 'year'),)
 	siteId = models.ForeignKey('climate.Site', primary_key = True)
 	year = models.IntegerField()
+
+class MonthlyReport():
+	class Meta:
+		managed = False
+	def generateTemperatures(self):
+		Tavg = []
+		Tmin = []
+		Tmax = []
+		for i in self.days:
+			hasData = False
+			for j in self.dayObjs:
+				if j.date.day == i:
+					Tavg.append(j.tempAvg)
+					Tmin.append(j.tempMin)
+					Tmax.append(j.tempMax)
+			if not hasData:
+				Tmin.append(None)
+				Tmax.append(None)
+				Tavg.append(None)
+		return json.dumps(Tmin), json.dumps(Tavg), json.dumps(Tmax)
+	def __init__(self, siteId, year, month, monthObjs, yearObj, dayObjs):
+		self.siteId = siteId
+		self.year = year
+		self.month = month
+		self.monthObjs = monthObjs
+		self.yearObj = yearObj
+		self.dayObjs = dayObjs
+		self.days = Month(year=self.year, month=self.month).daysOfMonth()
+		self.tempMins, self.tempAvgs, self.tempMaxs = self.generateTemperatures()
+	
 	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')

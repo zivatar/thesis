@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
 from .models import Site, Weather, RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
+from .models import MonthlyReport
 from .forms import SiteForm, ObservationForm, DiaryForm
 from django.utils import timezone
 from re import sub
@@ -90,6 +91,15 @@ def yearly_view(request, pk, year):
 			datasetNum.append(0)
 
 	return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 'monthNames': monthList, 'num': datasetNum})
+
+def monthly_view(request, site, year, month):
+	siteObj = get_object_or_404(Site, pk=site)
+	yearly = YearlyStatistics.objects.filter(siteId = siteObj).filter(year = year)[0]
+	monthly = MonthlyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
+	daily = DailyStatistics.objects.filter(siteId = siteObj).filter(date__year = year).filter(date__month = month)
+	datasetNum = []
+	a = MonthlyReport(site, year, month, monthly, yearly, daily)
+	return render(request, 'climate/monthly_view.html', {'site' : siteObj, 'num': datasetNum, 'year': yearly, 'month': month, 'report': a})
 	
 def observations(request, pk):
 	site = get_object_or_404(Site, pk=pk)
