@@ -1,0 +1,46 @@
+{% extends 'climate/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% block content %}
+<script>
+
+	var lat;
+	var lon;
+	function setLatLon(lat, lon) {
+		document.getElementById("new_site_lat").value = lat;
+		document.getElementById("new_site_lon").value = lon;
+	};
+</script>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<span class="glyphicon glyphicon-cloud-upload"></span> Mért adatok feltöltése
+	</div>
+	<div class="panel-body">
+			
+		<div class="tab-content">
+				
+			<div id="add_new" class="tab-pane fade in active">
+				<h1>Mért adatok feltöltése</h1>
+						
+				<!--<div class="col-6 pull-right">
+					<label><input type="checkbox" data-toggle="toggle" class="form-control">UTC időzóna használata</label>
+					<label><input type="checkbox" checked data-toggle="toggle" class="form-control">Tizedespont használata</label>
+				</div>-->
+				<form method="post" enctype="multipart/form-data" class="post-form">{% csrf_token %}
+				<div class="col-12">
+					<div class="btn-group">
+						<input type="file" name="myfile" />
+						<button type="submit" class="save btn btn-success btn-group-justified">Adatfile feltöltése</button>
+					</div>
+				</div>
+				</form>
+				
+			</div>
+					
+		</div>
+
+	</div>
+</div>
+
+{% endblock content %}

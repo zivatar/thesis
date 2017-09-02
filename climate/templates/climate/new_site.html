@@ -1,0 +1,99 @@
+{% extends 'climate/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% block content %}
+<script>
+
+	var lat;
+	var lon;
+	function setLatLon(lat, lon) {
+		document.getElementById("new_site_lat").value = lat;
+		document.getElementById("new_site_lon").value = lon;
+	};
+</script>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<span class="glyphicon glyphicon-map-marker"></span> Saját mérőhelyek
+	</div>
+	<div class="panel-body">
+			
+		<div class="nav-inside">
+				<ul class="nav nav-pills">
+					<li class="active"><a href="#add_new">+1</a></li>
+					{% for site in sites %}
+						<li><a href="{% url 'site_edit' pk=site.pk %}">{{ site.title }}</a></li> <!-- class="active" -->
+					{% endfor %}
+				</ul>
+		</div>
+			
+		<div class="tab-content">
+				
+			<div id="add_new" class="tab-pane fade in active">
+				<h1>Új mérőhely</h1>
+						
+				<form id="new_site" method="post" class="post-form">{% csrf_token %}
+				{{ form.non_field_errors }}
+						
+				<div id="google_maps_one_marker" class="col-12 col-sm-4">
+				</div>
+						
+				<div class="form-group col-sm-2">
+					{{ form.lat.errors }}
+					{% render_field form.lat class+="form-control" placeholder="47°" required=true id="new_site_lat" %}
+					{{ form.lon.errors }}
+					{% render_field form.lon class+="form-control" placeholder="19°" required=true id="new_site_lon" %}
+						
+					{{ form.isActive.errors }}
+					<label for="{{ form.isActive.id_for_label }}">Aktív:</label>
+					{% render_field form.isActive class+="form-control" %}
+					{{ form.isPublic.errors }}
+					<label for="{{ form.isPublic.id_for_label }}">Publikus:</label>
+					{% render_field form.isPublic class+="form-control" %}
+				</div>
+						
+				<div class="col-sm-6">
+					<div class="form-group">
+						{{ form.title.errors }}
+						<label for="{{ form.title.id_for_label }}">Megnevezés:</label>
+						{% render_field form.title class+="form-control" placeholder="Pl. Kékestető, kilátó" value=site.title required=true %}
+					</div>
+					<div class="form-group">
+						{{ form.wideArea.errors }}
+						<label for="{{ form.wideArea.id_for_label }}">Tágabb környezet:</label>
+						{% render_field form.wideArea class+="form-control" %}
+					</div>
+					<div class="form-group">
+						{{ form.narrowArea.errors }}
+						<label for="{{ form.narrowArea.id_for_label }}">Szűkebb környezet:</label>
+						{% render_field form.narrowArea class+="form-control" %}
+					</div>
+				</div>
+						
+				<div class="col-12">
+					{{ form.comment.errors }}
+					<label for="{{ form.comment.id_for_label }}">Megjegyzés:</label>
+					{% render_field form.comment class+="form-control" placeholder="Pl. 3 emeletes ház lapos tetején találhatóak a műszerek. A kilátás kiváló a Budai-hegység irányában." %}
+				</div>
+		
+				<div class="col-12">
+					<button type="submit" class="save btn btn-success btn-group-justified">Új mérőhely mentése</button>
+				</div>
+						
+				</form>
+						
+						<!--
+						<form method="POST" class="post-form">{% csrf_token %}
+							{{ form.as_p }}
+							<button type="submit" class="save btn btn-default">Save</button>
+						</form>
+						-->
+			</div>
+					
+		</div>
+
+	</div>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCT8nqIVYJhuI5INrAwkzYMzEBAOIhKt60&callback=GMselectOneStation"></script>
+
+{% endblock content %}

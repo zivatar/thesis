@@ -1,0 +1,166 @@
+{% extends 'climate/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% block content %}
+<script>
+	var activeSite;
+	var tmpSite;
+	var mySites = getSites();
+	function getSites() {
+		var sites = [];
+		return sites;
+	}
+	function changeActiveSite(id) {
+		activeSite = mySites[id];
+	}
+	//(changeActiveSite(0))();
+</script>
+
+<div class="panel panel-primary">
+	<div class="panel-heading"><span class="glyphicon glyphicon-map-marker"></span> Saját mérőhelyek</div>
+		<div class="panel-body"><form>
+			<div class="nav-inside">
+				<ul class="nav nav-pills">
+					<li class="active" role="presentation"><a data-toggle="pill" href="#add_new">+1</a></li>
+					{% for site in sites %}
+						<li role="presentation"><a data-toggle="pill" href="#{{ site.id }}">{{ site.title }}</a></li> <!-- class="active" -->
+					{% endfor %}
+				</ul>
+			</div>
+			
+			<div class="tab-content">
+
+				{% for site in sites %}
+					<div id="{{ site.id }}" class="tab-pane fade">
+						<h1>{{ site.title }}</h1>
+						
+						<form method="POST" class="post-form">{% csrf_token %}
+						{{ form.non_field_errors }}
+						
+						<div id="google_maps_one_marker" class="col-12 col-sm-4"></div>
+						<div class="form-group col-sm-2">
+							<label><input type="checkbox" {% if site.isActive %}checked{% endif %} data-toggle="toggle" class="form-control">Aktív</label>
+							<label><input type="checkbox" {% if site.isPublic %}checked{% endif %} data-toggle="toggle" class="form-control">Publikus</label>
+						</div>
+						
+						<div class="col-sm-6">
+			
+							<div class="form-group">
+								<label for="{{ form.title.id_for_label }}">Megnevezés:</label>
+								{% render_field form.title class+="form-control" placeholder="Pl. Kékestető, kilátó" value=site.title %}
+							</div>
+							<div class="form-group">
+								<!--
+								<label for="kornyezet">Tágabb környezet:</label>
+								<select class="form-control" id="exampleSelect1">
+									{% for w in wide_area %}
+										<option {% if site.wideArea == w.0 %}selected="selected"{% endif %}>{{ w.1 }}</option>
+									{% endfor %}
+								</select>
+								-->
+								<label for="{{ form.wideArea.id_for_label }}">Megnevezés:</label>
+								{% render_field form.wideArea class+="form-control" %}
+							</div>
+							<div class="form-group">
+								<label for="kornyezet">Szűkebb környezet:</label>
+								<select class="form-control" id="exampleSelect1">
+									{% for n in narrow_area %}
+										<option {% if site.narrowArea == n.0 %}selected="selected"{% endif %}>{{ n.1 }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						
+						<div class="col-12">
+							<div class="form-group">
+								<label for="comment">Megjegyzés:</label>
+								<textarea class="form-control" rows="5" id="comment" placeholder="Pl. 3 emeletes ház lapos tetején találhatóak a műszerek. A kilátás kiváló a Budai-hegység irányában.">{{ site.comment }}</textarea>
+							</div>
+						</div>
+		
+						<div class="col-12 visible-lg visible-md">
+							<div class="btn-group btn-group-justified">
+								<a href="#" class="btn btn-success">Módosítások mentése</a>
+								<a href="{% url 'my_sites' %}" class="btn btn-default">Módosítások elvetése</a>
+								<a href="#" class="btn btn-danger">Mérőhely törlése</a>
+							</div>
+						</div>
+						
+						<div class="col-12 visible-xs visible-sm">
+							<div class="btn-group btn-group-vertical">
+								<a href="#" class="btn btn-success">Módosítások mentése</a>
+								<!--<button type="submit" class="save btn btn-default btn-group-justified">Módosítások mentése</button>-->
+								<a href="#" class="{% url 'my_sites' %}">Módosítások elvetése</a>
+								<a href="#" class="btn btn-danger">Mérőhely törlése</a>
+							</div>
+						</div>
+						
+						<div class="col-12 small_images">
+							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="23%">
+							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="23%">
+							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="23%">
+							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="23%">
+						</div>
+						
+						</form>
+					</div>
+				{% endfor %}
+				
+				<div id="add_new" class="tab-pane fade in active">
+						<h1>Új mérőhely</h1>
+						
+						<form method="POST" class="post-form">{% csrf_token %}
+						
+						<div id="google_maps_one_marker" class="col-12 col-sm-4"></div>
+						
+						<div class="form-group col-sm-2">
+							<label><input type="checkbox" checked data-toggle="toggle" class="form-control">Aktív</label>
+							<label><input type="checkbox" checked data-toggle="toggle" class="form-control">Publikus</label>
+						</div>
+						
+						<div class="col-sm-6">
+			
+							<div class="form-group">
+								<label for="megnevezes">Megnevezés:</label>
+								<input type="email" class="form-control" id="megnevezes" placeholder="Pl. Kékestető, kilátó" value="{{ site.title }}">
+							</div>
+							<div class="form-group">
+								<label for="kornyezet">Tágabb környezet:</label>
+								<select class="form-control" id="exampleSelect1">
+									{% for w in wide_area %}
+										<option {% if site.wideArea == w.0 %}selected="selected"{% endif %}>{{ w.1 }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="kornyezet">Szűkebb környezet:</label>
+								<select class="form-control" id="exampleSelect1">
+									{% for n in narrow_area %}
+										<option {% if site.narrowArea == n.0 %}selected="selected"{% endif %}>{{ n.1 }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						
+						<div class="col-12">
+							<div class="form-group">
+								<label for="comment">Megjegyzés:</label>
+								<textarea class="form-control" rows="5" id="comment" placeholder="Pl. 3 emeletes ház lapos tetején találhatóak a műszerek. A kilátás kiváló a Budai-hegység irányában."></textarea>
+							</div>
+						</div>
+		
+						<div class="col-12">
+							<button type="submit" class="save btn btn-success btn-group-justified">Új mérőhely mentése</button>
+							<!--<div class="btn-group btn-group-justified">
+								<a href="#" class="btn btn-success">Új mérőhely mentése</a>
+							</div>-->
+						</div>
+						
+						</form>
+					</div>
+				
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock content %}

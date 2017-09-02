@@ -61,6 +61,7 @@ class Month:
 
 class Climate(object):
 	tempDistribLimits = [-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40]
+	rhDistribLimits = [20, 40, 60, 80]
 
 	def getNrFrostDays(minTemps):
 		return len([x for x in minTemps if x != None and x < 0])
@@ -73,7 +74,7 @@ class Climate(object):
 	def getNrWarmDays(maxTemps):
 		return len([x for x in maxTemps if x != None and x >= 30])
 	def getNrHotDays(maxTemps):
-		return len
+		return len([x for x in maxTemps if x != None and x >= 35])
 
 	@staticmethod
 	def calculateDistribution(data, limits):
@@ -93,6 +94,11 @@ class Climate(object):
 	@staticmethod
 	def calculateTempDistrib(temps):
 		data = Climate.calculateDistribution(temps, Climate.tempDistribLimits)
+		return data
+
+	@staticmethod
+	def calculateRhDistrib(rhs):
+		data = Climate.calculateDistribution(rhs, Climate.rhDistribLimits)
 		return data
 		
 # -----------------------------------------------------------------------------------------
@@ -178,6 +184,7 @@ class DailyStatistics(models.Model):
 	precipitation = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
 	precipHalfHour = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
 	tempDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
+	rhDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
 
 class MonthlyStatistics(models.Model):
 	class Meta:
@@ -219,9 +226,7 @@ class MonthlyReport():
 		return Tmin, Tavg, Tmax
 	def generateTempDistribution(self):
 		dist = []
-
 		for l in range(len(Climate.tempDistribLimits)):
-			print(l)
 			sublist = []
 			for i in self.days:
 				hasData = False
@@ -233,7 +238,22 @@ class MonthlyReport():
 							sublist.append(dailyData.split(',')[l])
 				if not hasData:
 					sublist.append(None)
-			print(sublist)
+			dist.append(sublist)
+		return dist
+	def generateRhDistribution(self):
+		dist = []
+		for l in range(len(Climate.rhDistribLimits)):
+			sublist = []
+			for i in self.days:
+				hasData = False
+				for j in self.dayObjs:
+					if j.date.day == i:
+						hasData = True
+						dailyData = j.rhDistribution
+						if dailyData != None and dailyData != "":
+							sublist.append(dailyData.split(',')[l])
+				if not hasData:
+					sublist.append(None)
 			dist.append(sublist)
 		return dist
 	def calculateIndices(self):
@@ -259,6 +279,7 @@ class MonthlyReport():
 		self.tempAvgs = json.dumps(self.tempAvgs)
 		self.tempMaxs = json.dumps(self.tempMaxs)
 		self.tempDist = json.dumps(self.generateTempDistribution())
+		self.rhDist = json.dumps(self.generateRhDistribution())
 	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')

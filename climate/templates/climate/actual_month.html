@@ -1,0 +1,47 @@
+{% extends 'climate/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block title %}Havi adatlap: {{site.title}}, {{month.year}}.{{month.getMonth}}. {% endblock %}
+
+{% block content %}
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<span class="glyphicon glyphicon-cloud"></span> Éghajlati napló kitöltése
+	</div>
+	<div class="panel-body">
+	<p>Mérőhely: {{site.title}}</p>
+	<p>Aktuális hónap: {{month.year}}.{{month.getMonth}}</p>
+	
+		<div class="table-responsive">
+			<table class="table table-striped valign-center">
+				<thead>
+					<tr>
+						<th>Nap</th>
+						<th>Tmin</th>
+						<th>Tmax</th>
+						<th>Csapadék</th>
+						<th>Szignifikáns jelenségek</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for day in month.daysOfMonthTillToday %}
+						<tr>
+							<form id="actual_month_{{day}}" method="post" class="post-form">{% csrf_token %}
+							{{ form.non_field_errors }}
+							<td>{% render_field form.tMin class+="form-control" value=day %}{{day}}</td>
+							<td>{% render_field form.tMin class+="form-control" placeholder=actuals.0.precAmount %}</td>
+							<td>{% render_field form.tMax class+="form-control" placeholder="tMax" %}</td>
+							<td>{% render_field form.precAmount class+="form-control" placeholder="csapi" %}</td>
+							<td><a><span class="glyphicon glyphicon-ok-sign right"></span></a></td>
+							<td><button type="submit" class="btn btn-success btn-block">Belépés</button></td>
+							</form>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock content %}

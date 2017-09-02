@@ -1,0 +1,50 @@
+{% extends 'climate/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<span class="glyphicon glyphicon-map-marker"></span> {{ site.title }}, {{ year.year }}
+	</div>
+	<div class="panel-body">
+
+		<a href="{% url 'site_list' %}">Meteorológiai állomások</a> >> <a href="{% url 'site_details' pk=site.pk %}">{{ site.title }}</a>
+
+		<table class="table table-striped">
+			<tr>
+				<td>Év</td>
+				<td>{{year.year}}</td>
+			</tr>
+		</table>
+
+		<h4>Adatok száma</h4>
+		<table class="table table-striped" >
+			<tr>
+			{% for m in monthNames %}
+				<td>{{m}}</td>
+			{% endfor %}
+			</tr>
+			<tr>
+			{% for m in num %}
+				<td><a href="{% url 'monthly_view' site=site.pk year=year.year month=1 %}">{{m}}</a></td>
+			{% endfor %}
+			</tr>
+		</table>
+
+		<h4>Havi hőmérsékleti szélsőértékek és átlag</h4>
+
+		<h4>A hőmérséklet eloszlása</h4>
+
+		<h4>Hőmérsékleti jelzőnapok gyakorisága</h4>
+
+		<h4>Relatív nedvesség gyakorisága</h4>
+
+		<h4>Havi csapadékmennyiség éves menete</h4>
+
+		<h4>Napi csapadékmennyiség küszöbérték meghaladása</h4>
+
+		<h4>A szélsebesség gyakorisága</h4>
+
+		<h4>A jellemző szélirány eloszlása</h4>
+	</div>
+</div>
+{% endblock content %}

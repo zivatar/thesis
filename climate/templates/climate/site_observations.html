@@ -1,0 +1,50 @@
+{% extends 'climate/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="panel panel-primary">
+	<div class="panel-body">
+			
+		<div class="tab-content">
+				
+			<div id="add_new" class="tab-pane fade in active">
+				<h1>{{ site.title }}</h1>
+				<h2>Észlelések</h2>
+					
+				<div class="col-12">
+				<table class="table table-striped table-condensed observation">
+					<thead>
+						<tr>
+							<th>Dátum</th>
+							<th>Szélsebesség (Beaufort-skála)</th>
+							<th>Időjárási jelenségek</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for o in observations %}
+						<tr>
+						<td>{{ o.createdDate|date:'Y-m-d H:i' }}
+						<td>{{ o.windSpeed }}</td>
+						<td>
+								{% for wc in o.weatherCode %}
+									{% if wc %}<span class="label label-primary">{{ wc }}</span>{% endif %}
+								{% endfor %}
+						</td>
+						<tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				</div>
+				<h2><a href="{% url 'site_details' pk=site.pk %}">Állomás adatai</a></h2>	
+				<h2><a href="{% url 'actual_month' pk=site.pk %}">Éghajlati napló</a></h2>
+				<h2><a href="{% url 'upload' pk=site.pk %}">Adatok feltöltése</a></h2>
+				
+			</div>
+					
+		</div>
+
+	</div>
+</div>
+
+{% endblock content %}
