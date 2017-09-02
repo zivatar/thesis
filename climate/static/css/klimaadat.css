@@ -172,6 +172,5 @@ table.observation span.label {
 }
 
 .navbar-inverse .navbar-nav li a:hover {
-	background-color: whitesmoke;
-	color: black;
+	background-color: #FC4A1A;
 }
