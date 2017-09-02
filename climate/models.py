@@ -59,7 +59,9 @@ class Month:
 	def getMonth(self):
 		return str(self.month).zfill(2) 
 
-class Climate:
+class Climate(object):
+	tempDistribLimits = [-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40]
+
 	def getNrFrostDays(minTemps):
 		return len([x for x in minTemps if x != None and x < 0])
 	def getNrColdDays(minTemps):
@@ -71,7 +73,27 @@ class Climate:
 	def getNrWarmDays(maxTemps):
 		return len([x for x in maxTemps if x != None and x >= 30])
 	def getNrHotDays(maxTemps):
-		return len([x for x in maxTemps if x != None and x >= 35])
+		return len
+
+	@staticmethod
+	def calculateDistribution(data, limits):
+		res = []
+		for i in range(len(limits)):
+			if (i == 0):
+	  			high = limits[i]
+			elif (i == len(limits) - 1):
+	  			low = limits[i]
+			else:
+	  			low = limits[i]
+	  			high = limits[i+1]
+			sublist = [x for x in data if x != None and (high == None or x <= high) and (low == None or x > low)]
+			res.append(len(sublist))
+		return res
+
+	@staticmethod
+	def calculateTempDistrib(temps):
+		data = Climate.calculateDistribution(temps, Climate.tempDistribLimits)
+		return data
 		
 # -----------------------------------------------------------------------------------------
 
@@ -155,6 +177,7 @@ class DailyStatistics(models.Model):
 	tempAvg = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
 	precipitation = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
 	precipHalfHour = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
+	tempDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
 
 class MonthlyStatistics(models.Model):
 	class Meta:
@@ -185,6 +208,7 @@ class MonthlyReport():
 			hasData = False
 			for j in self.dayObjs:
 				if j.date.day == i:
+					hasData = True
 					Tavg.append(j.tempAvg)
 					Tmin.append(j.tempMin)
 					Tmax.append(j.tempMax)
@@ -193,6 +217,25 @@ class MonthlyReport():
 				Tmax.append(None)
 				Tavg.append(None)
 		return Tmin, Tavg, Tmax
+	def generateTempDistribution(self):
+		dist = []
+
+		for l in range(len(Climate.tempDistribLimits)):
+			print(l)
+			sublist = []
+			for i in self.days:
+				hasData = False
+				for j in self.dayObjs:
+					if j.date.day == i:
+						hasData = True
+						dailyData = j.tempDistribution
+						if dailyData != None and dailyData != "":
+							sublist.append(dailyData.split(',')[l])
+				if not hasData:
+					sublist.append(None)
+			print(sublist)
+			dist.append(sublist)
+		return dist
 	def calculateIndices(self):
 		return ({
 			'frostDays': Climate.getNrFrostDays(self.tempMins),
@@ -215,6 +258,7 @@ class MonthlyReport():
 		self.tempMins = json.dumps(self.tempMins)
 		self.tempAvgs = json.dumps(self.tempAvgs)
 		self.tempMaxs = json.dumps(self.tempMaxs)
+		self.tempDist = json.dumps(self.generateTempDistribution())
 	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')

@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
-from .models import Site, Weather, RawObservation, RawManualData, Month, RawData
+from .models import Site, Weather, Climate
+from .models import RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
 from .models import MonthlyReport
 from .forms import SiteForm, ObservationForm, DiaryForm
@@ -97,9 +98,10 @@ def monthly_view(request, site, year, month):
 	yearly = YearlyStatistics.objects.filter(siteId = siteObj).filter(year = year)[0]
 	monthly = MonthlyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
 	daily = DailyStatistics.objects.filter(siteId = siteObj).filter(date__year = year).filter(date__month = month)
+	climate = Climate()
 	datasetNum = []
 	a = MonthlyReport(site, year, month, monthly, yearly, daily)
-	return render(request, 'climate/monthly_view.html', {'site' : siteObj, 'num': datasetNum, 'year': yearly, 'month': month, 'report': a})
+	return render(request, 'climate/monthly_view.html', {'site' : siteObj, 'num': datasetNum, 'year': yearly, 'month': month, 'report': a, 'climate': climate})
 	
 def observations(request, pk):
 	site = get_object_or_404(Site, pk=pk)
@@ -216,6 +218,7 @@ def create_daily_statistics(fromDate, toDate, siteId):
 		tempMax = decimal.Decimal(-99.9)
 		tempSum = decimal.Decimal(0.0)
 		tempNum = decimal.Decimal(0.0)
+		temps = []
 		precipitation = decimal.Decimal(0.0)
 		for j in rawDataSet:
 			if j.temperature is not None:
@@ -225,8 +228,11 @@ def create_daily_statistics(fromDate, toDate, siteId):
 					tempMin = j.temperature
 				if j.temperature > tempMax:
 					tempMax = j.temperature
+				temps.append(j.temperature)
 			if j.precipitation is not None:
 				precipitation = precipitation + j.precipitation
+		tempDistribution = Climate.calculateTempDistrib(temps)
+		d.tempDistribution = ''.join(str(e)+',' for e in tempDistribution)[:-1]
 		d.tempMin = tempMin
 		d.tempMax = tempMax
 		d.tempAvg = tempSum / tempNum
