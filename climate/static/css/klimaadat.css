@@ -16,6 +16,12 @@ div#google_maps_one_marker {
 
 }
 
+div#google_maps_one_station {
+	padding-top: 30%;
+	background-color: silver;
+	border: 1px solid #bbb;
+}
+
 div#google_maps_all_stations {
 	border: 1px solid #bbb;
 	padding-top: 65%;

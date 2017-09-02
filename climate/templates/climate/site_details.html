@@ -6,10 +6,16 @@
 
 	var lat;
 	var lon;
-	function setLatLon(lat, lon) {
-		document.getElementById("new_site_lat").value = lat;
-		document.getElementById("new_site_lon").value = lon;
-	};
+	//function setLatLon(lat, lon) {
+	//	document.getElementById("new_site_lat").value = lat;
+	//	document.getElementById("new_site_lon").value = lon;
+	//};
+
+	function getPos() {
+		var positions = [{ position: {lat: {{ site.lat }}, lng: {{ site.lon }}}, title: "{{ site.title }}" }];
+		console.log(positions);
+		return positions;
+	}
 </script>
 
 <div class="panel panel-primary">
@@ -23,7 +29,7 @@
 			<div id="add_new" class="tab-pane fade in active">
 				<h1>{{ site.title }}</h1>
 						
-				<div id="google_maps_one_marker" class="col-12">
+				<div id="google_maps_one_station" class="col-12">
 				</div>
 				
 				<h2>Legutóbbi észlelések</h2>
@@ -79,5 +85,7 @@
 
 	</div>
 </div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlx5Dw6cC5yonCBvGN7PehKnmirniYyxU&callback=GMoneStation"></script>
 
 {% endblock content %}

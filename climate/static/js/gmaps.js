@@ -39,3 +39,20 @@ function GMallStations() {
 
 	map.fitBounds(bounds);
 }
+
+function GMoneStation() {
+  var positions = getPos();
+  var mapCanvas = document.getElementById("google_maps_one_station");
+  var mapOptions = { mapTypeId: google.maps.MapTypeId.TERRAIN, maxZoom: 14, };
+  var map = new google.maps.Map(mapCanvas, mapOptions);
+  var bounds = new google.maps.LatLngBounds();
+  
+  for ( var i = 0; i < positions.length; i++ ) {
+    var pos = positions[i];
+    pos.map = map;
+    new google.maps.Marker(pos);
+    bounds.extend(pos.position);
+  }
+
+  map.fitBounds(bounds);
+}
