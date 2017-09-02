@@ -1,6 +1,7 @@
 body {
 	font-family: 'Roboto', sans-serif;
 	background-color: #384351;
+	background-color: #286090;
 	color: white;
 }
 
@@ -148,10 +149,16 @@ table.observation span.label {
 }
 
 #big-main-header span.with-bg {
-	background-color: #333;
+	text-shadow: 0 0 20px #333;
     color: #fff;
     padding: 18px;
     letter-spacing: 10px;
+}
+
+@media screen and (min-width: 800px) {
+	#big-main-header span.with-bg {
+		background-color: #333;
+	}
 }
 
 .navbar {

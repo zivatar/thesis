@@ -76,9 +76,30 @@
 		<p>{{report.rhDist}}</p>
 
 
-		<h4>Havi csapadékmennyiség éves menete</h4>
+		<h4>A havi csapadékmennyiség napi menete</h4>
+
+		<p>{{report.prec}}</p>
 
 		<h4>Napi csapadékmennyiség küszöbérték meghaladása</h4>
+
+		<table class="table table-striped">
+			<tr>
+				<td>Csapadékos napok száma:</td>
+				<td>{{report.precDist.0}}</td>
+			</tr>
+			<tr>
+				<td>10mm fölötti csapadékú napok száma</td>
+				<td>{{report.precDist.10}}</td>
+			</tr>
+			<tr>
+				<td>30mm fölötti csapadékú napok száma</td>
+				<td>{{report.precDist.30}}</td>
+			</tr>
+			<tr>
+				 <td>50mm fölötti csapadékú napok száma</td>
+				 <td>{{report.precDist.50}}</td>
+			</tr>
+		</table>
 
 		<h4>A szélsebesség gyakorisága</h4>
 

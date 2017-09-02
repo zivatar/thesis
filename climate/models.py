@@ -224,6 +224,28 @@ class MonthlyReport():
 				Tmax.append(None)
 				Tavg.append(None)
 		return Tmin, Tavg, Tmax
+	def getPrecipitation(self):
+		prec = []
+		precDay = 0
+		precDay10 = 0
+		precDay30 = 0
+		precDay50 = 0
+		for i in self.days:
+			hasData = False
+			for j in self.dayObjs:
+				if j.date.day == i:
+					hasData = True
+					prec.append(j.precipitation)
+					precDay = precDay + 1
+					if j.precipitation >= 10:
+						precDay10 = precDay10 + 1
+					if j.precipitation >= 30:
+						precDay30 = precDay30 + 1
+					if j.precipitation >= 50:
+						precDay50 = precDay50 + 1
+			if not hasData:
+				prec.append(None)
+		return prec, { 0: precDay, 10: precDay10, 30: precDay30, 50: precDay50}
 	def generateTempDistribution(self):
 		dist = []
 		for l in range(len(Climate.tempDistribLimits)):
@@ -280,6 +302,7 @@ class MonthlyReport():
 		self.tempMaxs = json.dumps(self.tempMaxs)
 		self.tempDist = json.dumps(self.generateTempDistribution())
 		self.rhDist = json.dumps(self.generateRhDistribution())
+		self.prec, self.precDist = json.dumps(self.getPrecipitation()[0]), self.getPrecipitation()[1]
 	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
