@@ -14,11 +14,11 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<span class="glyphicon glyphicon-map-marker"></span> {{ site.title }}, {{ year.year }}
+		<span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'site_list' %}">Meteorológiai állomások</a> >> <a href="{% url 'site_details' pk=site.pk %}">{{ site.title }}</a> >> <a href="{% url 'yearly_view' pk=site.pk year=report.year %}">{{ report.year }}</a> >> {{ report.month }}
 	</div>
 	<div class="panel-body">
 
-		<a href="{% url 'site_list' %}">Meteorológiai állomások</a> >> <a href="{% url 'site_details' pk=site.pk %}">{{ site.title }}</a> >> <a href="{% url 'yearly_view' pk=site.pk year=report.year %}">{{ report.year }}</a> >> {{ report.month }}
+		
 
 		<table class="table table-striped">
 			<tr>

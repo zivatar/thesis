@@ -174,3 +174,8 @@ table.observation span.label {
 .navbar-inverse .navbar-nav li a:hover {
 	background-color: #FC4A1A;
 }
+
+.panel-heading a, .panel-heading a:hover {
+	color: white;
+	text-decoration: underline;
+}
