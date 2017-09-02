@@ -60,18 +60,18 @@ class Month:
 		return str(self.month).zfill(2) 
 
 class Climate:
-	def getNrFrostDays(self, minTemps):
-		return [len(x for x in minTemps if x < 0)]
-	def getNrColdDays(self, minTemps):
-		return [len(x for x in minTemps if x < -10)]
-	def getNrWarmNights(self, minTemps):
-		return [len(x for x in minTemps if x > 20)]
-	def getNrSummerDays(self, maxTemps):
-		return [len(x for x in maxTemps if x > 25)]
-	def getNrWarmDays(self, maxTemps):
-		return [len(x for x in maxTemps if x >= 30)]
-	def getNrHotDays(self, maxTemps):
-		return [len(x for x in maxTemps if x >= 35)]
+	def getNrFrostDays(minTemps):
+		return len([x for x in minTemps if x != None and x < 0])
+	def getNrColdDays(minTemps):
+		return len([x for x in minTemps if x != None and x < -10])
+	def getNrWarmNights(minTemps):
+		return len([x for x in minTemps if x != None and x > 20])
+	def getNrSummerDays(maxTemps):
+		return len([x for x in maxTemps if x != None and x > 25])
+	def getNrWarmDays(maxTemps):
+		return len([x for x in maxTemps if x != None and x >= 30])
+	def getNrHotDays(maxTemps):
+		return len([x for x in maxTemps if x != None and x >= 35])
 		
 # -----------------------------------------------------------------------------------------
 
@@ -192,7 +192,16 @@ class MonthlyReport():
 				Tmin.append(None)
 				Tmax.append(None)
 				Tavg.append(None)
-		return json.dumps(Tmin), json.dumps(Tavg), json.dumps(Tmax)
+		return Tmin, Tavg, Tmax
+	def calculateIndices(self):
+		return ({
+			'frostDays': Climate.getNrFrostDays(self.tempMins),
+			'coldDays': Climate.getNrColdDays(self.tempMins),
+			'warmNights': Climate.getNrWarmNights(self.tempMins),
+			'summerDays': Climate.getNrSummerDays(self.tempMins),
+			'warmDays': Climate.getNrWarmDays(self.tempMins),
+			'hotDays': Climate.getNrHotDays(self.tempMins)
+			})
 	def __init__(self, siteId, year, month, monthObjs, yearObj, dayObjs):
 		self.siteId = siteId
 		self.year = year
@@ -202,7 +211,10 @@ class MonthlyReport():
 		self.dayObjs = dayObjs
 		self.days = Month(year=self.year, month=self.month).daysOfMonth()
 		self.tempMins, self.tempAvgs, self.tempMaxs = self.generateTemperatures()
-	
+		self.indices = self.calculateIndices()
+		self.tempMins = json.dumps(self.tempMins)
+		self.tempAvgs = json.dumps(self.tempAvgs)
+		self.tempMaxs = json.dumps(self.tempMaxs)
 	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')

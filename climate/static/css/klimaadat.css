@@ -32,7 +32,6 @@ div#google_maps_all_stations {
   }
   
 div.carousel-inner {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 div.graph {
@@ -91,7 +90,10 @@ div.nav-inside {
 div.panel.panel-primary, div.jumbotron {
 	background-color: #DDD;
 	border: 0;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+div.jumbotron {
+	border: 2px solid #FC4A1A;
 }
 
 body {
@@ -124,4 +126,33 @@ div.highlighted:hover {
 table.observation span.label {
 	font-size: medium;
 	margin: 3px;
+}
+
+
+/* tooltip */
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 105%;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
 }
