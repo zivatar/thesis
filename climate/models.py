@@ -376,6 +376,7 @@ class YearlyReport():
 			'warmDays': self.collectData('warmDays'),
 			'hotDays': self.collectData('hotDays')
 		}
+		self.precipitation = self.collectData('precipitation')
 
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')

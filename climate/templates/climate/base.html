@@ -59,7 +59,7 @@
 			
 			{% if user.is_authenticated %}
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="{% url 'logout' %}">Kilépés</a></li>
+					<li><a href="{% url 'logout' %}">[<span class="glyphicon glyphicon-user"></span> {{user}}] Kilépés</a></li>
 				</ul>
 			{% else %}
 				<ul class="nav navbar-nav navbar-right">
