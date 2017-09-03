@@ -62,6 +62,7 @@ class Month:
 class Climate(object):
 	tempDistribLimits = [-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40]
 	rhDistribLimits = [20, 40, 60, 80]
+	windDirLimits = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5]
 
 	def getNrFrostDays(minTemps):
 		return len([x for x in minTemps if x != None and x < 0])
@@ -99,6 +100,11 @@ class Climate(object):
 	@staticmethod
 	def calculateRhDistrib(rhs):
 		data = Climate.calculateDistribution(rhs, Climate.rhDistribLimits)
+		return data
+
+	@staticmethod
+	def calculateWindDistrib(rhs):
+		data = Climate.calculateDistribution(rhs, Climate.windDirLimits)
 		return data
 		
 # -----------------------------------------------------------------------------------------
@@ -185,6 +191,7 @@ class DailyStatistics(models.Model):
 	precipHalfHour = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
 	tempDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
 	rhDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
+	windDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
 
 class MonthlyStatistics(models.Model):
 	class Meta:
@@ -278,6 +285,22 @@ class MonthlyReport():
 					sublist.append(None)
 			dist.append(sublist)
 		return dist
+	def generateWindDistribution(self):
+		dist = []
+		for l in range(len(Climate.windDirLimits)):
+			sublist = []
+			for i in self.days:
+				hasData = False
+				for j in self.dayObjs:
+					if j.date.day == i:
+						hasData = True
+						dailyData = j.windDistribution
+						if dailyData != None and dailyData != "":
+							sublist.append(dailyData.split(',')[l])
+				if not hasData:
+					sublist.append(None)
+			dist.append(sublist)
+		return dist
 	def calculateIndices(self):
 		return ({
 			'frostDays': Climate.getNrFrostDays(self.tempMins),
@@ -303,6 +326,7 @@ class MonthlyReport():
 		self.tempDist = json.dumps(self.generateTempDistribution())
 		self.rhDist = json.dumps(self.generateRhDistribution())
 		self.prec, self.precDist = json.dumps(self.getPrecipitation()[0]), self.getPrecipitation()[1]
+		self.windDist = json.dumps(self.generateWindDistribution())
 	
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')

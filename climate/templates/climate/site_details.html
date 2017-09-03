@@ -73,7 +73,7 @@
 					</tr>
 					<tr>
 					{% for m in y.months %}
-						<td>{{ m.month }}</td>
+						<td><a href="{% url 'monthly_view' site=site.pk year=m.year month=m.month %}">{{ m.month }}</a></td>
 					{% endfor %}
 					</tr>
 				{% endfor %}

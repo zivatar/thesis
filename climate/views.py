@@ -220,6 +220,7 @@ def create_daily_statistics(fromDate, toDate, siteId):
 		tempNum = decimal.Decimal(0.0)
 		temps = []
 		rhs = []
+		winds = []
 		precipitation = decimal.Decimal(0.0)
 		for j in rawDataSet:
 			if j.temperature is not None:
@@ -234,10 +235,14 @@ def create_daily_statistics(fromDate, toDate, siteId):
 				rhs.append(j.humidity)
 			if j.precipitation is not None:
 				precipitation = precipitation + j.precipitation
+			if j.windDir is not None:
+				winds.append(j.windDir)
 		tempDistribution = Climate.calculateTempDistrib(temps)
 		d.tempDistribution = ''.join(str(e)+',' for e in tempDistribution)[:-1]
 		rhDistribution = Climate.calculateRhDistrib(rhs)
 		d.rhDistribution = ''.join(str(e)+',' for e in rhDistribution)[:-1]
+		windDistribution = Climate.calculateWindDistrib(winds)
+		d.windDistribution = ''.join(str(e)+',' for e in windDistribution)[:-1]
 		d.tempMin = tempMin
 		d.tempMax = tempMax
 		d.tempAvg = tempSum / tempNum
