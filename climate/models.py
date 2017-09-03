@@ -277,7 +277,7 @@ class MonthlyReport():
 						hasData = True
 						dailyData = j.tempDistribution
 						if dailyData != None and dailyData != "":
-							sublist.append(dailyData.split(',')[l])
+							sublist.append(int(float(dailyData.split(',')[l])))
 				if not hasData:
 					sublist.append(None)
 			dist.append(sublist)
@@ -293,7 +293,7 @@ class MonthlyReport():
 						hasData = True
 						dailyData = j.rhDistribution
 						if dailyData != None and dailyData != "":
-							sublist.append(dailyData.split(',')[l])
+							sublist.append(int(float(dailyData.split(',')[l])))
 				if not hasData:
 					sublist.append(None)
 			dist.append(sublist)
@@ -309,7 +309,7 @@ class MonthlyReport():
 						hasData = True
 						dailyData = j.windDistribution
 						if dailyData != None and dailyData != "":
-							sublist.append(dailyData.split(',')[l])
+							sublist.append(int(float(dailyData.split(',')[l])))
 				if not hasData:
 					sublist.append(None)
 			dist.append(sublist)

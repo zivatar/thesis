@@ -18,10 +18,7 @@
 	
 	<link href="{%static 'css/jumbotron-narrow.css' %}" rel="stylesheet">
 	<!-- /BOOTSTRAP +++++++++++++++++++++++++++++ -->
-	
-	<!-- LIBS ++++++++++++++++ -->
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> <!-- google charts -->
-	<!-- /LIBS ++++++++++++++++++++ -->
+
 	
 	<!-- FONTS ++++++++++++++++++++++++++++++++++ -->
 	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
@@ -29,12 +26,18 @@
 	
 	<!-- CSS FILES ++++++++++++++++++++++++++++++ -->
 	<!--<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" /> <!-- https://ghinda.net/css-toggle-switch/bootstrap.html -->
-	<link rel="stylesheet" href="{% static 'css/klimaadat.css' %}">
+	
 	<link href="{%static 'css/weather-icons.min.css' %}" rel="stylesheet">
 	<link href="{% static 'css/weather-icons-wind.min.css' %}" rel="stylesheet">
 	<!-- /CSS FILES +++++++++++++++++++++++++++++ -->
 	
 	<script src="{% static 'js/gmaps.js' %}"></script>
+
+	<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"></script>
+	<script src="{% static 'js/chart.js' %}"></script>
+
+	<link rel="stylesheet" href="{% static 'css/klimaadat.css' %}">
 
 	<title>
 		{% block title %}{% endblock %}

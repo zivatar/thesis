@@ -86,10 +86,10 @@ def yearly_view(request, pk, year):
 		added = False
 		for j in monthly:
 			if j.month == i + 1:
-				datasetNum.append(j.dataAvailable)
+				datasetNum.append({'id': i+1, 'available':j.dataAvailable})
 				added = True
 		if not added:
-			datasetNum.append(0)
+			datasetNum.append({'id': i+1, 'available':0})
 	a = YearlyReport(site, year, monthly, yearly)
 	return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 'monthNames': monthList, 'num': datasetNum, 'report': a})
 
@@ -98,7 +98,7 @@ def monthly_view(request, site, year, month):
 	yearly = YearlyStatistics.objects.filter(siteId = siteObj).filter(year = year)[0]
 	monthly = MonthlyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
 	daily = DailyStatistics.objects.filter(siteId = siteObj).filter(date__year = year).filter(date__month = month)
-	climate = Climate()
+	climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
 	datasetNum = []
 	a = MonthlyReport(site, year, month, monthly, yearly, daily)
 	return render(request, 'climate/monthly_view.html', {'site' : siteObj, 'num': datasetNum, 'year': yearly, 'month': month, 'report': a, 'climate': climate})

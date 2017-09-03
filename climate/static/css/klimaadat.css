@@ -5,6 +5,10 @@ body {
 	color: white;
 }
 
+h1, h2 {
+	font-family: 'Quicksand', sans-serif;
+}
+
 div#google_maps_one_marker {
 	/*width:20vw;
     height: 20vw;*/

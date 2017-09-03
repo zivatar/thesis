@@ -33,13 +33,11 @@
 
 		<h4>Havi hőmérsékleti szélsőértékek és átlag</h4>
 
-		<p>{{report.tempMins}}</p>
-		<p>{{report.tempAvgs}}</p>
-		<p>{{report.tempMaxs}}</p>
+		<canvas id="chart_temperature" width="100%" height="100%" style="max-height:400px;"></canvas>
 
 		<h4>A hőmérséklet eloszlása</h4>
 
-		<p>{{report.tempDist}}</p>
+		<canvas id="chart_temperature_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
 
 		<h4>Hőmérsékleti jelzőnapok gyakorisága</h4>
 
@@ -73,12 +71,11 @@
 
 		<h4>Relatív nedvesség gyakorisága</h4>
 
-		<p>{{report.rhDist}}</p>
+		<canvas id="chart_rh_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
 
+		<h4>A napi csapadékmennyiség menete</h4>
 
-		<h4>A havi csapadékmennyiség napi menete</h4>
-
-		<p>{{report.prec}}</p>
+		<canvas id="chart_precipitation" width="100%" height="100%" style="max-height:400px;"></canvas>
 
 		<h4>Napi csapadékmennyiség küszöbérték meghaladása</h4>
 
@@ -103,7 +100,29 @@
 
 		<h4>A szélirány eloszlása</h4>
 
-		<p>{{report.windDist}}
+		<canvas id="chart_wind" width="100%" height="100%" style="max-height:400px;"></canvas>
+
 	</div>
 </div>
+
+<script>
+
+var data = [{{report.tempMins}}, {{report.tempAvgs}}, {{report.tempMaxs}}];
+var dataLabels = ["Minimumhőmérséklet", "Átlaghőmérséklet", "Maximumhőmérséklet"]
+new LineChart("chart_temperature", data, dataLabels).draw();
+
+new StackedBarChart("chart_temperature_distribution", {{report.tempDist}}, {{climate.temp}}).draw();
+
+new StackedBarChart("chart_rh_distribution", {{report.rhDist}}, {{climate.rh}}).draw();
+
+var dataLabels = ["Napi csapadékmennyiség"];
+new LineChart("chart_precipitation", [{{report.prec}}], dataLabels).draw();
+
+var dataLabels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+new StackedBarChart("chart_wind", {{report.windDist}}, dataLabels).draw();
+
+//console.log({{climate}});
+
+</script>
+
 {% endblock content %}

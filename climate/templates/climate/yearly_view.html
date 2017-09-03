@@ -25,7 +25,13 @@
 			</tr>
 			<tr>
 			{% for m in num %}
-				<td><a href="{% url 'monthly_view' site=site.pk year=year.year month=1 %}">{{m}}</a></td>
+				{% if m.available > 0 %}
+					<td><a href="{% url 'monthly_view' site=site.pk year=year.year month=m.id %}">{{m.available}}</a></td>
+				{% else %}
+					<td>{{m.available}}</td>
+				{% endif %}
+				
+				
 			{% endfor %}
 			</tr>
 		</table>
