@@ -4,7 +4,7 @@ from django.shortcuts import redirect, get_object_or_404
 from .models import Site, Weather, Climate
 from .models import RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
-from .models import MonthlyReport
+from .models import MonthlyReport, YearlyReport
 from .forms import SiteForm, ObservationForm, DiaryForm
 from django.utils import timezone
 from re import sub
@@ -90,8 +90,8 @@ def yearly_view(request, pk, year):
 				added = True
 		if not added:
 			datasetNum.append(0)
-
-	return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 'monthNames': monthList, 'num': datasetNum})
+	a = YearlyReport(site, year, monthly, yearly)
+	return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 'monthNames': monthList, 'num': datasetNum, 'report': a})
 
 def monthly_view(request, site, year, month):
 	siteObj = get_object_or_404(Site, pk=site)
@@ -265,8 +265,35 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 			d = d[0]
 		rawDataSet = DailyStatistics.objects.filter(date__year=f.year, 
 							date__month=f.month).filter(siteId = siteId)
+		tempmins = []
+		tempmaxs = []
+		tempavgs = []
+		precipitation = decimal.Decimal(0.0)
+		for j in rawDataSet:
+			if j.tempMin is not None:
+				tempmins.append(j.tempMin)
+			if j.tempMax is not None:
+				tempmaxs.append(j.tempMax)
+			if j.tempAvg is not None:
+				tempavgs.append(j.tempAvg)
+			if j.precipitation is not None:
+				precipitation = precipitation + j.precipitation
 		d.dataAvailable = rawDataSet.count()
-		d.summerDays = 0
+		if len(tempmins) > 0:
+			d.tempMin = min(tempmins)
+			d.tempMinAvg = sum(tempmins) / len(tempmins)
+		if len(tempmaxs) > 0:
+			d.tempMax = max(tempmaxs)
+			d.tempMaxAvg = sum(tempmaxs) / len(tempmaxs)
+		if len(tempavgs) > 0:
+			d.tempAvg = sum(tempavgs) / len(tempavgs)
+		d.precipitation = precipitation
+		d.summerDays = Climate.getNrSummerDays(tempmaxs)
+		d.frostDays = Climate.getNrFrostDays(tempmins)
+		d.coldDays = Climate.getNrColdDays(tempmins)
+		d.warmNights = Climate.getNrWarmNights(tempmins)
+		d.warmDays = Climate.getNrWarmDays(tempmaxs)
+		d.hotDays = Climate.getNrHotDays(tempmaxs)
 		d.save()
 		f = f.replace(month = f.month + 1)
 	return 1

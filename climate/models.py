@@ -47,7 +47,6 @@ class Month:
 		return self.year == dt.year and self.month == dt.month
 	def daysOfMonth(self):
 		lastDay = calendar.monthrange(self.year, self.month)[1]
-		print(lastDay)
 		a = []
 		[a.append(i) for i in range(1, lastDay + 1)]
 		return a
@@ -57,7 +56,13 @@ class Month:
 		[a.append(i) for i in range(1, lastDay + 1)]
 		return a
 	def getMonth(self):
-		return str(self.month).zfill(2) 
+		return str(self.month).zfill(2)
+
+class Year:
+	def monthsOfYear(self):
+		a = []
+		[a.append(i) for i in range(1, 13)]
+		return a
 
 class Climate(object):
 	tempDistribLimits = [-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40]
@@ -203,7 +208,15 @@ class MonthlyStatistics(models.Model):
 	tempMin = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
 	tempMax = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
 	tempAvg = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
-	summerDays = models.IntegerField()
+	precipitation = models.DecimalField(blank = True, null = True, max_digits = 4, decimal_places = 1)
+	tempMinAvg = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	tempMaxAvg = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
+	summerDays = models.IntegerField(blank = True, null = True)
+	frostDays = models.IntegerField(blank = True, null = True)
+	coldDays = models.IntegerField(blank = True, null = True)
+	warmNights = models.IntegerField(blank = True, null = True)
+	warmDays = models.IntegerField(blank = True, null = True)
+	hotDays = models.IntegerField(blank = True, null = True)
 
 class YearlyStatistics(models.Model):
 	class Meta:
@@ -327,7 +340,43 @@ class MonthlyReport():
 		self.rhDist = json.dumps(self.generateRhDistribution())
 		self.prec, self.precDist = json.dumps(self.getPrecipitation()[0]), self.getPrecipitation()[1]
 		self.windDist = json.dumps(self.generateWindDistribution())
-	
+
+class YearlyReport():
+	class Meta:
+		managed = False
+	def collectData(self, prop):
+		dataset = []
+		for i in self.months:
+			hasData = False
+			for j in self.monthObjs:
+				if j.month == i:
+					hasData = True
+					dataset.append(getattr(j, prop))
+			if not hasData:
+				dataset.append(None)
+		return dataset
+	def __init__(self, siteId, year, monthObjs, yearObj):
+		self.siteId = siteId
+		self.year = year
+		self.monthObjs = monthObjs
+		self.yearObj = yearObj
+		self.months = Year().monthsOfYear()
+		self.temps = {
+			'mins': self.collectData('tempMin'),
+			'minAvgs': self.collectData('tempMinAvg'),
+			'avgs': self.collectData('tempAvg'),
+			'maxAvgs': self.collectData('tempMaxAvg'),
+			'maxs': self.collectData('tempMax')
+		}
+		self.tempIndices = {
+			'summerDays': self.collectData('summerDays'),
+			'frostDays': self.collectData('frostDays'),
+			'coldDays': self.collectData('coldDays'),
+			'warmNights': self.collectData('warmNights'),
+			'warmDays': self.collectData('warmDays'),
+			'hotDays': self.collectData('hotDays')
+		}
+
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
 	createdDate = models.DateTimeField(default = timezone.now())
@@ -385,7 +434,3 @@ class DailyStat(models.Model):
 class MonthlyStat(models.Model):
 	siteId = models.ForeignKey('climate.Site')
 	date = models.DateField()
-
-class YearlyReport(models.Model):
-	siteId = models.ForeignKey('climate.Site')
-	year = models.IntegerField(default = -1)
