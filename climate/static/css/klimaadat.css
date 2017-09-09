@@ -5,10 +5,6 @@ body {
 	color: white;
 }
 
-h1, h2 {
-	font-family: 'Quicksand', sans-serif;
-}
-
 div#google_maps_one_marker {
 	/*width:20vw;
     height: 20vw;*/
@@ -137,6 +133,7 @@ table.observation span.label {
 	background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    font-family: 'Quicksand', sans-serif;
 }
 
 .text-vertical-center {

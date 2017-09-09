@@ -38,25 +38,51 @@
 
 		<h4>Havi hőmérsékleti szélsőértékek és átlagok</h4>
 
-		<p>{{report.temps.mins}}</p>
-		<p>{{report.temps.minAvgs}}</p>
-		<p>{{report.temps.avgs}}</p>
-		<p>{{report.temps.maxAvgs}}</p>
-		<p>{{report.temps.maxs}}</p>
+		<canvas id="chart_temperature" width="100%" height="100%" style="max-height:400px;"></canvas>
 
 		<h4>Hőmérsékleti jelzőnapok gyakorisága</h4>
 
-		<p>{{report.tempIndices}}</p>
+		{{report.summerDays}}
 
-		<h4>Relatív nedvesség gyakorisága</h4>
+		<canvas id="chart_temperature_indices" width="100%" height="100%" style="max-height:400px;"></canvas>
+
+		<h4>A hőmérséklet eloszlása</h4>
+
+		<canvas id="chart_temperature_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
+
+		<h4>Relatív nedvesség eloszlása</h4>
+
+		<canvas id="chart_rh_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
 
 		<h4>Havi csapadékmennyiség éves menete</h4>
 
-		<p>{{report.precipitation}}</p>
-
-		<h4>A szélsebesség gyakorisága</h4>
+		<canvas id="chart_precipitation" width="100%" height="100%" style="max-height:400px;"></canvas>
 
 		<h4>A jellemző szélirány eloszlása</h4>
+
+		<canvas id="chart_wind" width="100%" height="100%" style="max-height:400px;"></canvas>
 	</div>
 </div>
+
+<script>
+
+var data = [{{report.temps.mins}}, {{report.temps.minAvgs}}, {{report.temps.avgs}}, {{report.temps.maxAvgs}}, {{report.temps.maxs}}];
+var dataLabels = ["Minimum", "Átlagos minimum", "Átlag", "Átlagos maximum", "Maximumhőmérséklet"]
+new LineChart("chart_temperature", data, dataLabels).draw();
+
+var data = [{{report.tempIndices.summerDays}}, {{report.tempIndices.frostDays}}, {{report.tempIndices.coldDays}}, {{report.tempIndices.warmNights}}, {{report.tempIndices.warmDays}}, {{report.tempIndices.hotDays}}];
+var dataLabels = ["Nyári napok", "Fagyos napok", "Hideg napok", "Meleg éjszakák", "Meleg napok", "Forró napok"]
+new LineChart("chart_temperature_indices", data, dataLabels).draw();
+
+new StackedBarChart("chart_temperature_distribution", {{report.tempDist}}, {{climate.temp}}).draw();
+
+new StackedBarChart("chart_rh_distribution", {{report.rhDist}}, {{climate.rh}}).draw();
+
+var dataLabels = ["Havi csapadékmennyiség"];
+new LineChart("chart_precipitation", [{{report.prec}}], dataLabels).draw();
+
+var dataLabels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+new StackedBarChart("chart_wind", {{report.windDist}}, dataLabels).draw();
+
+</script>
 {% endblock content %}

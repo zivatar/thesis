@@ -81,6 +81,7 @@ def yearly_view(request, pk, year):
 	site = get_object_or_404(Site, pk=pk)
 	yearly = YearlyStatistics.objects.filter(siteId = site).filter(year = year)[0]
 	monthly = MonthlyStatistics.objects.filter(siteId = site).filter(year = year)
+	climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
 	datasetNum = []
 	for i in range(12):
 		added = False
@@ -91,7 +92,7 @@ def yearly_view(request, pk, year):
 		if not added:
 			datasetNum.append({'id': i+1, 'available':0})
 	a = YearlyReport(site, year, monthly, yearly)
-	return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 'monthNames': monthList, 'num': datasetNum, 'report': a})
+	return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 'monthNames': monthList, 'num': datasetNum, 'report': a, 'climate': climate})
 
 def monthly_view(request, site, year, month):
 	siteObj = get_object_or_404(Site, pk=site)
@@ -287,6 +288,24 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 			d.tempMaxAvg = sum(tempmaxs) / len(tempmaxs)
 		if len(tempavgs) > 0:
 			d.tempAvg = sum(tempavgs) / len(tempavgs)
+		rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
+							createdDate__month=f.month).filter(siteId = siteId)
+		temps = []
+		rhs = []
+		winds = []
+		for j in rawDataSet:
+			if j.temperature is not None:
+				temps.append(j.temperature)
+			if j.humidity is not None:
+				rhs.append(j.humidity)
+			if j.windDir is not None:
+				winds.append(j.windDir)
+		tempDistribution = Climate.calculateTempDistrib(temps)
+		d.tempDistribution = ''.join(str(e)+',' for e in tempDistribution)[:-1]
+		rhDistribution = Climate.calculateRhDistrib(rhs)
+		d.rhDistribution = ''.join(str(e)+',' for e in rhDistribution)[:-1]
+		windDistribution = Climate.calculateWindDistrib(winds)
+		d.windDistribution = ''.join(str(e)+',' for e in windDistribution)[:-1]
 		d.precipitation = precipitation
 		d.summerDays = Climate.getNrSummerDays(tempmaxs)
 		d.frostDays = Climate.getNrFrostDays(tempmins)

@@ -217,6 +217,9 @@ class MonthlyStatistics(models.Model):
 	warmNights = models.IntegerField(blank = True, null = True)
 	warmDays = models.IntegerField(blank = True, null = True)
 	hotDays = models.IntegerField(blank = True, null = True)
+	tempDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
+	rhDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
+	windDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
 
 class YearlyStatistics(models.Model):
 	class Meta:
@@ -355,28 +358,79 @@ class YearlyReport():
 			if not hasData:
 				dataset.append(None)
 		return dataset
+	def generateTempDistribution(self):
+		dist = []
+		for l in range(len(Climate.tempDistribLimits)):
+			sublist = []
+			for i in self.months:
+				hasData = False
+				for j in self.monthObjs:
+					if j.month == i:
+						hasData = True
+						dailyData = j.tempDistribution
+						if dailyData != None and dailyData != "":
+							sublist.append(int(float(dailyData.split(',')[l])))
+				if not hasData:
+					sublist.append(None)
+			dist.append(sublist)
+		return dist
+	def generateRhDistribution(self):
+		dist = []
+		for l in range(len(Climate.rhDistribLimits)):
+			sublist = []
+			for i in self.months:
+				hasData = False
+				for j in self.monthObjs:
+					if j.month == i:
+						hasData = True
+						dailyData = j.rhDistribution
+						if dailyData != None and dailyData != "":
+							sublist.append(int(float(dailyData.split(',')[l])))
+				if not hasData:
+					sublist.append(None)
+			dist.append(sublist)
+		return dist
+	def generateWindDistribution(self):
+		dist = []
+		for l in range(len(Climate.windDirLimits)):
+			sublist = []
+			for i in self.months:
+				hasData = False
+				for j in self.monthObjs:
+					if j.month == i:
+						hasData = True
+						dailyData = j.windDistribution
+						if dailyData != None and dailyData != "":
+							sublist.append(int(float(dailyData.split(',')[l])))
+				if not hasData:
+					sublist.append(None)
+			dist.append(sublist)
+		return dist
 	def __init__(self, siteId, year, monthObjs, yearObj):
 		self.siteId = siteId
 		self.year = year
 		self.monthObjs = monthObjs
 		self.yearObj = yearObj
 		self.months = Year().monthsOfYear()
-		self.temps = {
-			'mins': self.collectData('tempMin'),
-			'minAvgs': self.collectData('tempMinAvg'),
-			'avgs': self.collectData('tempAvg'),
-			'maxAvgs': self.collectData('tempMaxAvg'),
-			'maxs': self.collectData('tempMax')
+		self.temps ={
+			'mins': json.dumps(self.collectData('tempMin')),
+			'minAvgs': json.dumps(self.collectData('tempMinAvg')),
+			'avgs': json.dumps(self.collectData('tempAvg')) ,
+			'maxAvgs': json.dumps(self.collectData('tempMaxAvg')),
+			'maxs': json.dumps(self.collectData('tempMax'))
 		}
 		self.tempIndices = {
-			'summerDays': self.collectData('summerDays'),
-			'frostDays': self.collectData('frostDays'),
-			'coldDays': self.collectData('coldDays'),
-			'warmNights': self.collectData('warmNights'),
-			'warmDays': self.collectData('warmDays'),
-			'hotDays': self.collectData('hotDays')
+			'summerDays': json.dumps(self.collectData('summerDays')),
+			'frostDays': json.dumps(self.collectData('frostDays')),
+			'coldDays': json.dumps(self.collectData('coldDays')),
+			'warmNights': json.dumps(self.collectData('warmNights')),
+			'warmDays': json.dumps(self.collectData('warmDays')),
+			'hotDays': json.dumps(self.collectData('hotDays'))
 		}
-		self.precipitation = self.collectData('precipitation')
+		self.prec = json.dumps(self.collectData('precipitation'))
+		self.tempDist = json.dumps(self.generateTempDistribution())
+		self.rhDist = json.dumps(self.generateRhDistribution())
+		self.windDist = json.dumps(self.generateWindDistribution())
 
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
