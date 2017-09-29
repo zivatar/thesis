@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate
 from .models import Site, Weather, Climate
 from .models import RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
@@ -13,12 +15,29 @@ import dateutil.parser as dtparser
 import calendar
 import datetime
 import decimal
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
 def site_list(request):
 	sites = Site.objects.filter(isPublic=True).order_by('title')
 	return render(request, 'climate/site_list.html', {'sites': sites})
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect(main)
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
 
 #@login_required
 #def my_sites(request):
@@ -345,3 +364,19 @@ def upload(request, pk):
 		return redirect(site_details, pk)
 	else:
 		return render(request, 'climate/upload.html', {'site': site})
+
+class UploadHandler(APIView):
+	def get(self, request, *args, **kw):
+		print("asdfg")
+		get_arg1 = request.GET.get('arg1', None)
+		get_arg2 = request.GET.get('arg2', None)
+		result = 999
+		response = Response(result, status=status.HTTP_200_OK)
+		return response
+	def post(self, request, *args, **kw):
+		print("asdfg")
+		get_arg1 = request.GET.get('arg1', None)
+		get_arg2 = request.GET.get('arg2', None)
+		result = 999
+		response = Response(result, status=status.HTTP_200_OK)
+		return response

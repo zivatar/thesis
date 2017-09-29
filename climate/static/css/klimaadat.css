@@ -42,16 +42,22 @@ div.graph {
 }
 
 div.item {
-	border-radius: 10px;
 	padding: 5px;
-}
-
-div.item:hover {
+	padding-left: 15px;
+	border: 1px solid navy;
 	background: white;
+	color: #286090;
+	margin-bottom: 5px;
+	box-shadow: 0 0 5px navy;
 }
 
 div.item h4 a {
-	color: black; /* nem mukod */
+	text-decoration: underline;
+	color: black;
+}
+
+.item h4 a:hover {
+	color: #FC4A1A;
 }
 
 table.table-striped  td, table.table-striped th {
@@ -179,4 +185,8 @@ table.observation span.label {
 .panel-heading a, .panel-heading a:hover {
 	color: white;
 	text-decoration: underline;
+}
+
+#login-table tbody td {
+	vertical-align: middle !important;
 }

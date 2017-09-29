@@ -20,10 +20,10 @@ Zivatar.hu Éghajlati Adatbázis
 	<div class="col-lg-6">
 		<h3>Adatok rögzítése</i></h3>
 		
-		<a href="{% url 'new_site' %}"><div class="item">
-			<h4><span class="label label-default"><span class="glyphicon glyphicon-map-marker"></span> Saját mérőhelyek</span></h4>
+		<div class="item">
+			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'new_site' %}">Saját mérőhelyek</a></h4>
 			<p><strong>Hol mérsz?</strong> Saját mérőhelyek felvitele, módosítása, törlése.</p>
-		</div></a>
+		</div>
 		<div class="item">
 			<h4><span class="glyphicon glyphicon-scale"></span> Mérőműszerek</h4>
 			<p><strong>Mivel mérsz?</strong> Saját mérőműszerek rögzítése, lezárása.</p>
@@ -35,20 +35,20 @@ Zivatar.hu Éghajlati Adatbázis
 			<h4><span class="glyphicon glyphicon-list-alt"></span> Éghajlati adatok rögzítése</h4>
 			<p><strong>Mit mértél? Mit láttál?</strong> Éghajlati napló vezetése. Aktuális és összefoglaló adatok feltöltése.</p>
 		</div>
-		<a href="{% url 'new_observation' %}"><div class="item">
-			<h4><span class="glyphicon glyphicon-cloud"></span> Aktuális időjárás rögzítése</h4>
-		</div></a>
+		<div class="item">
+			<h4><span class="glyphicon glyphicon-cloud"></span> <a href="{% url 'new_observation' %}">Aktuális időjárás rögzítése</a></h4>
+		</div>
 	</div>
 
     <div class="col-lg-6">
 		<h3>Adatok lekérése</h3>
-		<a href="{% url 'site_list' %}"><div class="item">
-			<h4><span class="glyphicon glyphicon-map-marker"></span> Publikus mérőhelyek</h4>
-			<p>Publikus mérőhelyek megjelenítése térképen</p>
-		</div></a>
 		<div class="item">
-			<h4><span class="glyphicon glyphicon-stats"></span> Éghajlati adatok lekérése</h4>
-			<p>Az összegyűjtött adatok lekérése egy kiválasztott helyre és időtartamra. Havi és éves statisztikák készítése, ha rendelkezésre állnak a megfelelő adatok. Ábrák és grafikonok.</p>
+			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'site_list' %}">Publikus mérőhelyek listája</a></h4>
+			<p>Publikus mérőhelyek megjelenítése térképen</p>
+		</div>
+		<div class="item">
+			<h4><span class="glyphicon glyphicon-stats"></span> <a href="{% url 'site_list' %}">Éghajlati adatok lekérése</a></h4>
+			<p>Az összegyűjtött adatok lekérése egy kiválasztott helyre és időtartamra. Havi és éves statisztikák készítése, ha rendelkezésre állnak a megfelelő adatok. Ábrák és grafikonok rajzolása.</p>
 		</div>
 		<div class="item">
 			<h4><span class="glyphicon glyphicon-blackboard"></span> Észlelési segédlet</h4>

@@ -16,5 +16,7 @@ urlpatterns = [
 	url(r'^site/(?P<site>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)$', views.monthly_view, name='monthly_view'),
 	url(r'^new_observation/', views.new_observation, name='new_observation'),
 	url(r'^accounts/login/$', auth_views.login, name='login'),
+	url(r'^accounts/register/$', views.register, name='register'),
 	url(r'^accounts/logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
+	url(r'^api/hw/', views.UploadHandler.as_view(), name='upload_handler'),
 ]
