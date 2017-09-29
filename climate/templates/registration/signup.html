@@ -1,6 +1,6 @@
 {% extends 'climate/base.html' %}
 {% load widget_tweaks %}
-{% block title %}Login{% endblock %}
+{% block title %}Regisztráció{% endblock %}
 
 {% block content %}
 <div class="panel panel-primary">
@@ -19,10 +19,10 @@
                     {% for error in field.errors %}
                         <p style="color: red">{{ error }}</p>
                     {% endfor %}
-      </p>
-    {% endfor %}
-    <button type="submit">Regisztráció</button>
-  </form>
+                    </p>
+                {% endfor %}
+                <button type="submit">Regisztráció</button>
+                </form>
             </div>
 		</div>
 	</div>

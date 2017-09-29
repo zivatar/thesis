@@ -93,17 +93,6 @@ div.nav-inside {
 	margin-bottom: 10px;
 }
 
-div.panel.panel-primary {
-	background-color: #DDD;
-	border: 0;
-	color: black;
-}
-
-div.panel.panel-primary > div.panel-heading {
-	background-image: linear-gradient(to bottom,#F7B733 0,#FC4A1A 100%);
-	border: 0;
-}
-
 span.right {
 	float: right;
 }
@@ -189,4 +178,33 @@ table.observation span.label {
 
 #login-table tbody td {
 	vertical-align: middle !important;
+}
+
+div.panel.panel-primaryx {
+	background-color: #DDD;
+	border: 0;
+	color: black;
+}
+
+div.panel.panel-primary > div.panel-headingx {
+	background-image: linear-gradient(to bottom,#F7B733 0,#FC4A1A 100%);
+	border: 0;
+}
+
+.panel.panel-primary > .panel-heading {
+	border-bottom: 2px solid #FC4A1A;
+	color: #FC4A1A;
+	font-size: 1.2em;
+	line-height: 1em;
+	background: white
+}
+
+.panel.panel-primary {
+	padding: 5px;
+	padding-left: 15px;
+	border: 1px solid navy;
+	background: white;
+	color: #286090;
+	margin-bottom: 5px;
+	box-shadow: 0 0 5px navy;
 }
