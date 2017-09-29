@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm
+#from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from .models import Site, Weather, Climate
 from .models import RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
 from .models import MonthlyReport, YearlyReport
-from .forms import SiteForm, ObservationForm, DiaryForm
+from .forms import SiteForm, ObservationForm, DiaryForm, RegistrationForm
 from django.utils import timezone
 from re import sub
 from datetime import datetime
@@ -27,7 +27,7 @@ def site_list(request):
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
@@ -36,7 +36,7 @@ def register(request):
             login(request, user)
             return redirect(main)
     else:
-        form = UserCreationForm()
+        form = RegistrationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
 #@login_required
