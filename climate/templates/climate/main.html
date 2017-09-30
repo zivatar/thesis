@@ -19,6 +19,12 @@ Zivatar.hu Éghajlati Adatbázis
 <div class="row marketing">
 	<div class="col-lg-6">
 		<h3>Adatok rögzítése</i></h3>
+
+		<div class="item">
+			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'own_site_list' %}">Saját mérőhelyek listája</a></h4>
+			<p>Saját mérőhelyek megjelenítése térképen</p>
+			<p>Adatok feltöltése, megjelenítése. Manuális klímaívek kitöltése.</p>
+		</div>
 		
 		<div class="item">
 			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'new_site' %}">Saját mérőhelyek nyilvántartása</a></h4>
@@ -29,11 +35,7 @@ Zivatar.hu Éghajlati Adatbázis
 			<p><strong>Mivel mérsz?</strong> Saját mérőműszerek rögzítése, lezárása.</p>
 		</div>
 		<div class="item">
-			<h4><span class="glyphicon glyphicon-list-alt"></span> Éghajlati adatok rögzítése</h4>
-			<p><strong>Mit mértél? Mit láttál?</strong> Éghajlati napló vezetése. Aktuális és összefoglaló adatok feltöltése.</p>
-		</div>
-		<div class="item">
-			<h4><span class="glyphicon glyphicon-cloud"></span> <a href="{% url 'new_observation' %}">Aktuális időjárás rögzítése</a></h4>
+			<h4><span class="glyphicon glyphicon-cloud"></span> <a href="{% url 'new_observation' %}">Aktuális időjárás észlelése</a></h4>
 		</div>
 	</div>
 
@@ -43,10 +45,7 @@ Zivatar.hu Éghajlati Adatbázis
 			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'site_list' %}">Publikus mérőhelyek listája</a></h4>
 			<p>Publikus mérőhelyek megjelenítése térképen</p>
 		</div>
-		<div class="item">
-			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'own_site_list' %}">Saját mérőhelyek listája</a></h4>
-			<p>Saját mérőhelyek megjelenítése térképen</p>
-		</div>
+		
 		<div class="item">
 			<h4><span class="glyphicon glyphicon-stats"></span> <a href="{% url 'site_list' %}">Éghajlati adatok lekérése</a></h4>
 			<p>Az összegyűjtött adatok lekérése egy kiválasztott helyre és időtartamra. Havi és éves statisztikák készítése, ha rendelkezésre állnak a megfelelő adatok. Ábrák és grafikonok rajzolása.</p>

@@ -1,0 +1,57 @@
+{% extends 'climate/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<span class="glyphicon glyphicon-cloud"></span> Gyors vizuális észlelés
+	</div>
+	<div class="panel-body">
+		<!--
+		<form id="new_observation" method="post" class="post-form">{% csrf_token %}
+		{{ form.as_p }}
+		<div class="col-12 form-group">
+				<button type="submit" class="save btn btn-success btn-group-justified">Észlelés</button>
+			</div>
+		</form>
+		-->
+	
+		<form id="new_observation" method="post" class="post-form">{% csrf_token %}
+			{{ form.non_field_errors }}
+	
+			<div class="col-12 form-group">
+				<label for="kornyezet">Mérőhely:</label>
+				<select class="form-control" id="siteId" name="siteId">
+				{% for site in sites %}
+					<option value="{{site.id}}">{{ site.title }}</option>
+				{% endfor %}
+				</select>
+			</div>
+			<div class="col-12 form-group">
+				<label for="{{ form.windSpeed.id_for_label }}">Szélsebesség a Beaufort-skála alapján:</label>
+				{% render_field form.windSpeed class+="form-control" %}
+			</div>
+				
+			<div class="col-12 form-group">
+				<label for="kornyezet">Időjárási jelenségek:</label>
+				{{ form.weatherCode.errors }}
+				<div class="row">
+					{% for code in weather_code %}
+						<div class="col-sm-3 highlighted">
+							<label class="checkbox-inline"><input type="checkbox" name="weatherCode" value="{{code.0}}">{{code.1}}</label>
+						</div>
+					{% endfor %} <!-- TODO atkonvertalni a modellbe -->
+				</div>
+			</div>
+			<div class="col-12 form-group">
+				{{ form.comment.errors }}
+				<label for="{{ form.comment.id_for_label }}">Megjegyzés:</label>
+				{% render_field form.comment class+="form-control" %}
+			</div>
+			<div class="col-12 form-group">
+				<button type="submit" class="save btn btn-success btn-group-justified">Észlelés</button>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock content %}

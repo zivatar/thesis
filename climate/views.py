@@ -1,13 +1,15 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, get_object_or_404
 #from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from .models import Site, Weather, Climate
 from .models import RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
 from .models import MonthlyReport, YearlyReport
-from .forms import SiteForm, ObservationForm, DiaryForm, RegistrationForm
+from .forms import SiteForm, ObservationForm, DiaryForm, RegistrationForm, UserForm
 from django.utils import timezone
 from re import sub
 from datetime import datetime
@@ -21,6 +23,16 @@ from rest_framework import status
 
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
+def is_admin(user):
+	if user:
+		return user.groups.filter(name='is_admin').exists()
+	return False
+
+def can_upload(user):
+	if user:
+		return user.groups.filter(name='can_upload').exists()
+	return False
+
 def site_list(request):
 	sites = Site.objects.filter(isPublic=True).order_by('title')
 	return render(request, 'climate/site_list.html', {'sites': sites})
@@ -29,6 +41,40 @@ def site_list(request):
 def own_site_list(request):
 	sites = Site.objects.filter(owner=request.user).order_by('title')
 	return render(request, 'climate/site_list.html', {'sites': sites})
+
+@login_required
+def my_user(request):
+	user = request.user
+	return render(request, 'climate/my_user.html', {'user': user})
+
+@login_required
+@user_passes_test(is_admin, login_url='/accounts/login/')
+def edit_users(request):
+	myUser = request.user
+	users = User.objects.filter()
+	return render(request, 'climate/edit_users.html', {'user': myUser, 'users': users})
+
+@login_required
+@user_passes_test(is_admin, login_url='/accounts/login/')
+def edit_user(request, user):
+	userObj = get_object_or_404(User, pk=user)
+	if request.method == "POST":
+		form = UserForm(request.POST)
+		if form.is_valid():
+			cd = form.cleaned_data
+			userObj.is_active = cd.get('isActive')
+			userObj.groups.clear()
+			if cd.get('isAdmin'):
+				g = Group.objects.get(name='is_admin') 
+				userObj.groups.add(g)
+			if cd.get('canUpload'):
+				g = Group.objects.get(name='can_upload') 
+				userObj.groups.add(g)
+			userObj.save()
+			return redirect(edit_users)
+	else:
+		form = UserForm(initial={"isAdmin": is_admin(userObj), "isActive": userObj.is_active, "canUpload": can_upload(userObj)})
+	return render(request, 'climate/edit_user.html', {'editUser': userObj, 'form': form})
 
 def guide(request):
 	return render(request, 'climate/guide.html')
@@ -160,6 +206,13 @@ def site_edit(request, pk):
 	else:
 		return render(request, 'climate/main.html', {})
 
+@login_required
+def climate(request, pk):
+	site = get_object_or_404(Site, pk=pk)
+	return render(request, 'climate/climate.html', {'site': site})
+
+
+# TODO remove
 @login_required
 def actual_month(request, pk):
 	site = get_object_or_404(Site, pk=pk)
@@ -386,6 +439,7 @@ def upload(request, pk):
 	else:
 		return render(request, 'climate/main.html', {})
 
+#@user_passes_test(can_upload)
 class UploadHandler(APIView):
 	def get(self, request, *args, **kw):
 		print("asdfg")

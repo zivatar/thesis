@@ -57,14 +57,14 @@
 		</div>
 			<ul class="nav navbar-nav">
 				<li><a href="{% url 'main' %}">Főoldal</a></li>
-				<li><a href="{% url 'site_list' %}">Publikus adatok</a></li>
+				<li><a href="{% url 'site_list' %}">Publikus mérőhelyek</a></li>
 				<li><a href="{% url 'guide' %}">Észlelési segédlet</a></li>
 			</ul>
 			
 			{% if user.is_authenticated %}
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="{% url 'own_site_list' %}">Saját adatok</a></li>
-					<li><a href="{% url 'logout' %}">[<span class="glyphicon glyphicon-user"></span> {{user}}] Kilépés</a></li>
+					<li><a href="{% url 'own_site_list' %}">Saját mérőhelyek</a></li>
+					<li><a href="{% url 'my_user' %}">[<span class="glyphicon glyphicon-user"></span> {{user}}]</a></li>
 				</ul>
 			{% else %}
 				<ul class="nav navbar-nav navbar-right">

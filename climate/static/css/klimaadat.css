@@ -221,3 +221,11 @@ img.half {
 img.full {
 	width: 100%;
 }
+
+table.table-striped td.yes {
+	background: #9dff9d;
+}
+
+table.table-striped td.no {
+	background: #ff9d9d;
+}
