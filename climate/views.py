@@ -47,11 +47,6 @@ def register(request):
         form = RegistrationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
-#@login_required
-#def my_sites(request):
-#	sites = Site.objects.filter(owner=request.user)
-#	return render(request, 'climate/my_sites.html', {'sites': sites, 'wide_area': WIDE_AREA, 'narrow_area': NARROW_AREA})
-
 @login_required
 def new_site(request):
 	if request.method == "POST":
@@ -96,59 +91,74 @@ def createYearlyMonthly(yearly, monthly):
 
 def site_details(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')[:3]
-	yearly = YearlyStatistics.objects.filter(siteId = site)
-	monthly = MonthlyStatistics.objects.filter(siteId = site)
-	ym = createYearlyMonthly(yearly, monthly)
-	#print(yearly)
-	#print(monthly)
-	return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE, 'ym': ym})
+	if (site.isPublic or site.owner == request.user):
+		observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')[:3]
+		yearly = YearlyStatistics.objects.filter(siteId = site)
+		monthly = MonthlyStatistics.objects.filter(siteId = site)
+		ym = createYearlyMonthly(yearly, monthly)
+		return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE, 'ym': ym})
+	else:
+		return render(request, 'climate/main.html', {})
 
 def yearly_view(request, pk, year):
 	site = get_object_or_404(Site, pk=pk)
-	yearly = YearlyStatistics.objects.filter(siteId = site).filter(year = year)[0]
+	yearlyList = YearlyStatistics.objects.filter(siteId = site).filter(year = year)
+	if len(yearlyList) > 0:
+		yearly = yearlyList[0]
 	monthly = MonthlyStatistics.objects.filter(siteId = site).filter(year = year)
-	climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
-	datasetNum = []
-	for i in range(12):
-		added = False
-		for j in monthly:
-			if j.month == i + 1:
-				datasetNum.append({'id': i+1, 'available':j.dataAvailable})
-				added = True
-		if not added:
-			datasetNum.append({'id': i+1, 'available':0})
-	a = YearlyReport(site, year, monthly, yearly)
-	return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 'monthNames': monthList, 'num': datasetNum, 'report': a, 'climate': climate})
+	if site and yearlyList and monthly and (site.isPublic or site.owner == request.user):
+		climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
+		datasetNum = []
+		for i in range(12):
+			added = False
+			for j in monthly:
+				if j.month == i + 1:
+					datasetNum.append({'id': i+1, 'available':j.dataAvailable})
+					added = True
+			if not added:
+				datasetNum.append({'id': i+1, 'available':0})
+		a = YearlyReport(site, year, monthly, yearly)
+		return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 'monthNames': monthList, 'num': datasetNum, 'report': a, 'climate': climate})
+	else:
+		return render(request, 'climate/main.html', {})
 
 def monthly_view(request, site, year, month):
 	siteObj = get_object_or_404(Site, pk=site)
-	yearly = YearlyStatistics.objects.filter(siteId = siteObj).filter(year = year)[0]
+	yearly = YearlyStatistics.objects.filter(siteId = siteObj).filter(year = year)
 	monthly = MonthlyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
 	daily = DailyStatistics.objects.filter(siteId = siteObj).filter(date__year = year).filter(date__month = month)
-	climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
-	datasetNum = []
-	a = MonthlyReport(site, year, month, monthly, yearly, daily)
-	return render(request, 'climate/monthly_view.html', {'site' : siteObj, 'num': datasetNum, 'year': yearly, 'month': month, 'report': a, 'climate': climate})
-	
+	if siteObj and yearly and monthly and daily and (siteObj.isPublic or siteObj.owner == request.user):
+		climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
+		datasetNum = []
+		a = MonthlyReport(site, year, month, monthly, yearly, daily)
+		return render(request, 'climate/monthly_view.html', {'site' : siteObj, 'num': datasetNum, 'year': yearly, 'month': month, 'report': a, 'climate': climate})
+	else:
+		return render(request, 'climate/main.html', {})
+
 def observations(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')
-	return render(request, 'climate/site_observations.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE})
+	if (site.isPublic or site.owner == request.user):
+		observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')
+		return render(request, 'climate/site_observations.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE})
+	else:
+		return render(request, 'climate/main.html', {})
 
 @login_required
 def site_edit(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	if request.method == "POST":
-		form = SiteForm(request.POST, instance=site)
-		if form.is_valid():
-			site = form.save(commit=False)
-			site.save()
-			return redirect(site_edit, pk=site.pk)
+	if (site.owner == request.user):
+		if request.method == "POST":
+			form = SiteForm(request.POST, instance=site)
+			if form.is_valid():
+				site = form.save(commit=False)
+				site.save()
+				return redirect(site_edit, pk=site.pk)
+		else:
+			form = SiteForm()
+			sites = Site.objects.filter(owner=request.user)
+		return render(request, 'climate/site_edit.html', {'sites': sites, 'wide_area': Site.WIDE_AREA, 'narrow_area': Site.NARROW_AREA, 'form': form, 'site': site})
 	else:
-		form = SiteForm()
-		sites = Site.objects.filter(owner=request.user)
-	return render(request, 'climate/site_edit.html', {'sites': sites, 'wide_area': Site.WIDE_AREA, 'narrow_area': Site.NARROW_AREA, 'form': form, 'site': site})
+		return render(request, 'climate/main.html', {})
 
 @login_required
 def actual_month(request, pk):
@@ -364,14 +374,17 @@ def create_yearly_statistics(fromDate, toDate, siteId):
 @login_required
 def upload(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	if request.method == "POST":
-		firstDate, lastDate = handle_uploaded_file(request.FILES['myfile'], site)
-		create_daily_statistics(firstDate, lastDate, site)
-		create_monthly_statistics(firstDate, lastDate, site)
-		create_yearly_statistics(firstDate, lastDate, site)
-		return redirect(site_details, pk)
+	if site.owner == request.user:
+		if request.method == "POST":
+			firstDate, lastDate = handle_uploaded_file(request.FILES['myfile'], site)
+			create_daily_statistics(firstDate, lastDate, site)
+			create_monthly_statistics(firstDate, lastDate, site)
+			create_yearly_statistics(firstDate, lastDate, site)
+			return redirect(site_details, pk)
+		else:
+			return render(request, 'climate/upload.html', {'site': site})
 	else:
-		return render(request, 'climate/upload.html', {'site': site})
+		return render(request, 'climate/main.html', {})
 
 class UploadHandler(APIView):
 	def get(self, request, *args, **kw):
