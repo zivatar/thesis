@@ -172,8 +172,8 @@ table.observation span.label {
 }
 
 .panel-heading a, .panel-heading a:hover {
-	color: white;
-	text-decoration: underline;
+	color: #286090;
+	text-decoration: none;
 }
 
 #login-table tbody td {

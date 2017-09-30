@@ -21,15 +21,12 @@ Zivatar.hu Éghajlati Adatbázis
 		<h3>Adatok rögzítése</i></h3>
 		
 		<div class="item">
-			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'new_site' %}">Saját mérőhelyek</a></h4>
+			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'new_site' %}">Saját mérőhelyek nyilvántartása</a></h4>
 			<p><strong>Hol mérsz?</strong> Saját mérőhelyek felvitele, módosítása, törlése.</p>
 		</div>
 		<div class="item">
-			<h4><span class="glyphicon glyphicon-scale"></span> Mérőműszerek</h4>
+			<h4><span class="glyphicon glyphicon-scale"></span> Mérőműszerek nyilvántartása</h4>
 			<p><strong>Mivel mérsz?</strong> Saját mérőműszerek rögzítése, lezárása.</p>
-		</div>
-		<div class="item">
-			<h4><span class="glyphicon glyphicon-cloud-upload"></span> Mért adatok feltöltése</h4>
 		</div>
 		<div class="item">
 			<h4><span class="glyphicon glyphicon-list-alt"></span> Éghajlati adatok rögzítése</h4>
@@ -45,6 +42,10 @@ Zivatar.hu Éghajlati Adatbázis
 		<div class="item">
 			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'site_list' %}">Publikus mérőhelyek listája</a></h4>
 			<p>Publikus mérőhelyek megjelenítése térképen</p>
+		</div>
+		<div class="item">
+			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'own_site_list' %}">Saját mérőhelyek listája</a></h4>
+			<p>Saját mérőhelyek megjelenítése térképen</p>
 		</div>
 		<div class="item">
 			<h4><span class="glyphicon glyphicon-stats"></span> <a href="{% url 'site_list' %}">Éghajlati adatok lekérése</a></h4>
