@@ -5,7 +5,8 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
 	url(r'^$', views.main, name='main'),
 	#url(r'^$', views.site_list, name='site_list')
-	url(r'^site_list/', views.site_list, name='site_list'),
+	url(r'^public_site_list/', views.site_list, name='site_list'),
+	url(r'^own_site_list/', views.own_site_list, name='own_site_list'),
 	url(r'^new_site/', views.new_site, name='new_site'),
 	url(r'^site/(?P<pk>[0-9]+)/details$', views.site_details, name='site_details'),
 	url(r'^site/(?P<pk>[0-9]+)/edit$', views.site_edit, name='site_edit'),
@@ -19,4 +20,5 @@ urlpatterns = [
 	url(r'^accounts/register/$', views.register, name='register'),
 	url(r'^accounts/logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
 	url(r'^api/hw/', views.UploadHandler.as_view(), name='upload_handler'),
+	url(r'^guide/', views.guide, name='guide'),
 ]

@@ -1,0 +1,69 @@
+{% extends 'climate/base.html' %}
+{% load widget_tweaks %}
+{% block title %}Észlelési segédlet{% endblock %}
+
+{% block content %}
+<div class="panel panel-primary">
+	<div class="panel-heading"><span class="glyphicon glyphicon-blackboard"></span> Észlelési segédlet</div>
+		<div class="panel-body">
+			<div class="col-12">
+				<h3>Mérőműszerek elhelyezése</h3>
+                <p>A meteorológiai mérőműszerek elhelyezésének a következő kritériumoknak kell megfelelnie:</p>
+                <ul>
+                <li>A hőmérsékletet fűtött épületektől távol, rövidre nyírt fű fölött, a talajfelszíntől két méteres magasságban kell mérni, közvetlen és közvetett sugárzástól védve (árnyékolóban).</li>
+                <li>Relatív nedvességet a hőmérséklettel együtt mérjük.</li>
+                <li>A csapadékmérő a felszín fölött egy méterrel kell hogy elhelyezkedjen, olyan helyen, ahol az égre rálát, azaz nincs semmilyen tereptárgy takarásában.</li>
+                <li>A hóvastagságot reggel 7-kor kell lemérni, legalább három helyen, ahol se különösen sok, se különösen kevés hó nincs, és a mérések átlagát kell venni.</li>
+                <li>Szélmérést 10 méter magasságban, zavaró tereptárgyaktól távol kell végezni.</li>
+                <li>Radiációs minimumhőmérsékletet a talajtól 10 cm-re, árnyékolás nélkül mérünk, az éjszaka során.</li>
+                </ul>
+
+                <center>
+                <img class="article full" src="http://www.zivatar.hu/felhotar/albums/metallomas/romania/biharfured/normal_biharfured_zivatar_03.jpg" alt="Műszerkert: Biharfüred">
+                </center>
+
+                <h3>Mérési időpontok</h3>
+                <ul>
+                <li>A csapadékmennyiséget és a hóvastagságot reggel 7-kor kell lemérni.</li>
+                <li>A hőmérsékleti szélsőértékek mérésére többféle szabály van: éjféltől éjfélig vagy 06-18 UTC maximumot és 18-06 UTC között minimumot, vagy 06-06 UTC között mindkettőt.</li>
+                <li>Lehetőleg az adatgyűjtést UTC-re állított készülékkel érdemes végezni, akkor nem merülnek fel az óraátállításhoz kapcsolódó problémák.</li>
+                </ul>
+
+                <h3>Szélsebesség megállapítása becsléssel</h3>
+                <p>Széliránynak a meteorológiában azt az irányt nevezzük, amerről a szél fúj. Tehát az északi szél észak felől fúj.</p>
+                <p>A szélsebességet a <a href="http://www.zivatar.hu/c.php?c=beaufort-szelskala">Beaufort-skála</a> alapján becsülhetjük meg. Ez a tereptárgyakra, növényekre, fákra, vízfelületre gyakorolt hatása alapján bontja a szélsebességet kategóriákra:</p>
+                <center>
+                <img class="full" src="http://oneillseaodyssey.org/wp-content/themes/oneil/images/beaufort.gif">
+                <p><a href="http://oneillseaodyssey.org/wp-content/themes/oneil/images/beaufort.gif">Kép forrása</a></p>
+                </center>
+
+
+                <h3>Felhőzet mennyisége</h3>
+                <p>A felhőzet mennyiségét becsléssel lehet megállapítani. Az égre nézve azt kell megbecsülni, hogy az ég hány nyolcadát borítják felhők.</p>
+                <p>Ebbe beleszámítanak a vékony, átlátszó felhők, és a kondenzcsíkok is.</p>
+                <p>0 oktát (nyolcadot), azaz derült eget kizárólag akkor szabad megadni, ha tényleg felhőtlen az ég.</p>
+                <p>Ugyanígy 8 oktát, azaz borult eget pedig akkor, ha az ég 100%-át felhők borítják.</p>
+
+                <h3>Égkép jellemzése</h3>
+                <p>Az aktuálisan uralkodó felhőzetet leggyakrabban az egész eget összességében jellemző szinoptikus égképkódokkal írjuk le.</p>
+                <p>Ez a gyakorlatban azt jelenti, hogy az alacsony, középmagas és magas szintű felhőket egy-egy kóddal fogjuk jellemezni, az aktuálisan jelenlévő felhők alapján.</p>
+                <p>Az osztályozást az alábbi folyamatábrák és leírások használatával lehet végrehajtani: <a href="https://ane4bf-datap1.s3-eu-west-1.amazonaws.com/wmocms/s3fs-public/ckeditor/files/WMD2017_poster_low_JN1785_1.pdf?aGsYVoScFKPxRuxlxLNuPb4tcg8PjvcR">[alacsony szintű felhők]</a> <a href="https://ane4bf-datap1.s3-eu-west-1.amazonaws.com/wmocms/s3fs-public/ckeditor/files/WMD2017_poster_middle_JN1785_0.pdf?kR2kSOPabrj9IJ6Vd6NEfcnS05JtjEpQ">[középmagas szintű felhők]</a> <a href="https://ane4bf-datap1.s3-eu-west-1.amazonaws.com/wmocms/s3fs-public/ckeditor/files/WMD2017_poster_high_JN1785_2.pdf?1euxEpTy4HtTsV0y2aeCOO3e.T4NebZR">[magas szintű felhők]</a> <a href="https://ane4bf-datap1.s3-eu-west-1.amazonaws.com/wmocms/s3fs-public/ckeditor/files/WMD2017_poster_JN162028_EN.pdf?nYgh.wIczIOQE7LTllgPL2S0Zbwwn0A3">[bővebb info]</a></p>
+
+                <h3>Időjárási jelenségek</h3>
+                <p>A legfontosabb <a href="http://www.zivatar.hu/c.php?c=jelenido-kodok-eszlelesi-alapok">időjárási jelenségek</a> meghatározása:</p>
+                <ul>
+                <li>Száraz légköri homály: a látástávolság nagy területen korlátozott, miközben a relatív nedvesség alacsony. Ezzel szemben porvihar/homokvihar csak kisebb területre terjed ki, párásság és köd esetén pedig magas a relatív nedvesség.</li>
+                <li>Köd: 1 km alatti a látástávolság, párásság esetén 1-5 km. Zárt a köd, ha az égbolt nem látszik, és nyílt, ha a köd fölött csillagok vagy napsütés, esetleg magasabb szintű felhők láthatóak.</li>
+                <li>Eső: térben és időben egyenletes csapadékhullás, közepes cseppmérettel, ami réteges felhőzetből hullik. Ezzel szemben a zápor cseppmérete nagy, gomolyos felhőzetből esik, térben és időben egyaránt egyenetlen eloszlásban.</li>
+                <li>Csapadéksávot vagy virgát láthatunk a megfigyelőtől távolabb hulló csapadék esetén.</li>
+                <li>Szitálás szemcsemérete nagyon kicsi, Stratusból hullik, kis mennyiségben. Ennek szilárd halmazállapotú megfelelője a szemcsés hó (esetleg ónos szitálás)</li>
+                <li>Zivatart kell észlelni akkor, ha dörgést lehet hallani, függetlenül attól, van-e csapadékhullás. Ha van, akkor az valamilyen záporos csapadék lesz. Ha viszont csak villámlást lehet látni, az nem számít zivatarnak, mivel maga a zivatar akár nagyon messze is lehet.
+                </ul>
+
+                
+
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

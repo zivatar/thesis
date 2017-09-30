@@ -207,4 +207,17 @@ div.panel.panel-primary > div.panel-headingx {
 	color: #286090;
 	margin-bottom: 5px;
 	box-shadow: 0 0 5px navy;
+	border-radius: 0px;
+}
+
+img.article {
+	border-radius: 1em;
+}
+
+img.half {
+	width: 45%;
+}
+
+img.full {
+	width: 100%;
 }

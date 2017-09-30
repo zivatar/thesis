@@ -25,6 +25,14 @@ def site_list(request):
 	sites = Site.objects.filter(isPublic=True).order_by('title')
 	return render(request, 'climate/site_list.html', {'sites': sites})
 
+@login_required
+def own_site_list(request):
+	sites = Site.objects.filter(owner=request.user).order_by('title')
+	return render(request, 'climate/site_list.html', {'sites': sites})
+
+def guide(request):
+	return render(request, 'climate/guide.html')
+
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
