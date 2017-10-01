@@ -76,6 +76,15 @@ def edit_user(request, user):
 		form = UserForm(initial={"isAdmin": is_admin(userObj), "isActive": userObj.is_active, "canUpload": can_upload(userObj)})
 	return render(request, 'climate/edit_user.html', {'editUser': userObj, 'form': form})
 
+# TODO figyelembe venni hogy feltolhet-e
+# belepesnel ne engedni ha nem aktiv
+# muszer nyilvantartas
+# gravatar
+# 4 kep a siterol es 4 kep a muszerekrol, csak kulso tarhelyrol
+# eszlelesi segedletet befejezni
+# jelszovaltoztatasi lehetoseg
+# regisztracional kotelezo legyen emailt megadni
+
 def guide(request):
 	return render(request, 'climate/guide.html')
 

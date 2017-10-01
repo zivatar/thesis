@@ -10,6 +10,7 @@
 		<table class="table table-striped">
 		<tr>
 			<td>Név</td>
+			<td>E-mail</td>
 			<td>Admin</td>
 			<td>Aktív</td>
 			<td>Adatfeltöltési jog</td>
@@ -17,6 +18,7 @@
 		{% for u in users %}
 			<tr>
 				<td><a href="{% url 'edit_user' user=u.pk %}">{{u}}</a></td>
+				<td>{{u.email}}</td>
 				{% if u.groups.all.0.name == "is_admin" or u.groups.all.1.name == "is_admin" %}
 					<td class="yes">igen</td>
 				{% else %}
