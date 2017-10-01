@@ -12,7 +12,7 @@
 	//};
 
 	function getPos() {
-		var positions = [{ position: {lat: {{ site.lat }}, lng: {{ site.lon }}}, title: "{{ site.title }}" }];
+		var positions = [{ position: {lat: {{ site.lat|safe }}, lng: {{ site.lon|safe }}}, title: "{{ site.title }}" }];
 		console.log(positions);
 		return positions;
 	}

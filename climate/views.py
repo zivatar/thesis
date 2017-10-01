@@ -34,7 +34,7 @@ def can_upload(user):
 	return False
 
 def site_list(request):
-	sites = Site.objects.filter(isPublic=True).order_by('title')
+	sites = Site.objects.filter(isPublic=True).filter().order_by('title')
 	return render(request, 'climate/site_list.html', {'sites': sites})
 
 @login_required
@@ -77,13 +77,11 @@ def edit_user(request, user):
 	return render(request, 'climate/edit_user.html', {'editUser': userObj, 'form': form})
 
 # TODO figyelembe venni hogy feltolhet-e
-# belepesnel ne engedni ha nem aktiv
 # muszer nyilvantartas
 # gravatar
 # 4 kep a siterol es 4 kep a muszerekrol, csak kulso tarhelyrol
-# eszlelesi segedletet befejezni
 # jelszovaltoztatasi lehetoseg
-# regisztracional kotelezo legyen emailt megadni
+# climate
 
 def guide(request):
 	return render(request, 'climate/guide.html')
@@ -146,7 +144,7 @@ def createYearlyMonthly(yearly, monthly):
 
 def site_details(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	if (site.isPublic or site.owner == request.user):
+	if (site.isPublic and site.owner.is_active or site.owner == request.user):
 		observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')[:3]
 		yearly = YearlyStatistics.objects.filter(siteId = site)
 		monthly = MonthlyStatistics.objects.filter(siteId = site)
@@ -161,7 +159,7 @@ def yearly_view(request, pk, year):
 	if len(yearlyList) > 0:
 		yearly = yearlyList[0]
 	monthly = MonthlyStatistics.objects.filter(siteId = site).filter(year = year)
-	if site and yearlyList and monthly and (site.isPublic or site.owner == request.user):
+	if site and yearlyList and monthly and (site.isPublic and site.owner.is_active or site.owner == request.user):
 		climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
 		datasetNum = []
 		for i in range(12):
@@ -182,7 +180,7 @@ def monthly_view(request, site, year, month):
 	yearly = YearlyStatistics.objects.filter(siteId = siteObj).filter(year = year)
 	monthly = MonthlyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
 	daily = DailyStatistics.objects.filter(siteId = siteObj).filter(date__year = year).filter(date__month = month)
-	if siteObj and yearly and monthly and daily and (siteObj.isPublic or siteObj.owner == request.user):
+	if siteObj and yearly and monthly and daily and (siteObj.isPublic and siteObj.owner.is_active or siteObj.owner == request.user):
 		climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
 		datasetNum = []
 		a = MonthlyReport(site, year, month, monthly, yearly, daily)
@@ -192,7 +190,7 @@ def monthly_view(request, site, year, month):
 
 def observations(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	if (site.isPublic or site.owner == request.user):
+	if (site.isPublic and site.owner.is_active or site.owner == request.user):
 		observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')
 		return render(request, 'climate/site_observations.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE})
 	else:
