@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'widget_tweaks',
+    'captcha',
 	'climate',
 )
 
@@ -87,7 +88,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'hu'
 
 TIME_ZONE = 'Europe/Budapest'
 
@@ -97,6 +98,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+DECIMAL_SEPARATOR = ','
+THOUSAND_SEPARATOR = ''
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
@@ -105,3 +108,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 LOGIN_REDIRECT_URL = 'main'
+
+#RECAPTCHA_PUBLIC_KEY = 'MyRecaptchaKey124'
+#RECAPTCHA_PRIVATE_KEY = 'MyRecaptchaPrivateKey457'
+# TODO register key
+NOCAPTCHA = True
+RECAPTCHA_PROXY = 'http://127.0.0.1:8000'
