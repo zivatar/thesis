@@ -229,3 +229,12 @@ table.table-striped td.yes {
 table.table-striped td.no {
 	background: #ff9d9d;
 }
+
+.margin-h-0 {
+	margin-right: 0;
+	margin-left: 0;
+}
+
+.gravatar {
+	border: 1px solid #444;
+}

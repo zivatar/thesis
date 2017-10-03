@@ -10,11 +10,16 @@
 		<span class="glyphicon glyphicon-user"></span> Felhasználó jogainak szerkesztése: {{editUser}}
 	</div>
 	<div class="panel-body">
-		<form action="" method="POST">
-			{% csrf_token %}
-    		{{form.as_p}}
-    		<button type="submit">Submit</button>
-		</form>
+		<div class="row margin-h-0">
+			<p>E-mail: {{editUser.email}}</p>
+			<form class="pull-left" action="" method="POST">
+				{% csrf_token %}
+	    		{{form.as_p}}
+	    		<button type="submit">Submit</button>
+			</form>
+
+			<img class="pull-right gravatar" src="{{gravatar}}">
+		</div>
 	</div>
 </div>
 {% endblock content %}

@@ -1,6 +1,7 @@
 {% extends 'climate/base.html' %}
 {% load staticfiles %}
 {% load widget_tweaks %}
+{% load gravatar %}
 {% block content %}
 <div class="panel panel-primary">
 	<div class="panel-heading">
@@ -9,12 +10,19 @@
 	<div class="panel-body">
 		<h4>Műveletek</h4>
 
-		<ul>
+		<div class="row margin-h-0">
+
+		<ul class="pull-left">
 			<li><a href="{% url 'logout' %}">Kilépés</a></li>
 			{% if user.groups.all.0.name == "is_admin" or user.groups.all.1.name == "is_admin" %}
 				<li><a href="{% url 'edit_users' %}">Felhasználók karbantartása</a></li>
 			{% endif %}
 		</ul>
+		
+		<img class="pull-right gravatar" src="{{gravatar}}">
+
+
+		</div>
 
 		<h4>Adatok</h4>
 

@@ -21,6 +21,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from .utils import gravatar as gr
+
+
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
 def is_admin(user):
@@ -45,7 +48,8 @@ def own_site_list(request):
 @login_required
 def my_user(request):
 	user = request.user
-	return render(request, 'climate/my_user.html', {'user': user})
+	gravatar = gr.gravatar_url(user.email)
+	return render(request, 'climate/my_user.html', {'user': user, 'gravatar': gravatar})
 
 @login_required
 @user_passes_test(is_admin, login_url='/accounts/login/')
@@ -58,6 +62,7 @@ def edit_users(request):
 @user_passes_test(is_admin, login_url='/accounts/login/')
 def edit_user(request, user):
 	userObj = get_object_or_404(User, pk=user)
+	gravatar = gr.gravatar_url(userObj.email)
 	if request.method == "POST":
 		form = UserForm(request.POST)
 		if form.is_valid():
@@ -74,8 +79,9 @@ def edit_user(request, user):
 			return redirect(edit_users)
 	else:
 		form = UserForm(initial={"isAdmin": is_admin(userObj), "isActive": userObj.is_active, "canUpload": can_upload(userObj)})
-	return render(request, 'climate/edit_user.html', {'editUser': userObj, 'form': form})
+	return render(request, 'climate/edit_user.html', {'editUser': userObj, 'form': form, 'gravatar': gravatar})
 
+# nem aktiv user adatait ne mutassuk # vagy leghessen kulon tiltenai a sitejait
 # TODO figyelembe venni hogy feltolhet-e
 # muszer nyilvantartas
 # gravatar
