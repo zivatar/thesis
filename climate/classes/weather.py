@@ -1,13 +1,5 @@
 from django.db import models
 
-from urllib.parse import urlencode
-import hashlib
-import urllib
-def gravatar_url(email, size=100):
-	email = email.lower().encode("utf-8")
-	default = "identicon"
-	return "https://www.gravatar.com/avatar/%s?%s" % (hashlib.md5(email.lower()).hexdigest(), urllib.parse.urlencode({'d': default, 's': str(size)}))
-
 class Weather(models.Model):
 	WEATHER_CODE = (
 	(1, 'füst'), (2, 'homály'), (3, 'párásság'), (4, 'köd'), (19, 'nyílt köd'), (13, 'homokvihar'), (14, 'porforgatag'), 
