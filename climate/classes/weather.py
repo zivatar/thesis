@@ -28,7 +28,9 @@ class Weather(models.Model):
 	(10, '10: fák gyökerestül kidőlnek'), (11, '11: súlyos károk'), (12, '12: súlyos pusztítás')
 	)
 	
-	def getWeatherCodeText(ndx):
+	def getWeatherCodeText(ndx=None):
+		if (ndx == None):
+			return;
 		if type(ndx) == str and ndx != '':
 			ndx = int(ndx)
 		find = [x[1] for x in Weather.WEATHER_CODE if x[0] == ndx]
