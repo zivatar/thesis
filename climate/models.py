@@ -5,34 +5,12 @@ import datetime
 import decimal
 import simplejson as json
 
+from .classes.weather import Weather
+
+
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
-class Weather(models.Model):
-	WEATHER_CODE = (
-	(1, 'füst'), (2, 'homály'), (3, 'párásság'), (4, 'köd'), (19, 'nyílt köd'), (13, 'homokvihar'), (14, 'porforgatag'), 
-	(5, '22-es halo'), (6, 'melléknap'), (7, 'érintő ív'), (8, 'ritkább halo'),
-	(9, 'villámlás'), (10, 'dörgés'), (11, 'szivárvány'), (12, 'csapadéksáv'),
-	(15, 'szitálás'), (16, 'szemcsés hó'), (17, 'ónos szitálás'), (34, 'ónos eső'),
-	(18, 'eső'), (20, 'havazás'), (22, 'havas eső'),
-	(24, 'zápor'), (25, 'hózápor'), (26, 'havas eső zápor'), (27, 'jégeső'),
-	(29, 'tuba'), (30, 'tornádó'), (31, 'zivatar'), (32, 'hódara-zápor'), (33, 'fagyott eső'),
-	(34, 'harmat'), (35, 'dér'), (36, 'zúzmara'), (37, 'hófúvás')
-	)
 
-	BEAUFORT_SCALE = (
-	(-1, 'nem észlelt'),
-	(0, '0: szélcsend'), (1, '1: füst lengedezik'), (2, '2: arcon érezhető'), (3, '3: vékony gallyak mozognak'),
-	(4, '4: kisebb ágak mozognak'), (5, '5: nagyobb ágak mozognak, suhog'), (6, '6: drótkötelek zúgnak, vastag ágak mozognak'),
-	(7, '7: gallyak letörnek'), (8, '8: ágak letörnek'), (9, '9: gyengébb fák kidőlnek, épületekben kisebb károk'),
-	(10, '10: fák gyökerestül kidőlnek'), (11, '11: súlyos károk'), (12, '12: súlyos pusztítás')
-	)
-	
-	def getWeatherCodeText(self, ndx):
-		if type(ndx) == str and ndx != '':
-			ndx = int(ndx)
-		find = [x[1] for x in self.WEATHER_CODE if x[0] == ndx]
-		if len(find) > 0:
-			return find[0]
 		
 class Month:
 	def __init__(self, now=timezone.now(), year=0, month=0):
@@ -140,7 +118,7 @@ class Site(models.Model):
 	owner = models.ForeignKey('auth.user')
 	title = models.CharField(max_length = 100, unique = True)
 	comment = models.TextField(blank = True)
-	createdDate = models.DateTimeField(default = timezone.now())
+	createdDate = models.DateTimeField(auto_now_add=True)
 	isActive = models.BooleanField(default = True)
 	isPublic = models.BooleanField(default = True)
 	isDeleted = models.BooleanField(default = False)
@@ -434,7 +412,7 @@ class YearlyReport():
 
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
-	createdDate = models.DateTimeField(default = timezone.now())
+	createdDate = models.DateTimeField(auto_now_add=True)
 	comment = models.TextField(blank = True)
 	_weatherCode = models.CommaSeparatedIntegerField(max_length = 200, choices = Weather.WEATHER_CODE, blank = True)
 	windSpeed = models.IntegerField(choices = Weather.BEAUFORT_SCALE, default = 0)

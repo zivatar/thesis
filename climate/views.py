@@ -5,7 +5,8 @@ from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
-from .models import Site, Weather, Climate
+from .classes.weather import Weather
+from .models import Site, Climate
 from .models import RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
 from .models import MonthlyReport, YearlyReport
@@ -84,10 +85,9 @@ def edit_user(request, user):
 # nem aktiv user adatait ne mutassuk # vagy leghessen kulon tiltenai a sitejait
 # TODO figyelembe venni hogy feltolhet-e
 # muszer nyilvantartas
-# gravatar
 # 4 kep a siterol es 4 kep a muszerekrol, csak kulso tarhelyrol
 # jelszovaltoztatasi lehetoseg
-# climate
+# climate adatlap
 
 def guide(request):
 	return render(request, 'climate/guide.html')
