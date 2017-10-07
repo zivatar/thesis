@@ -1,40 +1,12 @@
 from django.db import models
 from django.utils import timezone
-import calendar
+
 import datetime
 import decimal
 import simplejson as json
 
 from .classes.weather import Weather
-
-
-monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
-
-
-		
-class Month:
-	def __init__(self, now=timezone.now(), year=0, month=0):
-		if year == 0 or month == 0:
-			self.year = now.year
-			self.month = now.month
-		else:
-			self.year = int(year)
-			self.month = int(month)
-		print(type(self.month))
-	def isInMonth(self, dt):
-		return self.year == dt.year and self.month == dt.month
-	def daysOfMonth(self):
-		lastDay = calendar.monthrange(self.year, self.month)[1]
-		a = []
-		[a.append(i) for i in range(1, lastDay + 1)]
-		return a
-	def daysOfMonthTillToday(self):
-		lastDay = timezone.now().day
-		a = []
-		[a.append(i) for i in range(1, lastDay + 1)]
-		return a
-	def getMonth(self):
-		return str(self.month).zfill(2)
+from .classes.month import Month
 
 class Year:
 	def monthsOfYear(self):
