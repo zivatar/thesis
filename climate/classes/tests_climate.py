@@ -21,6 +21,7 @@ class ClimateTestCase(unittest.TestCase):
 		self.assertEqual(Climate.getNrColdDays([2.5, 0.0, 9.9, -9.9]), 0)
 		self.assertEqual(Climate.getNrColdDays([]), 0)
 		self.assertEqual(Climate.getNrColdDays([-10.0, -9.9, 9.9, -10.1]), 1)
+		self.assertEqual(Climate.getNrColdDays([-10.1, -14.4, -99.9]), 3)
 
 if __name__ == '__main__':
 	unittest.main()
