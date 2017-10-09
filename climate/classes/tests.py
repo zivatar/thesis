@@ -3,6 +3,7 @@ import datetime
 from django.utils import timezone
 from .weather import Weather
 from .month import Month
+from .year import Year
 
 class WeatherTestCase(unittest.TestCase):
 
@@ -82,6 +83,13 @@ class MonthTestCase(unittest.TestCase):
 	def test_days_of_month_till_today(self):
 		today = timezone.now().day
 		self.assertEqual(Month.daysOfMonthTillToday(), list(range(1, today + 1)))
+
+class YearTestCase(unittest.TestCase):
+	'''
+	getMonth
+	'''
+	def test_get_month(self):
+		self.assertEqual(Year.monthsOfYear(), list(range(1, 13)))
 
 if __name__ == '__main__':
 	unittest.main()
