@@ -1,6 +1,8 @@
 from django.conf.urls import url
 from . import views
 from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
 	url(r'^$', views.main, name='main'),
@@ -29,5 +31,5 @@ urlpatterns = [
         auth_views.password_reset_confirm, {'template_name': 'registration/z_password_reset_confirm.html'}, name='password_reset_confirm'),
     url(r'^accounts/password_reset/complete/$', auth_views.password_reset_complete, {'template_name': 'registration/z_password_reset_complete.html'}, name='password_reset_complete'),
 	url(r'^api/hw/', views.UploadHandler.as_view(), name='upload_handler'),
-	url(r'^guide/', views.guide, name='guide'),
-]
+	url(r'^guide/', views.guide, name='guide')
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

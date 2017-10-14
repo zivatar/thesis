@@ -238,3 +238,17 @@ table.table-striped td.no {
 .gravatar {
 	border: 1px solid #444;
 }
+
+.no-padding {
+	padding: 0 !important;
+}
+
+img.upload {
+	border: 1px solid #888;
+}
+
+@media (max-width: 767px) {
+    .col-xs-12 {
+        margin-top:15px;
+    }
+}

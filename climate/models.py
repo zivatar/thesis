@@ -4,12 +4,25 @@ from django.utils import timezone
 import datetime
 import decimal
 import simplejson as json
+import os
 
 from .classes.weather import Weather
 from .classes.month import Month
 from .classes.year import Year
 from .classes.climate import Climate
-		
+
+def get_image_path_site1(instance, filename):
+	return os.path.join('uploads', 'site', str(instance.id), '1'+filename)
+
+def get_image_path_site2(instance, filename):
+	return os.path.join('uploads', 'site', str(instance.id), '2'+filename)
+
+def get_image_path_instrument1(instance, filename):
+	return os.path.join('uploads', 'instrument', str(instance.id), '1'+filename)
+
+def get_image_path_instrument2(instance, filename):
+	return os.path.join('uploads', 'instrument', str(instance.id), '2'+filename)
+
 class Site(models.Model):
 	NARROW_AREA = (
 		(1, 'kert'),
@@ -44,16 +57,21 @@ class Site(models.Model):
 	lon = models.DecimalField(max_digits = 20, decimal_places = 15)
 	narrowArea = models.IntegerField(choices = NARROW_AREA, default = 1)
 	wideArea = models.IntegerField(choices = WIDE_AREA, default = 1) # site.wideArea; site.get_wideArea_display() https://docs.djangoproject.com/en/1.9/topics/db/models/#field-options
+	primaryImage = models.ImageField(upload_to=get_image_path_site1, blank=True, null=True)
+	secondaryImage = models.ImageField(upload_to=get_image_path_site2, blank=True, null=True)
 	
 	def __str__(self):
 		return self.title
+
+
 
 class Instrument(models.Model):
 	id = models.AutoField(primary_key = True)
 	siteId = models.ForeignKey('climate.Site')
 	type = models.CharField(max_length = 50)
-	priority = models.IntegerField(default = 5)
 	isActive = models.BooleanField(default = True)
+	primaryImage = models.ImageField(upload_to=get_image_path_instrument1, blank=True, null=True)
+	secondaryImage = models.ImageField(upload_to=get_image_path_instrument2, blank=True, null=True)
 	# milyen szenzor van
 	# melyik szenzor mikor uzemelt
 

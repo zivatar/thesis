@@ -20,66 +20,94 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<span class="glyphicon glyphicon-map-marker"></span> {{ site.title }}
+		<span class="glyphicon glyphicon-map-marker"></span> Mérőállomás: {{ site.title }}
 	</div>
 	<div class="panel-body">
-			
-		<div class="tab-content">
-				
-			<div id="add_new" class="tab-pane fade in active">
-				<h1>{{ site.title }}</h1>
-						
-				<div id="google_maps_one_station" class="col-12">
+							
+			<div id="add_new">
+				<div class="col-sm-12">
+					<h1>{{ site.title }}</h1>
+				</div>
+
+				<div class="col-sm-12">
+					<div id="google_maps_one_station"></div>
+				</div>
+
+				<div class="col-sm-12">
+					<h2>Fényképek a mérőállomásról</h2>
 				</div>
 				
-				<h2>Legutóbbi észlelések</h2>
-				<div class="col-12">
-				<table class="table table-striped table-condensed observation">
-					<thead>
-						<tr>
-							<th>Dátum</th>
-							<th>Szélsebesség (Beaufort-skála)</th>
-							<th>Időjárási jelenségek</th>
-						</tr>
-					</thead>
-					<tbody>
-					{% for o in observations %}
-						<tr>
-						<td>{{ o.createdDate|date:'Y-m-d H:i' }}
-						<td>{{ o.windSpeed }}</td>
-						<td>
-								{% for wc in o.weatherCode %}
-									{% if wc %}<span class="label label-primary">{{ wc }}</span>{% endif %}
-								{% endfor %}
-						</td>
-						<tr>
-					{% endfor %}
-						<tr>
-							<td colspan=3><a href="{% url 'observations' pk=site.pk %}">További észlelések</a></td>
-						</tr>
-					</tbody>
-				</table>
+				{% if site.primaryImage or site.secondaryImage %}
+					<div class="col-sm-6 col-xs-12">
+						{% if site.primaryImage %}
+						<img class="upload" src="{{site.primaryImage.url}}" width="100%">
+						{% endif %}
+					</div>
+					<div class="col-sm-6 col-xs-12">
+						{% if site.primaryImage %}
+						<img class="upload" src="{{site.primaryImage.url}}" width="100%">
+						{% endif %}
+					</div>
+					<div class="col-sm-6 col-xs-12">
+						{% if site.secondaryImage %}
+						<img class="upload" src="{{site.secondaryImage.url}}" width="100%">
+						{% endif %}
+					</div>
+					<div class="clearfix"></div>
+				{% endif %}
+				
+
+				<div class="col-sm-12">
+					<h2>Legutóbbi észlelések</h2>
+
+					<table class="table table-striped table-condensed observation">
+						<thead>
+							<tr>
+								<th>Dátum</th>
+								<th>Szélsebesség (Beaufort-skála)</th>
+								<th>Időjárási jelenségek</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for o in observations %}
+							<tr>
+							<td>{{ o.createdDate|date:'Y-m-d H:i' }}
+							<td>{{ o.windSpeed }}</td>
+							<td>
+									{% for wc in o.weatherCode %}
+										{% if wc %}<span class="label label-primary">{{ wc }}</span>{% endif %}
+									{% endfor %}
+							</td>
+							<tr>
+						{% endfor %}
+							<tr>
+								<td colspan=3><a href="{% url 'observations' pk=site.pk %}">További észlelések</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="col-sm-12">
+					<h2><a href="{% url 'climate' pk=site.pk %}">Éghajlati napló</a></h2>
+					<h2><a href="{% url 'upload' pk=site.pk %}">Adatok feltöltése</a></h2>
 				</div>
 				
-				<h2><a href="{% url 'climate' pk=site.pk %}">Éghajlati napló</a></h2>
-				<h2><a href="{% url 'upload' pk=site.pk %}">Adatok feltöltése</a></h2>
+				<div class="col-sm-12">
+					<h2>Éghajlati adatok</h2>
 
-				<h2>Éghajlati adatok</h2>
-
-				<table class="table table-striped">
-				{% for y in ym %}
-					<tr>
-						<td colspan="12"><a href="{% url 'yearly_view' pk=site.pk year=y.year.year %}">{{ y.year.year }}</a></td>
-					</tr>
-					<tr>
-					{% for m in y.months %}
-						<td><a href="{% url 'monthly_view' site=site.pk year=m.year month=m.month %}">{{ m.month }}</a></td>
+					<table class="table table-striped">
+					{% for y in ym %}
+						<tr>
+							<td colspan="12"><a href="{% url 'yearly_view' pk=site.pk year=y.year.year %}">{{ y.year.year }}</a></td>
+						</tr>
+						<tr>
+						{% for m in y.months %}
+							<td><a href="{% url 'monthly_view' site=site.pk year=m.year month=m.month %}">{{ m.month }}</a></td>
+						{% endfor %}
+						</tr>
 					{% endfor %}
-					</tr>
-				{% endfor %}
-				</table>
-				
-			</div>
+					</table>
+				</div>	
 					
 		</div>
 
