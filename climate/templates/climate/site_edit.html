@@ -104,12 +104,16 @@
 				{% if site.primaryImage or site.secondaryImage %}
 					<div class="col-sm-6 col-xs-12">
 						{% if site.primaryImage %}
-						<img class="upload" src="{{site.primaryImage.url}}" width="100%">
+							<a href="{% url 'delete_site_image' site=site.pk number=1 %}"><img class="upload" src="{{site.primaryImage.url}}" width="100%"></a>
+						{% else %}
+							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="100%">
 						{% endif %}
 					</div>
 					<div class="col-sm-6 col-xs-12">
 						{% if site.secondaryImage %}
-						<img class="upload" src="{{site.secondaryImage.url}}" width="100%">
+							<a href="{% url 'delete_site_image' site=site.pk number=2 %}"><img class="upload" src="{{site.secondaryImage.url}}" width="100%"></a>
+						{% else %}
+							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=600&h=400" width="100%">
 						{% endif %}
 					</div>
 				{% endif %}

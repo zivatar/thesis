@@ -203,6 +203,20 @@ def observations(request, pk):
 		return render(request, 'climate/main.html', {})
 
 @login_required
+def delete_site_image(request, site, number):
+	print(number, number == 1, type(number), type(1))
+	siteObj = get_object_or_404(Site, pk=site)
+	if (siteObj.owner == request.user):
+		if (number == '1'):
+			siteObj.primaryImage.delete()
+		else:
+			siteObj.secondaryImage.delete()
+		siteObj.save()
+		return redirect(site_edit, pk=site)
+	else:
+		return render(request, 'climate/main.html', {})
+
+@login_required
 def site_edit(request, pk):
 	site = get_object_or_404(Site, pk=pk)
 	if (site.owner == request.user):

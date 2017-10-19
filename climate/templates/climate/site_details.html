@@ -38,16 +38,19 @@
 				</div>
 				
 				{% if site.primaryImage or site.secondaryImage %}
-					<div class="col-sm-6 col-xs-12">
-						{% if site.primaryImage %}
-						<img class="upload" src="{{site.primaryImage.url}}" width="100%">
-						{% endif %}
-					</div>
-					<div class="col-sm-6 col-xs-12">
-						{% if site.secondaryImage %}
-						<img class="upload" src="{{site.secondaryImage.url}}" width="100%">
-						{% endif %}
-					</div>
+					
+					{% if site.primaryImage %}
+						<div class="col-sm-6 col-xs-12">
+							<img class="upload" src="{{site.primaryImage.url}}" width="100%">
+						</div>
+					{% endif %}
+										
+					{% if site.secondaryImage %}
+						<div class="col-sm-6 col-xs-12">
+							<img class="upload" src="{{site.secondaryImage.url}}" width="100%">
+						</div>
+					{% endif %}
+					
 					<div class="clearfix"></div>
 				{% endif %}
 				
