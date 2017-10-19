@@ -207,7 +207,7 @@ def site_edit(request, pk):
 	site = get_object_or_404(Site, pk=pk)
 	if (site.owner == request.user):
 		if request.method == "POST":
-			form = SiteForm(request.POST, instance=site)
+			form = SiteForm(request.POST, request.FILES, instance=site)
 			if form.is_valid():
 				site = form.save(commit=False)
 				site.save()

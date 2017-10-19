@@ -151,12 +151,6 @@ table.observation span.label {
     letter-spacing: 10px;
 }
 
-@media screen and (min-width: 800px) {
-	#big-main-header span.with-bg {
-		background-color: #333;
-	}
-}
-
 .navbar {
 	border: 0;
 	background-color: #333;
@@ -251,4 +245,9 @@ img.upload {
     .col-xs-12 {
         margin-top:15px;
     }
+}
+
+.margin-h-2em {
+	margin-top: 2em;
+	margin-bottom: 2em;
 }

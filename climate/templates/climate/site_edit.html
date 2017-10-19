@@ -14,7 +14,7 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<span class="glyphicon glyphicon-map-marker"></span> Saját mérőhelyek
+		<span class="glyphicon glyphicon-map-marker"></span> Saját mérőhelyek szerkesztése, fényképek feltöltése
 	</div>
 	<div class="panel-body">
 			
@@ -32,7 +32,7 @@
 			<div id="add_new" class="tab-pane fade in active">
 				<h1>{{ site.title }}</h1>
 						
-				<form id="edit_site" method="post" class="post-form">{% csrf_token %}
+				<form id="edit_site" method="post" class="post-form" enctype="multipart/form-data">{% csrf_token %}
 				{{ form.non_field_errors }}
 						
 				<!--<div id="google_maps_one_marker" class="col-12 col-sm-4">
@@ -69,15 +69,28 @@
 						{% render_field form.narrowArea class+="form-control" %}
 					</div>
 				</div>
-						
-				<div class="col-12">
+
+				<div class="clearfix"></div>
+
+				<div class="col-12 margin-h-2em">
 					{{ form.comment.errors }}
 					<label for="{{ form.comment.id_for_label }}">Megjegyzés:</label>
 					{% render_field form.comment class+="form-control" placeholder="Pl. 3 emeletes ház lapos tetején találhatóak a műszerek. A kilátás kiváló a Budai-hegység irányában." value=site.comment %}
 				</div>
+
+				<div class="clearfix"></div>
+
+				<div class="col-12 margin-h-2em">
+					{{ form.comment.errors }}
+					<label for="{{ form.primaryImage.id_for_label }}">Képek módosítása:</label>
+					{% render_field form.primaryImage class+="form-control" value=site.primaryImage %}
+					{% render_field form.secondaryImage class+="form-control" value=site.secondaryImage %}
+				</div>
+
+				<div class="clearfix"></div>
 				
 				
-				<div class="col-12">
+				<div class="col-12 margin-h-2em">
 							<div class="btn-group btn-group-justified">
 								<a href="javascript:{}" class="btn btn-success" onclick="document.getElementById('edit_site').submit(); return false;">Módosítások mentése</a>
 
@@ -85,15 +98,21 @@
 								<a href="#" class="btn btn-danger">Mérőhely törlése</a>
 							</div>
 						</div>
-				
-				<div class="col-12 small_images">
-							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="23%">
-							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="23%">
-							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="23%">
-							<img class="img-thumbnail" src="https://placeholdit.imgix.net/~text?txtsize=60&txt=640%C3%97480&w=640&h=480" width="23%">
-						</div>
 						
 				</form>
+
+				{% if site.primaryImage or site.secondaryImage %}
+					<div class="col-sm-6 col-xs-12">
+						{% if site.primaryImage %}
+						<img class="upload" src="{{site.primaryImage.url}}" width="100%">
+						{% endif %}
+					</div>
+					<div class="col-sm-6 col-xs-12">
+						{% if site.secondaryImage %}
+						<img class="upload" src="{{site.secondaryImage.url}}" width="100%">
+						{% endif %}
+					</div>
+				{% endif %}
 						
 						<!--
 						<form method="POST" class="post-form">{% csrf_token %}
