@@ -52,6 +52,20 @@ def own_instrument_list(request):
 	return render(request, 'climate/instrument_list.html', {'instruments': instruments})
 
 @login_required
+def new_instrument(request):
+	if request.method == "POST":
+		form = InstrumentForm(request.POST)
+		if form.is_valid():
+			inst = form.save(commit=False)
+			inst.owner = request.user
+			inst.save()
+			return redirect(own_instrument_list)
+	else:
+		form = InstrumentForm()
+		sites = Site.objects.filter(owner=request.user)
+	return render(request, 'climate/new_instrument.html', {'sites': sites })
+
+@login_required
 def my_user(request):
 	user = request.user
 	gravatar = gr.gravatar_url(user.email)
