@@ -39,8 +39,26 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 	'widget_tweaks',
     'captcha',
-	'climate',
+    'django_nose',
+    'climate',
 )
+
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'django.zivatar@gmail.com'
+EMAIL_HOST_PASSWORD = 'QHvAF-W9j!)%A9K('
+EMAIL_PORT = 587
+
+# Use nose to run all tests
+#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# Tell nose to measure coverage on the 'foo' and 'bar' apps
+NOSE_ARGS = [
+    #'--with-coverage',
+    #'--cover-package=climate',
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -106,6 +124,9 @@ THOUSAND_SEPARATOR = ''
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_REDIRECT_URL = 'main'
 

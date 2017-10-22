@@ -6,7 +6,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from .classes.weather import Weather
-from .models import Site, Climate
+from .models import Site, Climate, Instrument
 from .models import RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
 from .models import MonthlyReport, YearlyReport
@@ -47,6 +47,11 @@ def own_site_list(request):
 	return render(request, 'climate/site_list.html', {'sites': sites})
 
 @login_required
+def own_instrument_list(request):
+	instruments = Instrument.objects.filter(owner=request.user).order_by('title')
+	return render(request, 'climate/instrument_list.html', {'instruments': instruments})
+
+@login_required
 def my_user(request):
 	user = request.user
 	gravatar = gr.gravatar_url(user.email)
@@ -81,13 +86,6 @@ def edit_user(request, user):
 	else:
 		form = UserForm(initial={"isAdmin": is_admin(userObj), "isActive": userObj.is_active, "canUpload": can_upload(userObj)})
 	return render(request, 'climate/edit_user.html', {'editUser': userObj, 'form': form, 'gravatar': gravatar})
-
-# nem aktiv user adatait ne mutassuk # vagy leghessen kulon tiltenai a sitejait
-# TODO figyelembe venni hogy feltolhet-e
-# muszer nyilvantartas
-# 4 kep a siterol es 4 kep a muszerekrol, csak kulso tarhelyrol
-# jelszovaltoztatasi lehetoseg
-# climate adatlap
 
 def guide(request):
 	return render(request, 'climate/guide.html')
