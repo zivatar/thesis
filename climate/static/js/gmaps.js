@@ -4,12 +4,20 @@ function setLatLon() { /* only placeholder */ }
 
 function GMselectOneStation() {
   var mapCanvas = document.getElementById("google_maps_one_marker");
+
+  var positions = getPos();
+  
+  console.log(positions[0]);
   var mapOptions = {
-    center: new google.maps.LatLng(47.6, 19.0),
+    center: new google.maps.LatLng(positions[0].position),
     zoom: 8,
     mapTypeId: google.maps.MapTypeId.TERRAIN
   }
   var map = new google.maps.Map(mapCanvas, mapOptions);
+
+    var pos = positions[0];
+    pos.map = map;
+    new google.maps.Marker(pos);
 
   google.maps.event.addListener(map,'click',function(event) {
   	var location = event.latLng;
