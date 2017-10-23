@@ -171,6 +171,13 @@ def site_details(request, pk):
 	else:
 		return render(request, 'climate/main.html', {})
 
+def instrument_details(request, pk):
+	instrument = get_object_or_404(Instrument, pk=pk)
+	if instrument.owner.is_active:
+		return render(request, 'climate/instrument_details.html', {'instrument': instrument})
+	else:
+		return render(request, 'climate/main.html', {})
+
 def yearly_view(request, pk, year):
 	site = get_object_or_404(Site, pk=pk)
 	yearlyList = YearlyStatistics.objects.filter(siteId = site).filter(year = year)

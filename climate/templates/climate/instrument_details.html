@@ -1,0 +1,59 @@
+{% extends 'climate/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<span class="glyphicon glyphicon-map-marker"></span> Mérőműszer: {{ instrument.title }}
+	</div>
+	<div class="panel-body">
+							
+			<div id="add_new">
+				<div class="col-sm-12">
+					<p>Típus: {{ instrument.type }}</p>
+					<p>Aktív: 
+						{% if instrument.isActive %}
+							IGEN
+						{% else %}
+							NEM
+						{% endif %}
+					</p>
+					<p>Mérőhely: <a href="{% url 'site_details' pk=instrument.siteId.pk %}">{{ instrument.siteId }}</a></p>
+					<p>Megjegyzések:
+						{% if instrument.comments %}
+							{{ instrument.comments }}
+						{% else %}
+							-
+						{% endif %}
+					</p>
+				</div>
+
+				
+				
+				{% if instrument.primaryImage or instrument.secondaryImage %}
+					<div class="col-sm-12">
+						<p>Fényképek róla:</p>
+					</div>
+					{% if instrument.primaryImage %}
+						<div class="col-sm-6 col-xs-12">
+							<img class="upload" src="{{instrument.primaryImage.url}}" width="100%">
+						</div>
+					{% endif %}
+										
+					{% if instrument.secondaryImage %}
+						<div class="col-sm-6 col-xs-12">
+							<img class="upload" src="{{instrument.secondaryImage.url}}" width="100%">
+						</div>
+					{% endif %}
+					
+					<div class="clearfix"></div>
+				{% endif %}
+				
+					
+		</div>
+
+	</div>
+</div>
+
+{% endblock content %}

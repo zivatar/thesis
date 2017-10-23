@@ -23,6 +23,7 @@ urlpatterns = [
 	url(r'^site/(?P<site>[0-9]+)/(?P<number>[0-9]+)/(?P<month>[0-9]+)$', views.monthly_view, name='monthly_view'),
 	url(r'^site/(?P<site>[0-9]+)/delete_image/(?P<number>[0-9]+)$', views.delete_site_image, name='delete_site_image'),
 	url(r'^own_instrument_list/', views.own_instrument_list, name='own_instrument_list'),
+	url(r'^instrument/(?P<pk>[0-9]+)/details$', views.instrument_details, name='instrument_details'),
 	url(r'^new_instrument/', views.new_instrument, name='new_instrument'),
 	url(r'^new_observation/', views.new_observation, name='new_observation'),
 	url(r'^accounts/login/$', auth_views.login, name='login'),
