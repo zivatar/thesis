@@ -51,7 +51,9 @@
 					<div class="clearfix"></div>
 				{% endif %}
 				
-					
+				{% if isOwner %}
+					<a href="{% url 'instrument_delete' pk=instrument.pk %}">Mérőműszer törlése</a>
+				{% endif %}					
 		</div>
 
 	</div>

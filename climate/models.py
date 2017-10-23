@@ -73,6 +73,7 @@ class Instrument(models.Model):
 	comment = models.TextField(blank = True)
 	type = models.CharField(max_length = 50)
 	isActive = models.BooleanField(default = True)
+	isDeleted = models.BooleanField(default = False)
 	primaryImage = models.ImageField(upload_to=get_image_path_instrument1, blank=True, null=True)
 	secondaryImage = models.ImageField(upload_to=get_image_path_instrument2, blank=True, null=True)
 	# milyen szenzor van

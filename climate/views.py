@@ -48,7 +48,7 @@ def own_site_list(request):
 
 @login_required
 def own_instrument_list(request):
-	instruments = Instrument.objects.filter(owner=request.user).order_by('title')
+	instruments = Instrument.objects.filter(owner=request.user).filter(isDeleted=False).order_by('title')
 	return render(request, 'climate/instrument_list.html', {'instruments': instruments})
 
 @login_required
@@ -167,15 +167,26 @@ def site_details(request, pk):
 		yearly = YearlyStatistics.objects.filter(siteId = site)
 		monthly = MonthlyStatistics.objects.filter(siteId = site)
 		ym = createYearlyMonthly(yearly, monthly)
-		instruments = Instrument.objects.filter(siteId = site).order_by('title')
+		instruments = Instrument.objects.filter(siteId = site).filter(isDeleted = False).order_by('title')
 		return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE, 'ym': ym, 'instruments': instruments})
 	else:
 		return render(request, 'climate/main.html', {})
 
 def instrument_details(request, pk):
 	instrument = get_object_or_404(Instrument, pk=pk)
-	if instrument.owner.is_active:
-		return render(request, 'climate/instrument_details.html', {'instrument': instrument})
+	if instrument.owner.is_active and not instrument.isDeleted:
+		isOwner = request.user == instrument.owner
+		return render(request, 'climate/instrument_details.html', {'instrument': instrument, 'isOwner': isOwner})
+	else:
+		return render(request, 'climate/main.html', {})
+
+@login_required
+def instrument_delete(request, pk):
+	instrument = get_object_or_404(Instrument, pk=pk)
+	if request.user == instrument.owner:
+		instrument.isDeleted = True
+		instrument.save()
+		return redirect(own_instrument_list)
 	else:
 		return render(request, 'climate/main.html', {})
 
