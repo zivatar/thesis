@@ -167,7 +167,8 @@ def site_details(request, pk):
 		yearly = YearlyStatistics.objects.filter(siteId = site)
 		monthly = MonthlyStatistics.objects.filter(siteId = site)
 		ym = createYearlyMonthly(yearly, monthly)
-		return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE, 'ym': ym})
+		instruments = Instrument.objects.filter(siteId = site).order_by('title')
+		return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE, 'ym': ym, 'instruments': instruments})
 	else:
 		return render(request, 'climate/main.html', {})
 

@@ -1,6 +1,7 @@
 {% extends 'climate/base.html' %}
 {% load staticfiles %}
 {% load widget_tweaks %}
+{% block title %}Mérőhely: {{site.title}}{% endblock %}
 {% block content %}
 <script>
 
@@ -33,12 +34,37 @@
 					<div id="google_maps_one_station"></div>
 				</div>
 
-				<div class="col-sm-12">
-					<h2>Fényképek a mérőállomásról</h2>
-				</div>
+				{% if instruments %}
+					<div class="col-sm-12">
+					<h2>Mérőműszerek a mérőállomáson</h2>
+					<table class="table table-striped" width="100%">
+					<tr>
+						<th>Név</th>
+						<th>Típus</th>
+						<th>Aktív-e</th>
+					</tr>
+					{% for instrument in instruments %}
+						<tr>
+							<td><a href="{% url 'instrument_details' pk=instrument.pk %}">{{ instrument.title }}</a></td>
+							<td>{{ instrument.type }}</td>
+							<td>
+								{% if instrument.isActive %}
+									IGEN
+								{% else %}
+									NEM
+								{% endif %}
+							</td>
+						</tr>
+					{% endfor %}
+					</table>
+					</div>
+				{% endif %}
+				
 				
 				{% if site.primaryImage or site.secondaryImage %}
-					
+					<div class="col-sm-12">
+						<h2>Fényképek a mérőállomásról</h2>
+					</div>
 					{% if site.primaryImage %}
 						<div class="col-sm-6 col-xs-12">
 							<img class="upload" src="{{site.primaryImage.url}}" width="100%">
