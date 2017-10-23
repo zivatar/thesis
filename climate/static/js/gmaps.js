@@ -6,8 +6,13 @@ function GMselectOneStation() {
   var mapCanvas = document.getElementById("google_maps_one_marker");
 
   var positions = getPos();
+  var drawPos = true;
+  if (positions == undefined) {
+    positions = [{ position: {lat: 47, lng: 19}}];
+    drawPos = false;
+  }
+  console.log(positions);
   
-  console.log(positions[0]);
   var mapOptions = {
     center: new google.maps.LatLng(positions[0].position),
     zoom: 8,
@@ -15,9 +20,11 @@ function GMselectOneStation() {
   }
   var map = new google.maps.Map(mapCanvas, mapOptions);
 
+  if (drawPos) {
     var pos = positions[0];
     pos.map = map;
     new google.maps.Marker(pos);
+  }
 
   google.maps.event.addListener(map,'click',function(event) {
   	var location = event.latLng;

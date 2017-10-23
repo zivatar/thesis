@@ -10,7 +10,7 @@ from .models import Site, Climate, Instrument
 from .models import RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
 from .models import MonthlyReport, YearlyReport
-from .forms import SiteForm, ObservationForm, DiaryForm, RegistrationForm, UserForm
+from .forms import SiteForm, ObservationForm, DiaryForm, RegistrationForm, UserForm, InstrumentForm
 from django.utils import timezone
 from re import sub
 from datetime import datetime
@@ -53,6 +53,7 @@ def own_instrument_list(request):
 
 @login_required
 def new_instrument(request):
+	sites = Site.objects.filter(owner=request.user)
 	if request.method == "POST":
 		form = InstrumentForm(request.POST)
 		if form.is_valid():
@@ -62,8 +63,7 @@ def new_instrument(request):
 			return redirect(own_instrument_list)
 	else:
 		form = InstrumentForm()
-		sites = Site.objects.filter(owner=request.user)
-	return render(request, 'climate/new_instrument.html', {'sites': sites })
+	return render(request, 'climate/new_instrument.html', {'sites': sites, 'form': form })
 
 @login_required
 def my_user(request):

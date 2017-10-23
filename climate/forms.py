@@ -1,5 +1,5 @@
 from django import forms
-from .models import Site, RawObservation, Weather, RawManualData
+from .models import Site, RawObservation, Weather, RawManualData, Instrument
 from django.contrib.auth.forms import UserCreationForm
 from captcha.fields import ReCaptchaField
 from django.contrib.auth.models import User
@@ -34,3 +34,8 @@ class UserForm(forms.Form):
 	isAdmin = forms.BooleanField(required=False, label='Admin')
 	isActive = forms.BooleanField(required=False, label='Aktív')
 	canUpload = forms.BooleanField(required=False, label='Tölthet fel adatfájlokat')
+
+class InstrumentForm(forms.ModelForm):
+	class Meta:
+		model = Instrument
+		fields = ('title', 'comment', 'siteId', 'type', 'isActive', 'primaryImage', 'secondaryImage')

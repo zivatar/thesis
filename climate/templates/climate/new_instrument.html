@@ -1,0 +1,61 @@
+{% extends 'climate/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<span class="glyphicon glyphicon-map-marker"></span> Új mérőműszer rögzítése
+	</div>
+	<div class="panel-body">
+				
+			<div id="add_new" class="tab-pane fade in active">						
+				<form class="pull-left" action="" method="POST">
+				{% csrf_token %}
+
+
+	    		<div class="col-12 margin-h-2em">
+					{{ form.title.errors }}
+					<label for="{{ form.primaryImage.id_for_label }}">Megnevezés:</label>
+					{% render_field form.title class+="form-control" required=true %}
+				</div>
+
+				<div class="col-12 margin-h-2em">
+					{{ form.siteId.errors }}
+					<label for="{{ form.siteId.id_for_label }}">Mérőhely:</label>
+					<select class="form-control" id="id_siteId" name="siteId" required="">
+						{% for s in sites %}
+							<option value="{{s.id}}">{{s.title}}</option>
+						{% endfor %}
+					</select>
+				</div>
+
+				<div class="col-12 margin-h-2em">
+					{{ form.type.errors }}
+					<label for="{{ form.type.id_for_label }}">Típus megnevezése:</label>
+					{% render_field form.type class+="form-control" required=true %}
+				</div>
+
+				<div class="col-12 margin-h-2em">
+					{{ form.isActive.errors }}
+					<label for="{{ form.isActive.id_for_label }}">Aktív-e:</label>
+					{% render_field form.isActive class+="form-control" %}
+				</div>
+
+	    		<div class="col-12 margin-h-2em">
+					{{ form.primaryImage.errors }} {{ form.secondaryImage.errors }}
+					<label for="{{ form.primaryImage.id_for_label }}">Elsődleges kép módosítása:</label>
+					{% render_field form.primaryImage class+="form-control" %}
+					<label for="{{ form.primaryImage.id_for_label }}">Másodlagos kép módosítása:</label>
+					{% render_field form.secondaryImage class+="form-control" %}
+				</div>
+
+	    		<button type="submit" class="btn btn-success">Rögzítés</button>
+				</form>
+			</div>
+
+
+	</div>
+</div>
+
+{% endblock content %}
