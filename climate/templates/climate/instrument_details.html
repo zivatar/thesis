@@ -52,7 +52,10 @@
 				{% endif %}
 				
 				{% if isOwner %}
-					<a href="{% url 'instrument_delete' pk=instrument.pk %}">Mérőműszer törlése</a>
+					<div class="col-sm-12">
+						<a href="{% url 'instrument_delete' pk=instrument.pk %}">Mérőműszer törlése</a>
+					</div>
+					
 				{% endif %}					
 		</div>
 

@@ -52,10 +52,27 @@ def own_instrument_list(request):
 	return render(request, 'climate/instrument_list.html', {'instruments': instruments})
 
 @login_required
+def site_edit(request, pk):
+	site = get_object_or_404(Site, pk=pk)
+	if (site.owner == request.user):
+		if request.method == "POST":
+			form = SiteForm(request.POST, request.FILES, instance=site)
+			if form.is_valid():
+				site = form.save(commit=False)
+				site.save()
+				return redirect(site_edit, pk=site.pk)
+		else:
+			form = SiteForm()
+			sites = Site.objects.filter(owner=request.user)
+		return render(request, 'climate/site_edit.html', {'sites': sites, 'wide_area': Site.WIDE_AREA, 'narrow_area': Site.NARROW_AREA, 'form': form, 'site': site})
+	else:
+		return render(request, 'climate/main.html', {})
+
+@login_required
 def new_instrument(request):
 	sites = Site.objects.filter(owner=request.user)
 	if request.method == "POST":
-		form = InstrumentForm(request.POST)
+		form = InstrumentForm(request.POST, request.FILES)
 		if form.is_valid():
 			inst = form.save(commit=False)
 			inst.owner = request.user
@@ -247,22 +264,7 @@ def delete_site_image(request, site, number):
 	else:
 		return render(request, 'climate/main.html', {})
 
-@login_required
-def site_edit(request, pk):
-	site = get_object_or_404(Site, pk=pk)
-	if (site.owner == request.user):
-		if request.method == "POST":
-			form = SiteForm(request.POST, request.FILES, instance=site)
-			if form.is_valid():
-				site = form.save(commit=False)
-				site.save()
-				return redirect(site_edit, pk=site.pk)
-		else:
-			form = SiteForm()
-			sites = Site.objects.filter(owner=request.user)
-		return render(request, 'climate/site_edit.html', {'sites': sites, 'wide_area': Site.WIDE_AREA, 'narrow_area': Site.NARROW_AREA, 'form': form, 'site': site})
-	else:
-		return render(request, 'climate/main.html', {})
+
 
 @login_required
 def climate(request, pk):

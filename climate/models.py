@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.template.defaultfilters import slugify
 
 import datetime
 import decimal
@@ -12,16 +13,16 @@ from .classes.year import Year
 from .classes.climate import Climate
 
 def get_image_path_site1(instance, filename):
-	return os.path.join('uploads', 'site', str(instance.id), '1'+filename)
+	return os.path.join('uploads', 'site', str(instance.id)+'1')
 
 def get_image_path_site2(instance, filename):
-	return os.path.join('uploads', 'site', str(instance.id), '2'+filename)
+	return os.path.join('uploads', 'site', str(instance.id)+'2')
 
 def get_image_path_instrument1(instance, filename):
-	return os.path.join('uploads', 'instrument', str(instance.id), '1'+filename)
+	return os.path.join('uploads', 'instrument', str(instance.siteId.pk), slugify(str(instance.title))+'1')
 
 def get_image_path_instrument2(instance, filename):
-	return os.path.join('uploads', 'instrument', str(instance.id), '2'+filename)
+	return os.path.join('uploads', 'instrument', str(instance.siteId.pk), slugify(str(instance.title))+'2')
 
 class Site(models.Model):
 	NARROW_AREA = (
