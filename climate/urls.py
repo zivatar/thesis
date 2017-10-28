@@ -16,7 +16,7 @@ urlpatterns = [
 	url(r'^site/(?P<pk>[0-9]+)/details$', views.site_details, name='site_details'),
 	url(r'^site/(?P<pk>[0-9]+)/edit$', views.site_edit, name='site_edit'),
 	url(r'^site/(?P<pk>[0-9]+)/actual_month$', views.actual_month, name='actual_month'),
-	url(r'^site/(?P<pk>[0-9]+)/upload$', views.upload, name='upload'),
+	url(r'^site/(?P<pk>[0-9]+)/upload$', views.upload_data, name='upload'),
 	url(r'^site/(?P<pk>[0-9]+)/climate$', views.climate, name='climate'),
 	url(r'^site/(?P<pk>[0-9]+)/observations$', views.observations, name='observations'),
 	url(r'^site/(?P<pk>[0-9]+)/(?P<year>[0-9]+)$', views.yearly_view, name='yearly_view'),
@@ -35,6 +35,6 @@ urlpatterns = [
     url(r'^accounts/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         auth_views.password_reset_confirm, {'template_name': 'registration/z_password_reset_confirm.html'}, name='password_reset_confirm'),
     url(r'^accounts/password_reset/complete/$', auth_views.password_reset_complete, {'template_name': 'registration/z_password_reset_complete.html'}, name='password_reset_complete'),
-	url(r'^api/hw/', views.UploadHandler.as_view(), name='upload_handler'),
+	url(r'^api/upload/', views.UploadHandler.as_view(), name='upload_handler'),
 	url(r'^guide/', views.guide, name='guide')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

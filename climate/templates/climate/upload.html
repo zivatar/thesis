@@ -2,15 +2,9 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
 {% block content %}
-<script>
 
-	var lat;
-	var lon;
-	function setLatLon(lat, lon) {
-		document.getElementById("new_site_lat").value = lat;
-		document.getElementById("new_site_lon").value = lon;
-	};
-</script>
+<script src="{% static 'js/papaparse.min.js' %}"></script>
+<script src="{% static 'js/upload.js' %}"></script>
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
@@ -21,20 +15,27 @@
 		<div class="tab-content">
 				
 			<div id="add_new" class="tab-pane fade in active">
-				<h1>Mért adatok feltöltése</h1>
+
+				<div id="site_id" class="invisible">{{site.pk}}</div>
 						
-				<!--<div class="col-6 pull-right">
-					<label><input type="checkbox" data-toggle="toggle" class="form-control">UTC időzóna használata</label>
-					<label><input type="checkbox" checked data-toggle="toggle" class="form-control">Tizedespont használata</label>
-				</div>-->
-				<form method="post" enctype="multipart/form-data" class="post-form">{% csrf_token %}
-				<div class="col-12">
-					<div class="btn-group">
-						<input type="file" name="myfile" />
-						<button type="submit" class="save btn btn-success btn-group-justified">Adatfile feltöltése</button>
+				<div id="upload_container">
+					<div id="SELECT_FILE" class="state">
+  						<p>Válaszd ki az adatforrást: <input type="file" id="csv-file" name="files"></p>
+					</div>
+
+					<div id="SELECT_COLUMNS" class="state">
+						<p>Melyik oszlop milyen adatot tartalmaz?</p>
+					</div>
+
+					<div id="UPLOAD_ROWS" class="state">
+						<p>Feltöltés alatt</p>
+						<p id="current_line">
+					</div>
+
+					<div id="FINISHED" class="state">
+						<p>Befejeződött a feltöltés</p>
 					</div>
 				</div>
-				</form>
 				
 			</div>
 					
@@ -42,5 +43,12 @@
 
 	</div>
 </div>
+
+<script>
+	$(document).ready(function(){
+    	$("#csv-file").change(handleFileSelect);
+			setState("SELECT_FILE");
+	});
+</script>
 
 {% endblock content %}

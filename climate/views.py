@@ -499,6 +499,14 @@ def upload(request, pk):
 	else:
 		return render(request, 'climate/main.html', {})
 
+@login_required
+def upload_data(request, pk):
+	site = get_object_or_404(Site, pk=pk)
+	if site.owner == request.user and site.isActive: # and request.user.can_upload:
+		return render(request, 'climate/upload.html', {'site': site})
+	else:
+		redirect(main)
+
 #@user_passes_test(can_upload)
 class UploadHandler(APIView):
 	def get(self, request, *args, **kw):
@@ -510,6 +518,7 @@ class UploadHandler(APIView):
 		return response
 	def post(self, request, *args, **kw):
 		print("asdfg")
+		print(request.user)
 		get_arg1 = request.GET.get('arg1', None)
 		get_arg2 = request.GET.get('arg2', None)
 		result = 999
