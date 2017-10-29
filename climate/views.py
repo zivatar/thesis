@@ -511,46 +511,48 @@ def upload_data(request, pk):
 class UploadHandler(APIView):
 	def post(self, request, *args, **kw):
 		if request.user != None: # and request.user.can_upload:
-			if request.data != None and request.data.get('site', None) != None:
+			if request.data != None and 'site' in request.data:
 				site = get_object_or_404(Site, pk=request.data.get('site', None))
-				if site.isActive and request.data.get('data', None) != None:
+				if site.isActive and 'data' in request.data:
 					handle_uploaded_data(site, request.data.get('data', None))
+					
 		response = Response(None, status=status.HTTP_204_NO_CONTENT)
 		return response
 
 def handle_uploaded_data(site, data):
+	firstDate = None
+	lastDate = None
 	for line in data:
-		if line.get('date', None) != None:
-			date = line.get('date', None)
+		if 'date' in line:
+			date = datetime.datetime.fromtimestamp(line.get('date', None) / 1000)
 			data, created = RawData.objects.get_or_create(siteId = site, createdDate = date)
 			
 			if firstDate == None:
 				firstDate = date
 			lastDate = date
-			data.save()
-			return
-			if created and False:
-				if process(line[2]):
-					data.pressure = process(line[2])
-				if process(line[3]):
-					data.tempIn = process(line[3])
-				if process(line[4]):
-					data.humidityIn = process(line[4])
-				if process(line[5]):
-					data.temperature = process(line[5])
-				if process(line[6]):
-					data.humidity = process(line[6])
-				if process(line[7]):
-					data.dewpoint = process(line[7])
-				if process(line[8]):
-					data.windChill = process(line[8])
-				if process(line[9]):
-					data.windSpeed = process(line[9])
-				if process(line[10]):
-					data.windDir = process(line[10])
-				if process(line[11]):
-					data.gust = process(line[11])
-				if process(line[12]):
-					data.precipitation = process(line[12])
+			
+			if created:
+				if 'dewpoint' in line:
+					data.dewpoint = line.get('dewpoint', None)
+				if 'precipitation' in line:
+					data.precipitation = line.get('precipitation', None)
+				if 'relativeHumidity' in line:
+					data.humidity = line.get('relativeHumidity', None)
+				if 'relativePressure' in line:
+					data.pressure = line.get('relativePressure', None)
+				if 'rhIndoor' in line:
+					data.humidityIn = line.get('rhIndoor', None)
+				if 'tempIndoor' in line:
+					data.tempIn = line.get('tempIndoor', None)
+				if 'temperature' in line:
+					data.temperature = line.get('temperature', None)
+				if 'windChill' in line:
+					data.windChill = line.get('windChill', None)
+				if 'windSpeed' in line:
+					data.windSpeed = line.get('windSpeed', None)
+				if 'windDirection' in line:
+					data.windDir = line.get('windDirection', None)
+				if 'windGustSpeed' in line:
+					data.gust = line.get('windGustSpeed', None)
 				data.save()
-			return firstDate, lastDate
+	return firstDate, lastDate

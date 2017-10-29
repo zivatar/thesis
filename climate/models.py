@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.template.defaultfilters import slugify
+#from django_unixdatetimefield import UnixDateTimeField
 
 import datetime
 import decimal
@@ -85,7 +86,7 @@ class RawData(models.Model):
 		unique_together = (('siteId', 'createdDate'),)
 	
 	siteId = models.ForeignKey('climate.Site')
-	createdDate = models.DateTimeField()
+	createdDate = models.DateTimeField() # UnixDateTimeField()
 	pressure = models.DecimalField(blank = True, null = True, max_digits = 5, decimal_places = 1)
 	tempIn = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
 	humidityIn = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
