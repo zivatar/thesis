@@ -509,18 +509,48 @@ def upload_data(request, pk):
 
 #@user_passes_test(can_upload)
 class UploadHandler(APIView):
-	def get(self, request, *args, **kw):
-		print("asdfg")
-		get_arg1 = request.GET.get('arg1', None)
-		get_arg2 = request.GET.get('arg2', None)
-		result = 999
-		response = Response(result, status=status.HTTP_200_OK)
-		return response
 	def post(self, request, *args, **kw):
-		print("asdfg")
-		print(request.user)
-		get_arg1 = request.GET.get('arg1', None)
-		get_arg2 = request.GET.get('arg2', None)
-		result = 999
-		response = Response(result, status=status.HTTP_200_OK)
+		if request.user != None: # and request.user.can_upload:
+			if request.data != None and request.data.get('site', None) != None:
+				site = get_object_or_404(Site, pk=request.data.get('site', None))
+				if site.isActive and request.data.get('data', None) != None:
+					handle_uploaded_data(site, request.data.get('data', None))
+		response = Response(None, status=status.HTTP_204_NO_CONTENT)
 		return response
+
+def handle_uploaded_data(site, data):
+	for line in data:
+		if line.get('date', None) != None:
+			date = line.get('date', None)
+			data, created = RawData.objects.get_or_create(siteId = site, createdDate = date)
+			
+			if firstDate == None:
+				firstDate = date
+			lastDate = date
+			data.save()
+			return
+			if created and False:
+				if process(line[2]):
+					data.pressure = process(line[2])
+				if process(line[3]):
+					data.tempIn = process(line[3])
+				if process(line[4]):
+					data.humidityIn = process(line[4])
+				if process(line[5]):
+					data.temperature = process(line[5])
+				if process(line[6]):
+					data.humidity = process(line[6])
+				if process(line[7]):
+					data.dewpoint = process(line[7])
+				if process(line[8]):
+					data.windChill = process(line[8])
+				if process(line[9]):
+					data.windSpeed = process(line[9])
+				if process(line[10]):
+					data.windDir = process(line[10])
+				if process(line[11]):
+					data.gust = process(line[11])
+				if process(line[12]):
+					data.precipitation = process(line[12])
+				data.save()
+			return firstDate, lastDate

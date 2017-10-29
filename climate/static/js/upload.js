@@ -119,11 +119,16 @@ function renderDateFormatInput() {
 
 function renderDateFormatHelp() {
   var parent = document.getElementById(currentState);
-  var p = document.createElement("P");
-  p.appendChild(document.createTextNode("YYYY: év; "));
-  p.appendChild(document.createTextNode("MM: hónap; "));
-  p.appendChild(document.createTextNode("DD: nap; "));
-  p.appendChild(document.createTextNode("hh: óra"));
+  
+  texts = ["YYYY: év", "MM: hónap", "DD: nap", "hh: óra" ];
+  for (var i = 0; i < texts.length; i++) {
+    var p = document.createElement("span");
+    p.className = "label label-info";
+    p.appendChild(document.createTextNode(texts[i]));
+    parent.appendChild(p);
+  }
+  
+  
   p.appendChild(document.createTextNode("mm: perc"));
   p.appendChild(document.createTextNode("ss: másodperc"));
   p.appendChild(document.createTextNode("a: am/pm"));
@@ -239,9 +244,7 @@ function sendData(allParams, dateFormat) {
       }, 0);
     } else {
       console.log("send at the end", dataToSend.length);
-      sendDataToServer(dataToSend, function() {
-
-      })
+      sendDataToServer(dataToSend, true)
       nextState();
       // TODO post calculate statistics
     }
@@ -253,15 +256,18 @@ function sendData(allParams, dateFormat) {
 
 /* UTILS ----------------------------------------------- */
 
-function sendDataToServer(data, callback) {
+function sendDataToServer(data, isLastPart) {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", API_URL + API_ENDPOINTS.UPLOAD_DATA, true);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
   var sendData = { 
     site: parseInt(document.getElementById("site_id").textContent),
-    data: data 
+    data: data,
   };
+  if (isLastPart) {
+    sendData.isLastPart = true;
+  }
   xhr.send(JSON.stringify(sendData));
   xhr.onload = function() {
     var data = JSON.parse(this.responseText);
