@@ -230,7 +230,8 @@ function sendData(allParams, dateFormat) {
           if (dataToSend.length >= limit) {
             //post
             console.log("send", dataToSend.length);
-            sendDataToServer(dataToSend);
+            lastLine = (l == iterations-1);
+            sendDataToServer(dataToSend, lastLine);
             dataToSend = [];
           }
         // TODO po

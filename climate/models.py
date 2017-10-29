@@ -106,7 +106,7 @@ class RawData(models.Model):
 class DailyStatistics(models.Model):
 	class Meta:
 		unique_together = (('siteId', 'date'),)
-	siteId = models.ForeignKey('climate.Site', primary_key = True)
+	siteId = models.ForeignKey('climate.Site')
 	date = models.DateTimeField()
 	dataAvailable = models.IntegerField(default = 0)
 	tempMin = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
@@ -121,7 +121,7 @@ class DailyStatistics(models.Model):
 class MonthlyStatistics(models.Model):
 	class Meta:
 		unique_together = (('year', 'month', 'siteId'),)
-	siteId = models.ForeignKey('climate.Site', primary_key = True)
+	siteId = models.ForeignKey('climate.Site')
 	year = models.IntegerField()
 	month = models.IntegerField()
 	dataAvailable = models.IntegerField(default = 0)
@@ -144,7 +144,7 @@ class MonthlyStatistics(models.Model):
 class YearlyStatistics(models.Model):
 	class Meta:
 		unique_together = (('siteId', 'year'),)
-	siteId = models.ForeignKey('climate.Site', primary_key = True)
+	siteId = models.ForeignKey('climate.Site')
 	year = models.IntegerField()
 
 class MonthlyReport():

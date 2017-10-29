@@ -26,7 +26,7 @@ from threading import Timer
 
 from .utils import gravatar as gr
 
-
+WAIT_BEFORE_CALCULATE_STATISTICS = 1
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
 def is_admin(user):
@@ -304,15 +304,10 @@ def handle_uploaded_file(f, site):
 		line = line.decode('cp437')
 		lineNumber = lineNumber + 1
 		if lineNumber > 1:
-			#data = RawData()
-			
+
 			line = sub('"', '', line).split(';')
 			date = line[1]
 			
-			#data.siteId = site
-			#data.createdDate = dtparser.parse(date + "+0100")
-			
-			#book = Book.objects.create(title="Ulysses")
 			data, created = RawData.objects.get_or_create(siteId = site, createdDate = dtparser.parse(date + "+0100"))
 			
 			if lineNumber == 2:
@@ -346,61 +341,54 @@ def handle_uploaded_file(f, site):
 	return firstDate, lastDate
 
 def create_daily_statistics(fromDate, toDate, siteId):
-	# nyari nap, hosegnap, stb
-	# fel oras csapadekosszeg maximuma
-	# jelentos csapadek volt-el
-	#
 	fromDate = fromDate.replace(hour=0, minute=0, second=0)
 	delta = toDate - fromDate
 	for i in range(delta.days + 1):
 		newObj = False
 		f = fromDate + datetime.timedelta(days = i)
-		d = DailyStatistics.objects.filter(siteId = siteId, date=f)
-		if len(d) == 0:
-			d = DailyStatistics()
-		else:
-			d = d[0]
-		d.date = f
 		t = fromDate + datetime.timedelta(days = i + 1)
 		rawDataSet1 = RawData.objects.filter(siteId = siteId)
 		rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
 							createdDate__month=f.month, 
 							createdDate__day=f.day).filter(siteId = siteId)
-		d.dataAvailable = rawDataSet.count()
-		tempMin = decimal.Decimal(99.9)
-		tempMax = decimal.Decimal(-99.9)
-		tempSum = decimal.Decimal(0.0)
-		tempNum = decimal.Decimal(0.0)
-		temps = []
-		rhs = []
-		winds = []
-		precipitation = decimal.Decimal(0.0)
-		for j in rawDataSet:
-			if j.temperature is not None:
-				tempSum = tempSum + j.temperature
-				tempNum = tempNum + 1
-				if j.temperature < tempMin:
-					tempMin = j.temperature
-				if j.temperature > tempMax:
-					tempMax = j.temperature
-				temps.append(j.temperature)
-			if j.humidity is not None:
-				rhs.append(j.humidity)
-			if j.precipitation is not None:
-				precipitation = precipitation + j.precipitation
-			if j.windDir is not None:
-				winds.append(j.windDir)
-		tempDistribution = Climate.calculateTempDistrib(temps)
-		d.tempDistribution = ''.join(str(e)+',' for e in tempDistribution)[:-1]
-		rhDistribution = Climate.calculateRhDistrib(rhs)
-		d.rhDistribution = ''.join(str(e)+',' for e in rhDistribution)[:-1]
-		windDistribution = Climate.calculateWindDistrib(winds)
-		d.windDistribution = ''.join(str(e)+',' for e in windDistribution)[:-1]
-		d.tempMin = tempMin
-		d.tempMax = tempMax
-		d.tempAvg = tempSum / tempNum
-		d.precipitation = precipitation
-		d.save()
+
+		if rawDataSet.count():
+			d, created = DailyStatistics.objects.update_or_create(siteId=siteId, date=f)
+			d.dataAvailable = rawDataSet.count()
+			tempMin = decimal.Decimal(99.9)
+			tempMax = decimal.Decimal(-99.9)
+			tempSum = decimal.Decimal(0.0)
+			tempNum = decimal.Decimal(0.0)
+			temps = []
+			rhs = []
+			winds = []
+			precipitation = decimal.Decimal(0.0)
+			for j in rawDataSet:
+				if j.temperature is not None:
+					tempSum = tempSum + j.temperature
+					tempNum = tempNum + 1
+					if j.temperature < tempMin:
+						tempMin = j.temperature
+					if j.temperature > tempMax:
+						tempMax = j.temperature
+					temps.append(j.temperature)
+				if j.humidity is not None:
+					rhs.append(j.humidity)
+				if j.precipitation is not None:
+					precipitation = precipitation + j.precipitation
+				if j.windDir is not None:
+					winds.append(j.windDir)
+			tempDistribution = Climate.calculateTempDistrib(temps)
+			d.tempDistribution = ''.join(str(e)+',' for e in tempDistribution)[:-1]
+			rhDistribution = Climate.calculateRhDistrib(rhs)
+			d.rhDistribution = ''.join(str(e)+',' for e in rhDistribution)[:-1]
+			windDistribution = Climate.calculateWindDistrib(winds)
+			d.windDistribution = ''.join(str(e)+',' for e in windDistribution)[:-1]
+			d.tempMin = tempMin
+			d.tempMax = tempMax
+			d.tempAvg = tempSum / tempNum
+			d.precipitation = precipitation
+			d.save()
 	return 1
 
 def create_monthly_statistics(fromDate, toDate, siteId):
@@ -408,65 +396,66 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 	toDate = toDate.replace(month=toDate.month+1, day=1, hour=0, minute=0, second=0)
 	f = fromDate
 	while f < toDate:
-		d = MonthlyStatistics.objects.filter(siteId = siteId, month = f.month, year = f.year)
-		if len(d) == 0:
-			d = MonthlyStatistics()
-			d.month = f.month
-			d.year = f.year
-			d.siteId = siteId
-		else:
-			d = d[0]
+
 		rawDataSet = DailyStatistics.objects.filter(date__year=f.year, 
 							date__month=f.month).filter(siteId = siteId)
-		tempmins = []
-		tempmaxs = []
-		tempavgs = []
-		precipitation = decimal.Decimal(0.0)
-		for j in rawDataSet:
-			if j.tempMin is not None:
-				tempmins.append(j.tempMin)
-			if j.tempMax is not None:
-				tempmaxs.append(j.tempMax)
-			if j.tempAvg is not None:
-				tempavgs.append(j.tempAvg)
-			if j.precipitation is not None:
-				precipitation = precipitation + j.precipitation
-		d.dataAvailable = rawDataSet.count()
-		if len(tempmins) > 0:
-			d.tempMin = min(tempmins)
-			d.tempMinAvg = sum(tempmins) / len(tempmins)
-		if len(tempmaxs) > 0:
-			d.tempMax = max(tempmaxs)
-			d.tempMaxAvg = sum(tempmaxs) / len(tempmaxs)
-		if len(tempavgs) > 0:
-			d.tempAvg = sum(tempavgs) / len(tempavgs)
-		rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
-							createdDate__month=f.month).filter(siteId = siteId)
-		temps = []
-		rhs = []
-		winds = []
-		for j in rawDataSet:
-			if j.temperature is not None:
-				temps.append(j.temperature)
-			if j.humidity is not None:
-				rhs.append(j.humidity)
-			if j.windDir is not None:
-				winds.append(j.windDir)
-		tempDistribution = Climate.calculateTempDistrib(temps)
-		d.tempDistribution = ''.join(str(e)+',' for e in tempDistribution)[:-1]
-		rhDistribution = Climate.calculateRhDistrib(rhs)
-		d.rhDistribution = ''.join(str(e)+',' for e in rhDistribution)[:-1]
-		windDistribution = Climate.calculateWindDistrib(winds)
-		d.windDistribution = ''.join(str(e)+',' for e in windDistribution)[:-1]
-		d.precipitation = precipitation
-		d.summerDays = Climate.getNrSummerDays(tempmaxs)
-		d.frostDays = Climate.getNrFrostDays(tempmins)
-		d.coldDays = Climate.getNrColdDays(tempmins)
-		d.warmNights = Climate.getNrWarmNights(tempmins)
-		d.warmDays = Climate.getNrWarmDays(tempmaxs)
-		d.hotDays = Climate.getNrHotDays(tempmaxs)
-		d.save()
-		f = f.replace(month = f.month + 1)
+		print(f.year, f.month, rawDataSet.count())
+		if rawDataSet.count():
+			d, created = MonthlyStatistics.objects.update_or_create(siteId=siteId, month=f.month, year=f.year)
+			d.dataAvailable = rawDataSet.count()
+			print(d, created)
+			tempmins = []
+			tempmaxs = []
+			tempavgs = []
+			precipitation = decimal.Decimal(0.0)
+			for j in rawDataSet:
+				if j.tempMin is not None:
+					tempmins.append(j.tempMin)
+				if j.tempMax is not None:
+					tempmaxs.append(j.tempMax)
+				if j.tempAvg is not None:
+					tempavgs.append(j.tempAvg)
+				if j.precipitation is not None:
+					precipitation = precipitation + j.precipitation
+			d.dataAvailable = rawDataSet.count()
+			if len(tempmins) > 0:
+				d.tempMin = min(tempmins)
+				d.tempMinAvg = sum(tempmins) / len(tempmins)
+			if len(tempmaxs) > 0:
+				d.tempMax = max(tempmaxs)
+				d.tempMaxAvg = sum(tempmaxs) / len(tempmaxs)
+			if len(tempavgs) > 0:
+				d.tempAvg = sum(tempavgs) / len(tempavgs)
+			rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
+								createdDate__month=f.month).filter(siteId = siteId)
+			temps = []
+			rhs = []
+			winds = []
+			for j in rawDataSet:
+				if j.temperature is not None:
+					temps.append(j.temperature)
+				if j.humidity is not None:
+					rhs.append(j.humidity)
+				if j.windDir is not None:
+					winds.append(j.windDir)
+			tempDistribution = Climate.calculateTempDistrib(temps)
+			d.tempDistribution = ''.join(str(e)+',' for e in tempDistribution)[:-1]
+			rhDistribution = Climate.calculateRhDistrib(rhs)
+			d.rhDistribution = ''.join(str(e)+',' for e in rhDistribution)[:-1]
+			windDistribution = Climate.calculateWindDistrib(winds)
+			d.windDistribution = ''.join(str(e)+',' for e in windDistribution)[:-1]
+			d.precipitation = precipitation
+			d.summerDays = Climate.getNrSummerDays(tempmaxs)
+			d.frostDays = Climate.getNrFrostDays(tempmins)
+			d.coldDays = Climate.getNrColdDays(tempmins)
+			d.warmNights = Climate.getNrWarmNights(tempmins)
+			d.warmDays = Climate.getNrWarmDays(tempmaxs)
+			d.hotDays = Climate.getNrHotDays(tempmaxs)
+			d.save()
+		if (f.month == 12):
+			f = f.replace(year = f.year + 1, month= 1)
+		else:
+			f = f.replace(month = f.month + 1)
 	return 1
 
 def create_yearly_statistics(fromDate, toDate, siteId):
@@ -520,17 +509,21 @@ def create_statistics(site):
 class UploadHandler(APIView):
 	
 	def post(self, request, *args, **kw):
-		def proc():
+		def _saveToDb():
+			handle_uploaded_data(site, request.data.get('data', None))
+
+		def _calculateStatistics():
 			create_statistics(site)
 
 		if request.user != None: # and request.user.can_upload:
 			if request.data != None and 'site' in request.data:
 				site = get_object_or_404(Site, pk=request.data.get('site', None))
 				if site.isActive and 'data' in request.data:
-					handle_uploaded_data(site, request.data.get('data', None))
 					response = Response(None, status=status.HTTP_204_NO_CONTENT)
+					t = Timer(0, _saveToDb)
+					t.start()
 					if 'isLastPart' in request.data and request.data.get('isLastPart', None):
-						t = Timer(5.0, proc)
+						t = Timer(WAIT_BEFORE_CALCULATE_STATISTICS, _calculateStatistics)
 						t.start()		
 		return response
 
