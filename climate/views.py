@@ -18,9 +18,11 @@ import dateutil.parser as dtparser
 import calendar
 import datetime
 import decimal
+import time
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from threading import Timer
 
 from .utils import gravatar as gr
 
@@ -507,16 +509,29 @@ def upload_data(request, pk):
 	else:
 		redirect(main)
 
+def create_statistics(site):
+	firstDate = RawData.objects.filter(siteId=site).order_by('createdDate')[0].createdDate
+	lastDate = RawData.objects.filter(siteId=site).order_by('-createdDate')[0].createdDate
+	create_daily_statistics(firstDate, lastDate, site)
+	create_monthly_statistics(firstDate, lastDate, site)
+	create_yearly_statistics(firstDate, lastDate, site)
+
 #@user_passes_test(can_upload)
 class UploadHandler(APIView):
+	
 	def post(self, request, *args, **kw):
+		def proc():
+			create_statistics(site)
+
 		if request.user != None: # and request.user.can_upload:
 			if request.data != None and 'site' in request.data:
 				site = get_object_or_404(Site, pk=request.data.get('site', None))
 				if site.isActive and 'data' in request.data:
 					handle_uploaded_data(site, request.data.get('data', None))
-					
-		response = Response(None, status=status.HTTP_204_NO_CONTENT)
+					response = Response(None, status=status.HTTP_204_NO_CONTENT)
+					if 'isLastPart' in request.data and request.data.get('isLastPart', None):
+						t = Timer(5.0, proc)
+						t.start()		
 		return response
 
 def handle_uploaded_data(site, data):

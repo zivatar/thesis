@@ -331,7 +331,7 @@ class YearlyReport():
 		self.year = year
 		self.monthObjs = monthObjs
 		self.yearObj = yearObj
-		self.months = Year().monthsOfYear()
+		self.months = Year.monthsOfYear()
 		self.temps ={
 			'mins': json.dumps(self.collectData('tempMin')),
 			'minAvgs': json.dumps(self.collectData('tempMinAvg')),
