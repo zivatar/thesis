@@ -1,5 +1,5 @@
 body {
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Saira', sans-serif;
 	background-color: #384351;
 	background-color: #286090;
 	color: white;
@@ -51,13 +51,20 @@ div.item {
 	box-shadow: 0 0 5px navy;
 }
 
-div.item h4 a {
-	text-decoration: underline;
+div.item h4, div.item h4 a {
 	color: black;
+	/*font-family: "Interstate Ultra Black";*/
+	font-weight: bold;
+	text-decoration: none;
+	/*font-size: 28px;*/
 }
 
 .item h4 a:hover {
 	color: #FC4A1A;
+}
+
+.before-footer {
+	margin: 10px;
 }
 
 table.table-striped  td, table.table-striped th {
@@ -128,7 +135,6 @@ table.observation span.label {
 	background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    font-family: 'Quicksand', sans-serif;
 }
 
 .text-vertical-center {

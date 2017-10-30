@@ -21,21 +21,26 @@ Zivatar.hu Éghajlati Adatbázis
 		<h3>Adatok rögzítése</i></h3>
 
 		<div class="item">
-			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'own_site_list' %}">Saját mérőhelyek listája</a></h4>
-			<p>Saját mérőhelyek megjelenítése térképen</p>
-			<p>Adatok feltöltése, megjelenítése. Manuális klímaívek kitöltése.</p>
+			<h4><a href="{% url 'own_site_list' %}"><span class="glyphicon glyphicon-home"></span> Saját mérőhelyek listája</a></h4>
+			<p>Saját mérőhelyek megjelenítése térképen.</p>
+			<p>Adatok feltöltése, megjelenítése.</p>
+			<p>Manuális klímaívek kitöltése. Aktuális időjárás észlelése.</p>
 		</div>
 		
 		<div class="item">
-			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'new_site' %}">Saját mérőhelyek nyilvántartása</a></h4>
+			<h4><a href="{% url 'new_site' %}"><span class="glyphicon glyphicon-map-marker"></span> Saját mérőhelyek nyilvántartása</a></h4>
 			<p><strong>Hol mérsz?</strong> Saját mérőhelyek felvitele, módosítása, törlése.</p>
+			<p>Mérőállomást bemutató fényképek feltöltése.</p>
 		</div>
 		<div class="item">
-			<h4><span class="glyphicon glyphicon-scale"></span> <a href="{% url 'own_instrument_list' %}">Saját mérőműszerek nyilvántartása</a></h4>
+			<h4><a href="{% url 'own_instrument_list' %}"><span class="glyphicon glyphicon-scale"></span> Saját mérőműszerek nyilvántartása</a></h4>
 			<p><strong>Mivel mérsz?</strong> Saját mérőműszerek rögzítése, lezárása.</p>
+			<p>Mérőműszert bemutató fényképek feltöltése.</p>
 		</div>
 		<div class="item">
-			<h4><span class="glyphicon glyphicon-cloud"></span> <a href="{% url 'new_observation' %}">Aktuális időjárás észlelése</a></h4>
+			<h4><a href="{% url 'new_observation' %}"><span class="glyphicon glyphicon-cloud"></span> Aktuális időjárás észlelése</a></h4>
+			<p>Aktuális időjárás gyors észlelése.</p>
+			<p>Szélsebesség, felhőzet és időjárási jelenségek leírása.</p>
 		</div>
 	</div>
 
@@ -43,7 +48,8 @@ Zivatar.hu Éghajlati Adatbázis
 		<h3>Adatok lekérése</h3>
 		<div class="item">
 			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'site_list' %}">Publikus mérőhelyek listája</a></h4>
-			<p>Publikus mérőhelyek megjelenítése térképen</p>
+			<p>Publikus mérőhelyek megjelenítése térképen.</p>
+			<p>Mért adatok és éghajlati paraméterek megjelenítése grafikonokon.</p>
 		</div>
 		
 		<div class="item">
@@ -51,13 +57,16 @@ Zivatar.hu Éghajlati Adatbázis
 			<p>Az összegyűjtött adatok lekérése egy kiválasztott helyre és időtartamra. Havi és éves statisztikák készítése, ha rendelkezésre állnak a megfelelő adatok. Ábrák és grafikonok rajzolása.</p>
 		</div>
 		<div class="item">
-			<h4><span class="glyphicon glyphicon-blackboard"></span> <a href="{% url 'guide' %}">Észlelési segédlet</a></h4>
-			<p>Segédlet az adatok rögzítéséhez és értelmezéséhez.</p>
+			<h4><span class="glyphicon glyphicon-book"></span> <a href="{% url 'guide' %}">Észlelési segédlet</a></h4>
+			<p>Tankönyv az adatok rögzítéséhez és értelmezéséhez.</p>
+			<p>Mi micsoda? Mit hogyan kell mérni és észlelni?</p>
 		</div>
 	</div>
 
-	<!--div class="col-lg-12">
-		<p>Az adatfeldolgozó- és megjelenítő rendszer az alábbi szakdolgozat részeként készült: Lernerné Lelovics Enikő Alexandra: Meteorológiai adatok nyilvántartása, megjelenítése és elemzése webes felületen</p>
-	</div-->
+	<div class="col-lg-12 before-footer">
+		<p>Az adatfeldolgozó- és megjelenítő rendszer az alábbi szakdolgozat részeként készült:
+		<br>
+		Lernerné Lelovics Enikő Alexandra: Meteorológiai adatok nyilvántartása, megjelenítése és elemzése webes felületen</p>
+	</div>
 </div>
 {% endblock content %}

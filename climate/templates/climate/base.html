@@ -3,6 +3,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
+
 	<!-- BOOTSTRAP +++++++++++++++++++++++++++++ -->
 	
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,6 +25,9 @@
 	
 	<!-- FONTS ++++++++++++++++++++++++++++++++++ -->
 	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Saira" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Saira+Semi+Condensed" rel="stylesheet">
+	<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
 	<!-- /FONTS +++++++++++++++++++++++++++++++++ -->
 	
 	<!-- CSS FILES ++++++++++++++++++++++++++++++ -->
@@ -35,7 +39,7 @@
 	
 	<script src="{% static 'js/gmaps.js' %}"></script>
 
-	<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
+	
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"></script>
 	<script src="{% static 'js/chart.js' %}"></script>
 
@@ -55,17 +59,23 @@
 <nav class="navbar navbar-inverse noradius">
 	<div class="container-fluid">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="{% url 'main' %}">Zivatar.hu Éghajlati Adatbázis</a>
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        		<span class="icon-bar"></span>
+        		<span class="icon-bar"></span>
+        		<span class="icon-bar"></span>                        
+      		</button>
+			<a class="navbar-brand" href="{% url 'main' %}">Zivatar.hu Klímaív</a>
 		</div>
+		<div class="collapse navbar-collapse" id="myNavbar">
 			<ul class="nav navbar-nav">
-				<li><a href="{% url 'site_list' %}">Publikus mérőhelyek</a></li>
-				<li><a href="{% url 'guide' %}">Észlelési segédlet</a></li>
+				<li><a href="{% url 'site_list' %}"><span class="glyphicon glyphicon-map-marker"></span> Publikus mérőhelyek</a></li>
+				<li><a href="{% url 'guide' %}"><span class="glyphicon glyphicon-book"></span> Tankönyv</a></li>
 			</ul>
 			
 			{% if user.is_authenticated %}
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="{% url 'own_site_list' %}">Saját mérőhelyek</a></li>
-					<li><a href="{% url 'my_user' %}">[<span class="glyphicon glyphicon-user"></span> {{user}}]</a></li>
+					<li><a href="{% url 'own_site_list' %}"><span class="glyphicon glyphicon-home"></span> Saját helyek</a></li>
+					<li><a href="{% url 'my_user' %}"><span class="glyphicon glyphicon-user"></span> Felhasználó</a></li>
 				</ul>
 			{% else %}
 				<ul class="nav navbar-nav navbar-right">
@@ -73,6 +83,7 @@
 					<li><a href="{% url 'login' %}">Belépés</a></li>	
 				</ul>
 			{% endif %}
+		</div>
 	</div>
 </nav>
 	
