@@ -21,27 +21,32 @@ Zivatar.hu Éghajlati Adatbázis
 		<h3>Adatok rögzítése</i></h3>
 
 		<div class="item">
+			<h4><a href="{% url 'new_observation' %}"><span class="glyphicon glyphicon-cloud"></span> Aktuális időjárás észlelése</a></h4>
+			<p>Aktuális időjárás gyors észlelése.</p>
+			<p>Szélsebesség, felhőzet és időjárási jelenségek leírása.</p>
+			<img src="{%static 'img/eszleles.jpg' %}">
+		</div>
+
+		<div class="item">
 			<h4><a href="{% url 'own_site_list' %}"><span class="glyphicon glyphicon-home"></span> Saját mérőhelyek listája</a></h4>
 			<p>Saját mérőhelyek megjelenítése térképen.</p>
 			<p>Adatok feltöltése, megjelenítése.</p>
 			<p>Manuális klímaívek kitöltése. Aktuális időjárás észlelése.</p>
+			<img src="{%static 'img/eszleles.jpg' %}">
 		</div>
-		
+
 		<div class="item">
 			<h4><a href="{% url 'new_site' %}"><span class="glyphicon glyphicon-map-marker"></span> Saját mérőhelyek nyilvántartása</a></h4>
 			<p><strong>Hol mérsz?</strong> Saját mérőhelyek felvitele, módosítása, törlése.</p>
 			<p>Mérőállomást bemutató fényképek feltöltése.</p>
+			<img src="{%static 'img/eszleles.jpg' %}">
 		</div>
 		<div class="item">
 			<h4><a href="{% url 'own_instrument_list' %}"><span class="glyphicon glyphicon-scale"></span> Saját mérőműszerek nyilvántartása</a></h4>
 			<p><strong>Mivel mérsz?</strong> Saját mérőműszerek rögzítése, lezárása.</p>
 			<p>Mérőműszert bemutató fényképek feltöltése.</p>
 		</div>
-		<div class="item">
-			<h4><a href="{% url 'new_observation' %}"><span class="glyphicon glyphicon-cloud"></span> Aktuális időjárás észlelése</a></h4>
-			<p>Aktuális időjárás gyors észlelése.</p>
-			<p>Szélsebesség, felhőzet és időjárási jelenségek leírása.</p>
-		</div>
+		
 	</div>
 
     <div class="col-lg-6">
@@ -49,17 +54,15 @@ Zivatar.hu Éghajlati Adatbázis
 		<div class="item">
 			<h4><span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'site_list' %}">Publikus mérőhelyek listája</a></h4>
 			<p>Publikus mérőhelyek megjelenítése térképen.</p>
-			<p>Mért adatok és éghajlati paraméterek megjelenítése grafikonokon.</p>
+			<p>Az összegyűjtött adatok lekérése egy kiválasztott helyre és időtartamra. Havi és éves statisztikák készítése, ha rendelkezésre állnak a megfelelő adatok. Ábrák és grafikonok rajzolása.</p>
+			<img src="{%static 'img/eszleles2.jpg' %}">
 		</div>
 		
-		<div class="item">
-			<h4><span class="glyphicon glyphicon-stats"></span> <a href="{% url 'site_list' %}">Éghajlati adatok lekérése</a></h4>
-			<p>Az összegyűjtött adatok lekérése egy kiválasztott helyre és időtartamra. Havi és éves statisztikák készítése, ha rendelkezésre állnak a megfelelő adatok. Ábrák és grafikonok rajzolása.</p>
-		</div>
 		<div class="item">
 			<h4><span class="glyphicon glyphicon-book"></span> <a href="{% url 'guide' %}">Észlelési segédlet</a></h4>
 			<p>Tankönyv az adatok rögzítéséhez és értelmezéséhez.</p>
 			<p>Mi micsoda? Mit hogyan kell mérni és észlelni?</p>
+			<img src="{%static 'img/eszleles.jpg' %}">
 		</div>
 	</div>
 

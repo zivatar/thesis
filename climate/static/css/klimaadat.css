@@ -42,13 +42,20 @@ div.graph {
 }
 
 div.item {
-	padding: 5px;
-	padding-left: 15px;
+	padding: 15px;
 	border: 1px solid navy;
 	background: white;
 	color: #286090;
-	margin-bottom: 5px;
+	margin-bottom: 1.5em;
 	box-shadow: 0 0 5px navy;
+}
+
+div.item > img {
+	margin-left: -15px;
+	margin-right: -15px;
+	margin-bottom: -15px;
+	margin-top: 5px;
+	width: calc(100% + 30px);
 }
 
 div.item h4, div.item h4 a {
