@@ -276,7 +276,7 @@ def climate(request, pk, year=None, month=None):
 	else:
 		thisMonth = Month()
 	actualData = RawManualData.objects.filter(year = thisMonth.year, month = thisMonth.month, siteId = pk)
-	return render(request, 'climate/climate.html', {'site': site, 'actualData': actualData, 'month': thisMonth})
+	return render(request, 'climate/climate.html', {'site': site, 'actualData': actualData, 'month': thisMonth, 'weatherCodes': Weather.WEATHER_CODE})
 
 
 # TODO remove

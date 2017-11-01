@@ -273,3 +273,11 @@ img.upload {
 input.narrow {
 	width: 50px;
 }
+
+.label {
+	margin: 2px;
+}
+
+.inline-block {
+	display: inline-block;	
+}
