@@ -21,6 +21,7 @@ class Weather(models.Model):
 	)
 	
 	def getWeatherCodeText(ndx=None):
+		print("Weather" + ndx)
 		if (ndx == None):
 			return;
 		if type(ndx) == str and ndx != '':

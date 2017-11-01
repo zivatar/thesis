@@ -367,7 +367,7 @@ class RawObservation(models.Model):
 		self.save()
 	@property
 	def weatherCode(self):
-		return self.convertToReadables(self._weatherCode.split(','))
+		return self.convertToReadables(self._weatherCode[:-1].split(','))
 		#return self._weatherCode.split(',')
 	@weatherCode.setter
 	def weatherCode(self, value):
@@ -378,7 +378,7 @@ class RawObservation(models.Model):
 			out.append(self.convertToReadable(o))
 		return out
 	def convertToReadable(self, code):
-		return Weather.getWeatherCodeText(Weather(), code)
+		return Weather.getWeatherCodeText(code)
 
 class RawManualData(models.Model):
 	siteId = models.ForeignKey('climate.Site')

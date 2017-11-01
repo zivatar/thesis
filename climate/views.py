@@ -269,9 +269,14 @@ def delete_site_image(request, site, number):
 
 
 @login_required
-def climate(request, pk):
+def climate(request, pk, year=None, month=None):
 	site = get_object_or_404(Site, pk=pk)
-	return render(request, 'climate/climate.html', {'site': site})
+	if year and month:
+		pass
+	else:
+		thisMonth = Month()
+	actualData = RawManualData.objects.filter(year = thisMonth.year, month = thisMonth.month, siteId = pk)
+	return render(request, 'climate/climate.html', {'site': site, 'actualData': actualData, 'month': thisMonth})
 
 
 # TODO remove

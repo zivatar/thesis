@@ -6,9 +6,11 @@ class Month:
 		if year == 0 or month == 0:
 			self.year = now.year
 			self.month = now.month
+			self._currentMonth = True
 		else:
 			self.year = int(year)
 			self.month = int(month)
+			self._currentMonth = False
 	def getDateReadable(self):
 		return str(self.year) + "." + str(self.month) + "."
 	def isInMonth(self, dt):
@@ -18,8 +20,11 @@ class Month:
 		a = []
 		[a.append(i) for i in range(1, lastDay + 1)]
 		return a
-	def daysOfMonthTillToday():
-		lastDay = timezone.now().day
+	def daysOfMonthTillToday(self):
+		if self._currentMonth:
+			lastDay = timezone.now().day
+		else:
+			lastDay = calendar.monthrange(self.year, self.month)[1]
 		a = []
 		[a.append(i) for i in range(1, lastDay + 1)]
 		return a
