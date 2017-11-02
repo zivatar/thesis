@@ -272,7 +272,10 @@ def delete_site_image(request, site, number):
 def climate(request, pk, year=None, month=None):
 	site = get_object_or_404(Site, pk=pk)
 	if year and month:
-		pass
+		realMonth = Month()
+		thisMonth = Month(year=year, month=month)
+		if thisMonth.year > realMonth.year or thisMonth.month > realMonth.month:
+			return redirect(main)
 	else:
 		thisMonth = Month()
 	actualData = RawManualData.objects.filter(year = thisMonth.year, month = thisMonth.month, siteId = pk)

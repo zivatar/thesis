@@ -18,6 +18,7 @@ urlpatterns = [
 	url(r'^site/(?P<pk>[0-9]+)/actual_month$', views.actual_month, name='actual_month'),
 	url(r'^site/(?P<pk>[0-9]+)/upload$', views.upload_data, name='upload'),
 	url(r'^site/(?P<pk>[0-9]+)/climate$', views.climate, name='climate'),
+	url(r'^site/(?P<pk>[0-9]+)/climate/(?P<year>[0-9]+)/(?P<month>[0-9]+)$', views.climate, name='climate'),
 	url(r'^site/(?P<pk>[0-9]+)/observations$', views.observations, name='observations'),
 	url(r'^site/(?P<pk>[0-9]+)/(?P<year>[0-9]+)$', views.yearly_view, name='yearly_view'),
 	url(r'^site/(?P<site>[0-9]+)/(?P<year>[0-9]+)/(?P<month>[0-9]+)$', views.monthly_view, name='monthly_view'),
