@@ -276,6 +276,8 @@ def climate(request, pk, year=None, month=None):
 		thisMonth = Month(year=year, month=month)
 		if thisMonth.year > realMonth.year or thisMonth.month > realMonth.month:
 			return redirect(main)
+		elif thisMonth.year == realMonth.year and thisMonth.month == realMonth.month:
+			thisMonth = realMonth
 	else:
 		thisMonth = Month()
 	actualData = RawManualData.objects.filter(year = thisMonth.year, month = thisMonth.month, siteId = pk)
