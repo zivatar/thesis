@@ -74,8 +74,8 @@ div.item h4, div.item h4 a {
 	margin: 10px;
 }
 
-table.table-striped  td, table.table-striped th {
-	border: 1px solid #bbb !important;
+.full-width {
+	width: 100%;
 }
 
 /*
@@ -203,17 +203,16 @@ div.panel.panel-primary > div.panel-headingx {
 	color: #FC4A1A;
 	font-size: 1.2em;
 	line-height: 1em;
-	background: white
+	background: whitesmoke;
 }
 
 .panel.panel-primary {
 	padding: 5px;
 	padding-left: 15px;
-	border: 1px solid navy;
-	background: white;
+	background: whitesmoke;
 	color: #286090;
 	margin-bottom: 5px;
-	box-shadow: 0 0 5px navy;
+	box-shadow: 0 0 15px navy;
 	border-radius: 0px;
 }
 
@@ -280,4 +279,8 @@ input.narrow {
 
 .inline-block {
 	display: inline-block;	
+}
+
+.datepicker.datepicker-dropdown th, .datepicker.datepicker-dropdown td {
+	color: black;
 }
