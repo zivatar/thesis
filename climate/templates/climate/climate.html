@@ -128,12 +128,18 @@
 	{% endfor %}
 </script>
 <script>
-$('#datePicker').datepicker({
-	minViewMode: 1,
-    maxViewMode: 2,
-    autoclose: true,
-    format: "yyyy/mm",
-    endDate: '+0d',
-});
+	$('#datePicker').datepicker({
+		minViewMode: 1,
+	    maxViewMode: 2,
+	    autoclose: true,
+	    format: "yyyy/mm",
+	    endDate: '+0d',
+	});
+
+	document.getElementById("datePicker").onchange = function() {
+		var val = document.getElementById("datePicker").value;
+		var path = "{% url 'climate' pk=site.pk %}";
+		window.location.href = (path + "/" + val);
+	};
 </script>
 {% endblock content %}
