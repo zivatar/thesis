@@ -8,6 +8,8 @@ import decimal
 import simplejson as json
 import os
 
+
+
 from .classes.weather import Weather
 from .classes.month import Month
 from .classes.year import Year
@@ -24,6 +26,7 @@ def get_image_path_instrument1(instance, filename):
 
 def get_image_path_instrument2(instance, filename):
 	return os.path.join('uploads', 'instrument', str(instance.siteId.pk), slugify(str(instance.title))+'2')
+
 
 class Site(models.Model):
 	NARROW_AREA = (
@@ -84,6 +87,8 @@ class Instrument(models.Model):
 class RawData(models.Model):
 	class Meta:
 		unique_together = (('siteId', 'createdDate'),)
+
+	#objects = BulkInsertManager()
 	
 	siteId = models.ForeignKey('climate.Site')
 	createdDate = models.DateTimeField() # UnixDateTimeField()
@@ -409,3 +414,5 @@ class DailyStat(models.Model):
 class MonthlyStat(models.Model):
 	siteId = models.ForeignKey('climate.Site')
 	date = models.DateField()
+
+

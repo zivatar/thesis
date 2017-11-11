@@ -19,6 +19,7 @@ import calendar
 import datetime
 import decimal
 import time
+import pytz
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -26,7 +27,7 @@ from threading import Timer
 
 from .utils import gravatar as gr
 
-WAIT_BEFORE_CALCULATE_STATISTICS = 1
+WAIT_BEFORE_CALCULATE_STATISTICS = 10
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
 def is_admin(user):
@@ -361,31 +362,23 @@ def create_daily_statistics(fromDate, toDate, siteId):
 		rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
 							createdDate__month=f.month, 
 							createdDate__day=f.day).filter(siteId = siteId)
-
+		precipitation = None
 		if rawDataSet.count():
 			d, created = DailyStatistics.objects.update_or_create(siteId=siteId, date=f)
 			d.dataAvailable = rawDataSet.count()
-			tempMin = decimal.Decimal(99.9)
-			tempMax = decimal.Decimal(-99.9)
-			tempSum = decimal.Decimal(0.0)
-			tempNum = decimal.Decimal(0.0)
 			temps = []
 			rhs = []
 			winds = []
-			precipitation = decimal.Decimal(0.0)
 			for j in rawDataSet:
 				if j.temperature is not None:
-					tempSum = tempSum + j.temperature
-					tempNum = tempNum + 1
-					if j.temperature < tempMin:
-						tempMin = j.temperature
-					if j.temperature > tempMax:
-						tempMax = j.temperature
 					temps.append(j.temperature)
 				if j.humidity is not None:
 					rhs.append(j.humidity)
 				if j.precipitation is not None:
-					precipitation = precipitation + j.precipitation
+					if precipitation is None:
+						precipitation = decimal.Decimal(0.0)
+					else:
+						precipitation = precipitation + j.precipitation
 				if j.windDir is not None:
 					winds.append(j.windDir)
 			tempDistribution = Climate.calculateTempDistrib(temps)
@@ -394,10 +387,12 @@ def create_daily_statistics(fromDate, toDate, siteId):
 			d.rhDistribution = ''.join(str(e)+',' for e in rhDistribution)[:-1]
 			windDistribution = Climate.calculateWindDistrib(winds)
 			d.windDistribution = ''.join(str(e)+',' for e in windDistribution)[:-1]
-			d.tempMin = tempMin
-			d.tempMax = tempMax
-			d.tempAvg = tempSum / tempNum
-			d.precipitation = precipitation
+			if len(temps) > 0:
+				tempMin = min(temps)
+				tempMax = max(temps)
+				tempAvg = sum(temps) / len(temps)
+			if precipitation is not None:
+				d.precipitation = precipitation
 			d.save()
 	return 1
 
@@ -409,11 +404,9 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 
 		rawDataSet = DailyStatistics.objects.filter(date__year=f.year, 
 							date__month=f.month).filter(siteId = siteId)
-		print(f.year, f.month, rawDataSet.count())
 		if rawDataSet.count():
 			d, created = MonthlyStatistics.objects.update_or_create(siteId=siteId, month=f.month, year=f.year)
 			d.dataAvailable = rawDataSet.count()
-			print(d, created)
 			tempmins = []
 			tempmaxs = []
 			tempavgs = []
@@ -509,11 +502,12 @@ def upload_data(request, pk):
 		redirect(main)
 
 def create_statistics(site):
-	firstDate = RawData.objects.filter(siteId=site).order_by('createdDate')[0].createdDate
-	lastDate = RawData.objects.filter(siteId=site).order_by('-createdDate')[0].createdDate
-	create_daily_statistics(firstDate, lastDate, site)
-	create_monthly_statistics(firstDate, lastDate, site)
-	create_yearly_statistics(firstDate, lastDate, site)
+	if RawData.objects.filter(siteId=site).order_by('createdDate').count() > 0:
+		firstDate = RawData.objects.filter(siteId=site).order_by('createdDate')[0].createdDate
+		lastDate = RawData.objects.filter(siteId=site).order_by('-createdDate')[0].createdDate
+		create_daily_statistics(firstDate, lastDate, site)
+		create_monthly_statistics(firstDate, lastDate, site)
+		create_yearly_statistics(firstDate, lastDate, site)
 
 #@user_passes_test(can_upload)
 class UploadHandler(APIView):
@@ -538,39 +532,26 @@ class UploadHandler(APIView):
 		return response
 
 def handle_uploaded_data(site, data):
-	firstDate = None
-	lastDate = None
-	for line in data:
-		if 'date' in line:
-			date = datetime.datetime.fromtimestamp(line.get('date', None) / 1000)
-			data, created = RawData.objects.get_or_create(siteId = site, createdDate = date)
-			
-			if firstDate == None:
-				firstDate = date
-			lastDate = date
-			
-			if created:
-				if 'dewpoint' in line:
-					data.dewpoint = line.get('dewpoint', None)
-				if 'precipitation' in line:
-					data.precipitation = line.get('precipitation', None)
-				if 'relativeHumidity' in line:
-					data.humidity = line.get('relativeHumidity', None)
-				if 'relativePressure' in line:
-					data.pressure = line.get('relativePressure', None)
-				if 'rhIndoor' in line:
-					data.humidityIn = line.get('rhIndoor', None)
-				if 'tempIndoor' in line:
-					data.tempIn = line.get('tempIndoor', None)
-				if 'temperature' in line:
-					data.temperature = line.get('temperature', None)
-				if 'windChill' in line:
-					data.windChill = line.get('windChill', None)
-				if 'windSpeed' in line:
-					data.windSpeed = line.get('windSpeed', None)
-				if 'windDirection' in line:
-					data.windDir = line.get('windDirection', None)
-				if 'windGustSpeed' in line:
-					data.gust = line.get('windGustSpeed', None)
-				data.save()
-	return firstDate, lastDate
+	start = datetime.datetime.fromtimestamp(data[0].get('date', None) / 1000, tz=pytz.timezone("Europe/Budapest"))
+	end = datetime.datetime.fromtimestamp(data[-1].get('date', None) / 1000, tz=pytz.timezone("Europe/Budapest"))
+	existing = RawData.objects.filter(createdDate__range=(start, end), siteId=site)
+	existing_dates = existing.values_list('createdDate', flat=True)
+
+	RawData.objects.bulk_create(
+		RawData(siteId = site, 
+			createdDate = datetime.datetime.fromtimestamp(line.get('date', None) / 1000, tz=pytz.timezone("Europe/Budapest")),
+			dewpoint = line.get('dewpoint', None),
+			precipitation = line.get('precipitation', None),
+			humidity = line.get('relativeHumidity', None),
+			pressure = line.get('relativePressure', None),
+			humidityIn = line.get('rhIndoor', None),
+			tempIn = line.get('tempIndoor', None),
+			temperature = line.get('temperature', None),
+			windChill = line.get('windChill', None),
+			windSpeed = line.get('windSpeed', None),
+			windDir = line.get('windDirection', None),
+			gust = line.get('windGustSpeed', None)
+			)
+		for line in data
+		if datetime.datetime.fromtimestamp(line.get('date', None) / 1000, tz=pytz.timezone("Europe/Budapest")) not in existing_dates
+	)
