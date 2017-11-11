@@ -1,0 +1,38 @@
+{% extends 'climate/base.html' %}
+{% load widget_tweaks %}
+{% block title %}Belépés{% endblock %}
+
+{% block content %}
+<div class="panel panel-primary">
+	<div class="panel-heading"><span class="glyphicon glyphicon-user"></span> Belépés</div>
+		<div class="panel-body">
+			<div class="col-12 login-form">
+				<form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <p>
+                    {{ field.label_tag }}<br>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small style="color: grey">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                    
+                    </p>
+                {% endfor %}
+                {% if form.errors %}
+                    <p style="color: red">
+                        Hibás felhasználónév vagy jelszó.
+                    </p>
+                {% endif %}
+                <button type="submit">Belépés</button>
+                <br><br>
+                <p><a href="{% url 'password_reset' %}">Elfelejtetted a jelszavad? Kérj újat!</a></p>
+                </form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
