@@ -27,9 +27,9 @@
 				<thead>
 					<tr>
 						<th>Nap</th>
-						<th>Tmin</th>
-						<th>Tmax</th>
-						<th>Csapadék</th>
+						<th>Tmin (°C)</th>
+						<th>Tmax (°C)</th>
+						<th>Csapadék (mm)</th>
 						<th>Szignifikáns jelenségek</th>
 					</tr>
 				</thead>
@@ -56,12 +56,16 @@
 				</tbody>
 			</table>
 
-			<button class="btn btn-success btn-block">Adatok beküldése</button>
+			<button id="push-data" class="btn btn-success btn-block">Adatok beküldése</button>
 		</div>
 	</div>
 </div>
 
+<script src="{% static 'js/constant.js' %}"></script>
+<script src="{% static 'js/utils.js' %}"></script>
+
 <script>
+
 	var data = {{actualData}};
 	var obsCodes = {};
 	{% for o in weatherCodes %}
@@ -126,6 +130,20 @@
 		document.getElementById("obs{{day}}").onchange = function() { handleAddObservation({{day}},"obs{{day}}") };
 		renderLabels({{day}},"obsLabels{{day}}");
 	{% endfor %}
+
+	document.getElementById("push-data").onclick = function() {
+		console.log({{month.year}});
+		console.log({{month.getMonth}});
+		console.log({{site.pk}});
+		var dataToSend = {
+			site: {{site.pk}},
+			year: {{month.year}},
+			month: {{month.getMonth}},
+			data: data
+		}
+		console.log(data);
+		sendDataToServer(API_ENDPOINTS.UPLOAD_CLIMATE_DATA, dataToSend, true)
+	}
 </script>
 <script>
 	$('#datePicker').datepicker({

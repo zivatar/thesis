@@ -1,8 +1,4 @@
-var API_URL = '/api'
-var API_ENDPOINTS = {
-  UPLOAD_DATA: "/upload/",
-  CALCULATE_STATISTICS: "/calculate"
-};
+
 
 var fileData;
 var currentState;
@@ -231,7 +227,7 @@ function sendData(allParams, dateFormat) {
             //post
             console.log("send", dataToSend.length);
             lastLine = (l == iterations-1);
-            sendDataToServer(dataToSend, lastLine);
+            sendDataToServer(API_ENDPOINTS.UPLOAD_DATA, dataToSend, lastLine);
             dataToSend = [];
           }
         // TODO po
@@ -245,7 +241,7 @@ function sendData(allParams, dateFormat) {
       }, 0);
     } else {
       console.log("send at the end", dataToSend.length);
-      sendDataToServer(dataToSend, true)
+      sendDataToServer(API_ENDPOINTS.UPLOAD_DATA, dataToSend, true)
       nextState();
       // TODO post calculate statistics
     }
@@ -257,55 +253,3 @@ function sendData(allParams, dateFormat) {
 
 /* UTILS ----------------------------------------------- */
 
-function sendDataToServer(data, isLastPart) {
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", API_URL + API_ENDPOINTS.UPLOAD_DATA, true);
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-  var sendData = { 
-    site: parseInt(document.getElementById("site_id").textContent),
-    data: data,
-  };
-  if (isLastPart) {
-    sendData.isLastPart = true;
-  }
-  xhr.send(JSON.stringify(sendData));
-  xhr.onload = function() {
-    var data = JSON.parse(this.responseText);
-    console.log(data);
-  }
-}
-
-// https://stackoverflow.com/questions/5100539/django-csrf-check-failing-with-an-ajax-post-request
-function getCookie(name) {
-  var cookieValue = null;
-  if (document.cookie && document.cookie != '') {
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = jQuery.trim(cookies[i]);
-      if (cookie.substring(0, name.length + 1) == (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
-
-function isUnique(arr) {
-  var arrUnique = arr.filter(function(item, pos) {
-    return arr.indexOf(item) == pos;
-  })
-  return arr.length == arrUnique.length;
-}
-
-// http://geniuscarrier.com/copy-object-in-javascript/
-function shallowCopy(oldObj) {
-    var newObj = {};
-    for(var i in oldObj) {
-        if(oldObj.hasOwnProperty(i)) {
-            newObj[i] = oldObj[i];
-        }
-    }
-    return newObj;
-}

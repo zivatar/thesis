@@ -184,12 +184,13 @@ class MonthlyReport():
 				if j.date.day == i:
 					hasData = True
 					prec.append(j.precipitation)
-					precDay = precDay + 1
-					if j.precipitation >= 10:
+					if j.precipitation is not None and j.precipitation > 0:
+						precDay = precDay + 1
+					if j.precipitation is not None and j.precipitation >= 10:
 						precDay10 = precDay10 + 1
-					if j.precipitation >= 30:
+					if j.precipitation is not None and j.precipitation >= 30:
 						precDay30 = precDay30 + 1
-					if j.precipitation >= 50:
+					if j.precipitation is not None and j.precipitation >= 50:
 						precDay50 = precDay50 + 1
 			if not hasData:
 				prec.append(None)
