@@ -387,6 +387,8 @@ class RawObservation(models.Model):
 		return Weather.getWeatherCodeText(code)
 
 class RawManualData(models.Model):
+	class Meta:
+		unique_together = (('year', 'month', 'day', 'siteId'),)
 	siteId = models.ForeignKey('climate.Site')
 	year = models.IntegerField(default = -1)
 	month = models.IntegerField(default = -1) # TODO year,month,siteId legyen unique

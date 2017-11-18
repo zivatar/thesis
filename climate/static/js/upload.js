@@ -227,7 +227,7 @@ function sendData(allParams, dateFormat) {
             //post
             console.log("send", dataToSend.length);
             lastLine = (l == iterations-1);
-            sendDataToServer(API_ENDPOINTS.UPLOAD_DATA, dataToSend, lastLine);
+            sendDataToServer(API_ENDPOINTS.UPLOAD_DATA, parseInt(document.getElementById("site_id").textContent), dataToSend, lastLine, true);
             dataToSend = [];
           }
         // TODO po
@@ -241,7 +241,7 @@ function sendData(allParams, dateFormat) {
       }, 0);
     } else {
       console.log("send at the end", dataToSend.length);
-      sendDataToServer(API_ENDPOINTS.UPLOAD_DATA, dataToSend, true)
+      sendDataToServer(API_ENDPOINTS.UPLOAD_DATA, parseInt(document.getElementById("site_id").textContent), dataToSend, true, true)
       nextState();
       // TODO post calculate statistics
     }
@@ -250,6 +250,3 @@ function sendData(allParams, dateFormat) {
   loop(1);
 
 }
-
-/* UTILS ----------------------------------------------- */
-

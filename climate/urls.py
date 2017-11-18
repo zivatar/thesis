@@ -37,5 +37,6 @@ urlpatterns = [
         auth_views.password_reset_confirm, {'template_name': 'registration/z_password_reset_confirm.html'}, name='password_reset_confirm'),
     url(r'^accounts/password_reset/complete/$', auth_views.password_reset_complete, {'template_name': 'registration/z_password_reset_complete.html'}, name='password_reset_complete'),
 	url(r'^api/upload/', views.UploadHandler.as_view(), name='upload_handler'),
+	url(r'^api/upload-climate/', views.UploadClimateHandler.as_view(), name='upload_climate_handler'),
 	url(r'^guide/', views.guide, name='guide')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

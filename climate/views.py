@@ -531,6 +531,51 @@ class UploadHandler(APIView):
 						t.start()		
 		return response
 
+
+#@user_passes_test(can_upload)
+class UploadClimateHandler(APIView):
+	
+	def post(self, request, *args, **kw):
+		def _saveToDb():
+			site = get_object_or_404(Site, pk=request.data.get('site'))
+			dataset = request.data["data"]
+			year = dataset.get('year')
+			month = dataset.get('month')
+			data = dataset.get('data')
+
+			for i in range(len(data)):
+				if data[i] is not None:
+					d, created = RawManualData.objects.update_or_create(
+						siteId=site,
+						year = year,
+						month = month,
+						day = i+1
+					)
+					if data[i].get('Tmin') is not None:
+						d.tMin = data[i].get('Tmin')
+					if data[i].get('Tmax') is not None:
+						d.tMax = data[i].get('Tmax')
+					if data[i].get('prec') is not None:
+						d.precAmount = data[i].get('prec')
+					if data[i].get('obs') is not None:
+						d.populateWeatherCode(data[i].get('obs'))
+					d.save()
+				
+
+		def _calculateStatistics():
+			create_statistics(site)
+
+		if request.user != None: # and request.user.can_upload:
+			if request.data != None and 'site' in request.data:
+				site = get_object_or_404(Site, pk=request.data.get('site', None))
+				if site.isActive and 'data' in request.data:
+					response = Response(None, status=status.HTTP_204_NO_CONTENT)
+					t = Timer(0, _saveToDb)
+					t.start()
+					t = Timer(WAIT_BEFORE_CALCULATE_STATISTICS, _calculateStatistics)
+					t.start()		
+		return response
+
 def handle_uploaded_data(site, data):
 	start = datetime.datetime.fromtimestamp(data[0].get('date', None) / 1000, tz=pytz.timezone("Europe/Budapest"))
 	end = datetime.datetime.fromtimestamp(data[-1].get('date', None) / 1000, tz=pytz.timezone("Europe/Budapest"))

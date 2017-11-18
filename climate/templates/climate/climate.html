@@ -99,6 +99,8 @@
 			if (value != -1) {
 				if (!data[day]) {
 					data[day] = { obs: [] }
+				} else if (!data[day].obs) {
+					data[day].obs = [];
 				}
 				if (data[day].obs.indexOf(value) == -1) {
 					data[day].obs.push(value);
@@ -136,13 +138,12 @@
 		console.log({{month.getMonth}});
 		console.log({{site.pk}});
 		var dataToSend = {
-			site: {{site.pk}},
 			year: {{month.year}},
 			month: {{month.getMonth}},
 			data: data
 		}
 		console.log(data);
-		sendDataToServer(API_ENDPOINTS.UPLOAD_CLIMATE_DATA, dataToSend, true)
+		sendDataToServer(API_ENDPOINTS.UPLOAD_CLIMATE_DATA, {{site.pk}}, dataToSend, true)
 	}
 </script>
 <script>
