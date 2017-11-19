@@ -370,10 +370,10 @@ def create_daily_statistics(fromDate, toDate, siteId):
 		newObj = False
 		f = fromDate + datetime.timedelta(days = i)
 		t = fromDate + datetime.timedelta(days = i + 1)
-		rawDataSet1 = RawData.objects.filter(siteId = siteId)
 		rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
 							createdDate__month=f.month, 
 							createdDate__day=f.day).filter(siteId = siteId)
+		manualDataSet = RawManualData.objects.filter(siteId = siteId).filter(year=f.year).filter(month=f.month).filter(day=f.day)
 		precipitation = None
 		if rawDataSet.count():
 			d, created = DailyStatistics.objects.update_or_create(siteId=siteId, date=f)
@@ -400,11 +400,20 @@ def create_daily_statistics(fromDate, toDate, siteId):
 			windDistribution = Climate.calculateWindDistrib(winds)
 			d.windDistribution = ''.join(str(e)+',' for e in windDistribution)[:-1]
 			if len(temps) > 0:
-				tempMin = min(temps)
-				tempMax = max(temps)
-				tempAvg = sum(temps) / len(temps)
+				d.tempMin = min(temps)
+				d.tempMax = max(temps)
+				d.tempAvg = sum(temps) / len(temps)
 			if precipitation is not None:
 				d.precipitation = precipitation
+			d.save()
+		if manualDataSet.count():
+			d, created = DailyStatistics.objects.update_or_create(siteId=siteId, date=f)
+			if manualDataSet[0].tMin is not None:
+				d.tempMin = manualDataSet[0].tMin
+			if manualDataSet[0].tMax is not None:
+				d.tempMax = manualDataSet[0].tMax
+			if manualDataSet[0].precAmount is not None:
+				d.precipitation = manualDataSet[0].precAmount
 			d.save()
 	return 1
 
@@ -513,13 +522,24 @@ def upload_data(request, pk):
 	else:
 		redirect(main)
 
-def create_statistics(site):
-	if RawData.objects.filter(siteId=site).order_by('createdDate').count() > 0:
-		firstDate = RawData.objects.filter(siteId=site).order_by('createdDate')[0].createdDate
-		lastDate = RawData.objects.filter(siteId=site).order_by('-createdDate')[0].createdDate
-		create_daily_statistics(firstDate, lastDate, site)
-		create_monthly_statistics(firstDate, lastDate, site)
-		create_yearly_statistics(firstDate, lastDate, site)
+def create_statistics(site, year, month):
+	if year is not None and month is not None:
+		if RawData.objects.filter(siteId=site).filter(createdDate__year=year).filter(createdDate__month=month).count() > 0 or RawManualData.objects.filter(siteId=site).filter(year=year).filter(month=month).count() > 0:
+			firstDate = datetime.datetime(year, month, 1, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
+			lastDate = datetime.datetime(year, month, Month(year=year, month=month).lastDay(), 23, 59, tzinfo=pytz.timezone("Europe/Budapest"))
+	else:
+		if RawData.objects.filter(siteId=site).count() > 0 or RawManualData.objects.filter(siteId=site).count():
+			firstDate1 = RawData.objects.filter(siteId=site).order_by('createdDate')[0].createdDate
+			lastDate1 = RawData.objects.filter(siteId=site).order_by('-createdDate')[0].createdDate
+			fd2 = RawManualData.objects.filter(siteId=site).order_by('year').order_by('month').order_by('day')[0].createdDate
+			ld2 = RawManualData.objects.filter(siteId=site).order_by('-year').order_by('-month').order_by('-day')[0].createdDate
+			firstDate2 = datetime.datetime(fd2.year, fd2.month, fd2.day, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
+			lastDate2 = datetime.datetime(ld2.year, ld2.month, ld2.day, 23, 59, tzinfo=pytz.timezone("Europe/Budapest"))
+			firstDate = min(firstDate1, firstDate2)
+			lastDate = max(lastDate1, lastDate2)
+	create_daily_statistics(firstDate, lastDate, site)
+	create_monthly_statistics(firstDate, lastDate, site)
+	create_yearly_statistics(firstDate, lastDate, site)
 
 #@user_passes_test(can_upload)
 class UploadHandler(APIView):
@@ -548,13 +568,13 @@ class UploadHandler(APIView):
 class UploadClimateHandler(APIView):
 	
 	def post(self, request, *args, **kw):
-		def _saveToDb():
-			site = get_object_or_404(Site, pk=request.data.get('site'))
-			dataset = request.data["data"]
-			year = dataset.get('year')
-			month = dataset.get('month')
-			data = dataset.get('data')
+		site = get_object_or_404(Site, pk=request.data.get('site'))
+		dataset = request.data["data"]
+		year = dataset.get('year')
+		month = dataset.get('month')
+		data = dataset.get('data')
 
+		def _saveToDb():
 			for i in range(len(data)):
 				if data[i] is not None:
 					d, created = RawManualData.objects.update_or_create(
@@ -575,7 +595,7 @@ class UploadClimateHandler(APIView):
 				
 
 		def _calculateStatistics():
-			create_statistics(site)
+			create_statistics(site, year, month)
 
 		if request.user != None: # and request.user.can_upload:
 			if request.data != None and 'site' in request.data:
@@ -584,7 +604,7 @@ class UploadClimateHandler(APIView):
 					response = Response(None, status=status.HTTP_204_NO_CONTENT)
 					t = Timer(0, _saveToDb)
 					t.start()
-					t = Timer(WAIT_BEFORE_CALCULATE_STATISTICS, _calculateStatistics)
+					t = Timer(0, _calculateStatistics)
 					t.start()		
 		return response
 

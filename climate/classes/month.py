@@ -15,6 +15,8 @@ class Month:
 		return str(self.year) + "." + str(self.month) + "."
 	def isInMonth(self, dt):
 		return self.year == dt.year and self.month == dt.month
+	def lastDay(self): # TODO test
+		return calendar.monthrange(self.year, self.month)[1]
 	def daysOfMonth(self):
 		lastDay = calendar.monthrange(self.year, self.month)[1]
 		a = []
