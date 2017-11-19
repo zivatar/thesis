@@ -12,6 +12,7 @@
 	<div class="panel-body">
 
 	<div class="row">
+
 		<div class="col-sm-6">
 			<p>Mérőhely: {{site.title}}</p>
 			<p>Aktuális hónap: {{month.year}}.{{month.getMonth}}.</p>
@@ -63,87 +64,42 @@
 
 <script src="{% static 'js/constant.js' %}"></script>
 <script src="{% static 'js/utils.js' %}"></script>
+<script src="{% static 'js/climate.js' %}"></script>
 
 <script>
 
-	var data = {{actualData}};
+	var data = {{ actualData|safe }};
+
 	var obsCodes = {};
 	{% for o in weatherCodes %}
 		obsCodes[{{o.0}}] = "{{o.1}}";
 	{% endfor %}
 
-	{% for day in month.daysOfMonthTillToday %}
-		function handleInputChange(inputName, day, elemId) {
-			var value = document.getElementById(elemId).value;
-			if (!data[day]) {
-				data[day] = {}
-			}
-			switch (inputName) {
-				case "Tmax":
-					data[day].Tmax = value == "" ? undefined : value;
-					break;
-				case "Tmin":
-					data[day].Tmin = value == "" ? undefined : value;
-					break;
-				case "prec":
-					data[day].prec = value == "" ? undefined : value;
-					break;
-			}
-			if (data[day].Tmin == undefined && data[day].Tmax == undefined && data[day].prec == undefined) {
-				data[day] = null;
-			}
-		}
-
-		function handleAddObservation(day, elemId) {
-			var value = document.getElementById(elemId).value;
-			if (value != -1) {
-				if (!data[day]) {
-					data[day] = { obs: [] }
-				} else if (!data[day].obs) {
-					data[day].obs = [];
-				}
-				if (data[day].obs.indexOf(value) == -1) {
-					data[day].obs.push(value);
-				}
-				
-				document.getElementById(elemId).value = -1;
-			}
-			renderLabels(day, "obsLabels"+day);
-		}
-
-		function renderLabels(day, elemId) {
-			var elem = document.getElementById(elemId);
-			elem.innerHTML = '';
-			if (!!data && !!data[day] && !!data[day].obs) {
-				for (var i = 0; i < data[day].obs.length; i++) {
-					var span = document.createElement("span");
-	    			span.className = "label label-info inline-block";
-	    			span.appendChild(document.createTextNode(obsCodes[data[day].obs[i]]));
-	    			elem.appendChild(span);
-	    			//console.log(obsCodes);
-				}
-			}
-			
-		}
-
-		document.getElementById("Tmax{{day}}").onchange = function() { handleInputChange("Tmax",{{day}},"Tmax{{day}}") };
-		document.getElementById("Tmin{{day}}").onchange = function() { handleInputChange("Tmin",{{day}},"Tmin{{day}}") };
-		document.getElementById("prec{{day}}").onchange = function() { handleInputChange("prec",{{day}},"prec{{day}}") };
-		document.getElementById("obs{{day}}").onchange = function() { handleAddObservation({{day}},"obs{{day}}") };
-		renderLabels({{day}},"obsLabels{{day}}");
-	{% endfor %}
-
 	document.getElementById("push-data").onclick = function() {
-		console.log({{month.year}});
-		console.log({{month.getMonth}});
-		console.log({{site.pk}});
 		var dataToSend = {
 			year: {{month.year}},
 			month: {{month.getMonth}},
 			data: data
 		}
-		console.log(data);
 		sendDataToServer(API_ENDPOINTS.UPLOAD_CLIMATE_DATA, {{site.pk}}, dataToSend, true)
+	}
+
+	window.onload = function() {
+		{% for day in month.daysOfMonthTillToday %}
+			document.getElementById("Tmax{{day}}").onchange = function() { handleInputChange("Tmax",{{day}}-1,"Tmax{{day}}") };
+			document.getElementById("Tmin{{day}}").onchange = function() { handleInputChange("Tmin",{{day}}-1,"Tmin{{day}}") };
+			document.getElementById("prec{{day}}").onchange = function() { handleInputChange("prec",{{day}}-1,"prec{{day}}") };
+			document.getElementById("obs{{day}}").onchange = function() { handleAddObservation({{day}}-1,"obs{{day}}") };
+			renderLabels({{day}}-1,"obsLabels{{day}}");
+
+			if (!!data[{{day}}-1]) {
+				document.getElementById("Tmax{{day}}").value = data[{{day}}-1].Tmax;
+				document.getElementById("Tmin{{day}}").value = data[{{day}}-1].Tmin;
+				document.getElementById("prec{{day}}").value = data[{{day}}-1].prec;
+			}
+			
+		{% endfor %}
+
 	}
 </script>
 <script>

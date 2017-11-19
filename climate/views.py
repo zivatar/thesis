@@ -20,6 +20,7 @@ import datetime
 import decimal
 import time
 import pytz
+import simplejson as json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -281,8 +282,19 @@ def climate(request, pk, year=None, month=None):
 			thisMonth = realMonth
 	else:
 		thisMonth = Month()
-	actualData = RawManualData.objects.filter(year = thisMonth.year, month = thisMonth.month, siteId = pk)
-	return render(request, 'climate/climate.html', {'site': site, 'actualData': actualData, 'month': thisMonth, 'weatherCodes': Weather.WEATHER_CODE})
+	actualDataJson = []
+	for i in thisMonth.daysOfMonthTillToday():
+		actualData = RawManualData.objects.filter(year = thisMonth.year, month = thisMonth.month, siteId = pk, day = i)
+		if len(actualData) > 0:
+			actualDataJson.append({
+				"Tmin": actualData[0].tMin,
+				"Tmax": actualData[0].tMax,
+				"prec": actualData[0].precAmount,
+				"obs": actualData[0].weatherCode
+			})
+		else:
+			actualDataJson.append(None)
+	return render(request, 'climate/climate.html', {'site': site, 'actualData': json.dumps(actualDataJson), 'month': thisMonth, 'weatherCodes': Weather.WEATHER_CODE})
 
 
 # TODO remove

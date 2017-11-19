@@ -405,7 +405,11 @@ class RawManualData(models.Model):
 		self.save()
 	@property
 	def weatherCode(self):
-		return self._weatherCode.split(',')
+		print(self._weatherCode[:-1].split(','))
+		if len(self._weatherCode[:-1]) > 0:
+			return self._weatherCode[:-1].split(',')
+		else:
+			return []
 	@weatherCode.setter
 	def weatherCode(self, value):
 		self._weatherCode = value
