@@ -237,7 +237,8 @@ def monthly_view(request, site, year, month):
 	siteObj = get_object_or_404(Site, pk=site)
 	yearly = YearlyStatistics.objects.filter(siteId = siteObj).filter(year = year)
 	monthly = MonthlyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
-	daily = DailyStatistics.objects.filter(siteId = siteObj).filter(date__year = year).filter(date__month = month)
+	daily = DailyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
+	print("SSSS",daily.count())
 	if siteObj and yearly and monthly and daily and (siteObj.isPublic and siteObj.owner.is_active or siteObj.owner == request.user):
 		climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
 		datasetNum = []
@@ -367,7 +368,6 @@ def create_daily_statistics(fromDate, toDate, siteId):
 	fromDate = fromDate.replace(hour=0, minute=0, second=0)
 	delta = toDate - fromDate
 	for i in range(delta.days + 1):
-		newObj = False
 		f = fromDate + datetime.timedelta(days = i)
 		t = fromDate + datetime.timedelta(days = i + 1)
 		rawDataSet = RawData.objects.filter(createdDate__year=f.year, 
@@ -376,7 +376,7 @@ def create_daily_statistics(fromDate, toDate, siteId):
 		manualDataSet = RawManualData.objects.filter(siteId = siteId).filter(year=f.year).filter(month=f.month).filter(day=f.day)
 		precipitation = None
 		if rawDataSet.count():
-			d, created = DailyStatistics.objects.update_or_create(siteId=siteId, date=f)
+			d, created = DailyStatistics.objects.update_or_create(siteId=siteId, year=f.year, month=f.month, day=f.day)
 			d.dataAvailable = rawDataSet.count()
 			temps = []
 			rhs = []
@@ -407,7 +407,8 @@ def create_daily_statistics(fromDate, toDate, siteId):
 				d.precipitation = precipitation
 			d.save()
 		if manualDataSet.count():
-			d, created = DailyStatistics.objects.update_or_create(siteId=siteId, date=f)
+			d, created = DailyStatistics.objects.update_or_create(siteId=siteId, year=f.year, month=f.month, day=f.day)
+			print(created)
 			if manualDataSet[0].tMin is not None:
 				d.tempMin = manualDataSet[0].tMin
 			if manualDataSet[0].tMax is not None:
@@ -423,8 +424,7 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 	f = fromDate
 	while f < toDate:
 
-		rawDataSet = DailyStatistics.objects.filter(date__year=f.year, 
-							date__month=f.month).filter(siteId = siteId)
+		rawDataSet = DailyStatistics.objects.filter(year=f.year, month=f.month).filter(siteId = siteId)
 		if rawDataSet.count():
 			d, created = MonthlyStatistics.objects.update_or_create(siteId=siteId, month=f.month, year=f.year)
 			d.dataAvailable = rawDataSet.count()
@@ -523,12 +523,15 @@ def upload_data(request, pk):
 		redirect(main)
 
 def create_statistics(site, year, month):
+	hasData = False
 	if year is not None and month is not None:
 		if RawData.objects.filter(siteId=site).filter(createdDate__year=year).filter(createdDate__month=month).count() > 0 or RawManualData.objects.filter(siteId=site).filter(year=year).filter(month=month).count() > 0:
+			hasData = True
 			firstDate = datetime.datetime(year, month, 1, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
 			lastDate = datetime.datetime(year, month, Month(year=year, month=month).lastDay(), 23, 59, tzinfo=pytz.timezone("Europe/Budapest"))
 	else:
 		if RawData.objects.filter(siteId=site).count() > 0 or RawManualData.objects.filter(siteId=site).count():
+			hasData = True
 			firstDate1 = RawData.objects.filter(siteId=site).order_by('createdDate')[0].createdDate
 			lastDate1 = RawData.objects.filter(siteId=site).order_by('-createdDate')[0].createdDate
 			fd2 = RawManualData.objects.filter(siteId=site).order_by('year').order_by('month').order_by('day')[0].createdDate
@@ -537,9 +540,10 @@ def create_statistics(site, year, month):
 			lastDate2 = datetime.datetime(ld2.year, ld2.month, ld2.day, 23, 59, tzinfo=pytz.timezone("Europe/Budapest"))
 			firstDate = min(firstDate1, firstDate2)
 			lastDate = max(lastDate1, lastDate2)
-	create_daily_statistics(firstDate, lastDate, site)
-	create_monthly_statistics(firstDate, lastDate, site)
-	create_yearly_statistics(firstDate, lastDate, site)
+	if hasData:
+		create_daily_statistics(firstDate, lastDate, site)
+		create_monthly_statistics(firstDate, lastDate, site)
+		create_yearly_statistics(firstDate, lastDate, site)
 
 #@user_passes_test(can_upload)
 class UploadHandler(APIView):

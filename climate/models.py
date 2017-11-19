@@ -110,9 +110,11 @@ class RawData(models.Model):
 	
 class DailyStatistics(models.Model):
 	class Meta:
-		unique_together = (('siteId', 'date'),)
+		unique_together = (('siteId', 'year', 'month', 'day'),)
 	siteId = models.ForeignKey('climate.Site')
-	date = models.DateTimeField()
+	year = models.IntegerField()
+	month = models.IntegerField()
+	day = models.IntegerField()
 	dataAvailable = models.IntegerField(default = 0)
 	tempMin = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
 	tempMax = models.DecimalField(blank = True, null = True, max_digits = 3, decimal_places = 1)
@@ -162,7 +164,7 @@ class MonthlyReport():
 		for i in self.days:
 			hasData = False
 			for j in self.dayObjs:
-				if j.date.day == i:
+				if j.day == i:
 					hasData = True
 					Tavg.append(j.tempAvg)
 					Tmin.append(j.tempMin)
@@ -181,7 +183,7 @@ class MonthlyReport():
 		for i in self.days:
 			hasData = False
 			for j in self.dayObjs:
-				if j.date.day == i:
+				if j.day == i:
 					hasData = True
 					prec.append(j.precipitation)
 					if j.precipitation is not None and j.precipitation > 0:
@@ -202,7 +204,7 @@ class MonthlyReport():
 			for i in self.days:
 				hasData = False
 				for j in self.dayObjs:
-					if j.date.day == i:
+					if j.day == i:
 						hasData = True
 						dailyData = j.tempDistribution
 						if dailyData != None and dailyData != "":
@@ -218,7 +220,7 @@ class MonthlyReport():
 			for i in self.days:
 				hasData = False
 				for j in self.dayObjs:
-					if j.date.day == i:
+					if j.day == i:
 						hasData = True
 						dailyData = j.rhDistribution
 						if dailyData != None and dailyData != "":
@@ -234,7 +236,7 @@ class MonthlyReport():
 			for i in self.days:
 				hasData = False
 				for j in self.dayObjs:
-					if j.date.day == i:
+					if j.day == i:
 						hasData = True
 						dailyData = j.windDistribution
 						if dailyData != None and dailyData != "":
