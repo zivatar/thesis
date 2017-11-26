@@ -55,13 +55,15 @@
 	</title>
 	
 	<!--script src="{% static 'js/charts.js' %}"></script-->
+
+	
 </head>
 
 <body>
 
 {% block before-header%}{% endblock %}
 
-<nav class="navbar navbar-inverse noradius">
+<nav id="navbar" class="navbar navbar-inverse noradius">
 	<div class="container-fluid">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -97,5 +99,19 @@
 	{% endblock %}
 </div> <!-- / narrow container -->
 
+<script type="text/javascript">
+	var header = document.getElementById("navbar");
+	var HEADER_TOP = header.offsetTop;
+
+	function handleFixHeader() {
+	  if (window.pageYOffset >= HEADER_TOP) {
+	    header.classList.add("sticky");
+	  } else {
+	    header.classList.remove("sticky");
+	  }
+	}
+
+	window.addEventListener("scroll", handleFixHeader);
+</script>
 </body>
 </html>
