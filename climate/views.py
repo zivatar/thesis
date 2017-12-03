@@ -6,7 +6,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from .classes.weather import Weather
-from .models import Site, Climate, Instrument
+from .classes.climate import Climate
+from .models import Site, Instrument
 from .models import RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
 from .models import MonthlyReport, YearlyReport
@@ -238,12 +239,22 @@ def monthly_view(request, site, year, month):
 	yearly = YearlyStatistics.objects.filter(siteId = siteObj).filter(year = year)
 	monthly = MonthlyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
 	daily = DailyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
-	print("SSSS",daily.count())
+
+
+
 	if siteObj and yearly and monthly and daily and (siteObj.isPublic and siteObj.owner.is_active or siteObj.owner == request.user):
 		climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
 		datasetNum = []
 		a = MonthlyReport(site, year, month, monthly, yearly, daily)
-		return render(request, 'climate/monthly_view.html', {'site' : siteObj, 'num': datasetNum, 'year': yearly, 'month': month, 'report': a, 'climate': climate})
+
+		significants = {}
+		for code in Weather.WEATHER_CODE:
+			key = code[1]
+			value = monthly[0].significants.get(code[0], 0)
+			significants[key] = value
+
+		return render(request, 'climate/monthly_view.html', {'site' : siteObj, 'num': datasetNum, 'year': yearly, 
+			'month': month, 'report': a, 'climate': climate, 'significants': significants})
 	else:
 		return render(request, 'climate/main.html', {})
 
@@ -420,7 +431,10 @@ def create_daily_statistics(fromDate, toDate, siteId):
 
 def create_monthly_statistics(fromDate, toDate, siteId):
 	fromDate = fromDate.replace(hour=0, minute=0, second=0, day=1)
-	toDate = toDate.replace(month=toDate.month+1, day=1, hour=0, minute=0, second=0)
+	if (toDate.month < 12):
+		toDate = toDate.replace(month=toDate.month+1, day=1, hour=0, minute=0, second=0)
+	else:
+		toDate = toDate.replace(year=toDate.year+1, month=1, day=1, hour=0, minute=0, second=0)
 	f = fromDate
 	while f < toDate:
 
@@ -475,7 +489,14 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 			d.warmNights = Climate.getNrWarmNights(tempmins)
 			d.warmDays = Climate.getNrWarmDays(tempmaxs)
 			d.hotDays = Climate.getNrHotDays(tempmaxs)
+
+			manualDataSet = RawManualData.objects.filter(siteId = siteId).filter(year=f.year).filter(month=f.month)
+			significants = {}
+			for day in manualDataSet:
+				significants = Climate.countSignificants(significants, day.weatherCode)
+			d.significants = significants
 			d.save()
+
 		if (f.month == 12):
 			f = f.replace(year = f.year + 1, month= 1)
 		else:
@@ -487,7 +508,6 @@ def create_yearly_statistics(fromDate, toDate, siteId):
 	toDate = toDate.replace(month = 12, day = 31, hour = 23, minute = 59, second = 59)
 	f = fromDate
 	while f < toDate:
-		print(f)
 		d = YearlyStatistics.objects.filter(siteId = siteId, year = f.year)
 		if len(d) == 0:
 			d = YearlyStatistics()
@@ -495,7 +515,14 @@ def create_yearly_statistics(fromDate, toDate, siteId):
 			d.siteId = siteId
 		else:
 			d = d[0]
+
+		manualDataSet = RawManualData.objects.filter(siteId = siteId).filter(year=f.year)
+		significants = {}
+		for day in manualDataSet:
+			significants = Climate.countSignificants(significants, day.weatherCode)
+		d.significants = significants
 		d.save()
+
 		f = f.replace(year = f.year + 1)
 	return 1
 	

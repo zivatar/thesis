@@ -73,34 +73,52 @@
 
 		<canvas id="chart_rh_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
 
-		<h4>A napi csapadékmennyiség menete</h4>
+		{% if report.prec %} <!-- TODO -->
+			<h4>A napi csapadékmennyiség menete</h4>
 
-		<canvas id="chart_precipitation" width="100%" height="100%" style="max-height:400px;"></canvas>
+			<canvas id="chart_precipitation" width="100%" height="100%" style="max-height:400px;"></canvas>
 
-		<h4>Napi csapadékmennyiség küszöbérték meghaladása</h4>
+			<h4>Napi csapadékmennyiség küszöbérték meghaladása</h4>
 
-		<table class="table table-striped">
+			<table class="table table-striped">
+				<tr>
+					<td>Csapadékos napok száma:</td>
+					<td>{{report.precDist.0}}</td>
+				</tr>
+				<tr>
+					<td>10mm fölötti csapadékú napok száma</td>
+					<td>{{report.precDist.10}}</td>
+				</tr>
+				<tr>
+					<td>30mm fölötti csapadékú napok száma</td>
+					<td>{{report.precDist.30}}</td>
+				</tr>
+				<tr>
+					 <td>50mm fölötti csapadékú napok száma</td>
+					 <td>{{report.precDist.50}}</td>
+				</tr>
+			</table>
+		{%	endif %}
+
+		{% if report.windDist %} <!-- TODO -->
+			<h4>A szélirány eloszlása</h4>
+			<canvas id="chart_wind" width="100%" height="100%" style="max-height:400px;"></canvas>
+		{% endif %}
+
+		<h4>Szignifikáns jelenségek</h4>
+
+		<table class="table">
 			<tr>
-				<td>Csapadékos napok száma:</td>
-				<td>{{report.precDist.0}}</td>
+				<td>Megnevezés</td>
+				<td>Napok száma</td>
 			</tr>
-			<tr>
-				<td>10mm fölötti csapadékú napok száma</td>
-				<td>{{report.precDist.10}}</td>
-			</tr>
-			<tr>
-				<td>30mm fölötti csapadékú napok száma</td>
-				<td>{{report.precDist.30}}</td>
-			</tr>
-			<tr>
-				 <td>50mm fölötti csapadékú napok száma</td>
-				 <td>{{report.precDist.50}}</td>
-			</tr>
+			{% for s,v in significants.items %}
+				<tr>
+					<td>{{s}}</td>
+					<td>{{v}}</td>
+				</tr>
+			{% endfor %}
 		</table>
-
-		<h4>A szélirány eloszlása</h4>
-
-		<canvas id="chart_wind" width="100%" height="100%" style="max-height:400px;"></canvas>
 
 	</div>
 </div>

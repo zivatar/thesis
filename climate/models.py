@@ -7,7 +7,7 @@ import datetime
 import decimal
 import simplejson as json
 import os
-
+from picklefield.fields import PickledObjectField
 
 
 from .classes.weather import Weather
@@ -147,6 +147,7 @@ class MonthlyStatistics(models.Model):
 	tempDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
 	rhDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
 	windDistribution = models.CommaSeparatedIntegerField(max_length = 200, blank = True)
+	significants = PickledObjectField(default={})
 
 class YearlyStatistics(models.Model):
 	class Meta:
@@ -253,7 +254,7 @@ class MonthlyReport():
 			'summerDays': Climate.getNrSummerDays(self.tempMins),
 			'warmDays': Climate.getNrWarmDays(self.tempMins),
 			'hotDays': Climate.getNrHotDays(self.tempMins)
-			})
+		})
 	def __init__(self, siteId, year, month, monthObjs, yearObj, dayObjs):
 		self.siteId = siteId
 		self.year = year
@@ -271,6 +272,7 @@ class MonthlyReport():
 		self.rhDist = json.dumps(self.generateRhDistribution())
 		self.prec, self.precDist = json.dumps(self.getPrecipitation()[0]), self.getPrecipitation()[1]
 		self.windDist = json.dumps(self.generateWindDistribution())
+		self.significants = json.dumps(monthObjs[0].significants)
 
 class YearlyReport():
 	class Meta:

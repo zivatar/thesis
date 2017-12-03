@@ -1,3 +1,5 @@
+from .weather import Weather
+
 class Climate(object):
 	tempDistribLimits = [-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40]
 	rhDistribLimits = [20, 40, 60, 80]
@@ -46,3 +48,12 @@ class Climate(object):
 	def calculateWindDistrib(rhs):
 		data = Climate.calculateDistribution(rhs, Climate.windDirLimits)
 		return data
+
+	@staticmethod
+	def countSignificants(significants, daily):
+		for code in Weather.WEATHER_CODE:
+			number = significants.get(code, 0)
+			if str(code[0]) in daily:
+				number = number + 1
+			significants[code[0]] = number
+		return significants
