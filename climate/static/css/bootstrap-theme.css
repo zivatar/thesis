@@ -61,13 +61,16 @@ input, select, .form-control, input[type=checkbox], input.datepicker {
 	-webkit-box-shadow: none;
 }
 
-table.table.table-striped td, table.table.table-striped th {
+table.table.table-striped td {
 	border: 0;
 }
 
-table.table.table-striped {
-	border-top: 2px solid #d6dee2;
+table.table.table-striped th {
 	border-bottom: 2px solid #d6dee2;
+}
+
+table.table.table-striped {
+	border: 2px solid #d6dee2;
 }
 
 .table-striped>tbody>tr:nth-of-type(odd) {
