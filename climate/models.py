@@ -154,7 +154,7 @@ class YearlyStatistics(models.Model):
 		unique_together = (('siteId', 'year'),)
 	siteId = models.ForeignKey('climate.Site')
 	year = models.IntegerField()
-
+	significants = PickledObjectField(default={})
 
 class MonthlyReport():
 	class Meta:

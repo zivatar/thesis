@@ -230,7 +230,15 @@ def yearly_view(request, pk, year):
 			if not added:
 				datasetNum.append({'id': i+1, 'available':0})
 		a = YearlyReport(site, year, monthly, yearly)
-		return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 'monthNames': monthList, 'num': datasetNum, 'report': a, 'climate': climate})
+
+		significants = {}
+		for code in Weather.WEATHER_CODE:
+			key = code[1]
+			value = yearly.significants.get(code[0], 0)
+			significants[key] = value
+
+		return render(request, 'climate/yearly_view.html', {'site' : site, 'year': yearly, 
+			'monthNames': monthList, 'num': datasetNum, 'report': a, 'climate': climate, 'significants': significants})
 	else:
 		return render(request, 'climate/main.html', {})
 
@@ -239,8 +247,6 @@ def monthly_view(request, site, year, month):
 	yearly = YearlyStatistics.objects.filter(siteId = siteObj).filter(year = year)
 	monthly = MonthlyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
 	daily = DailyStatistics.objects.filter(siteId = siteObj).filter(year = year).filter(month = month)
-
-
 
 	if siteObj and yearly and monthly and daily and (siteObj.isPublic and 
 		siteObj.owner.is_active or siteObj.owner == request.user):
@@ -260,7 +266,6 @@ def monthly_view(request, site, year, month):
 		return render(request, 'climate/main.html', {})
 
 # TODO add new pip dependency
-# TODO significant @ yearly
 # TODO observe significant -> stat
 
 def observations(request, pk):
@@ -510,18 +515,13 @@ def create_yearly_statistics(fromDate, toDate, siteId):
 	toDate = toDate.replace(month = 12, day = 31, hour = 23, minute = 59, second = 59)
 	f = fromDate
 	while f < toDate:
-		d = YearlyStatistics.objects.filter(siteId = siteId, year = f.year)
-		if len(d) == 0:
-			d = YearlyStatistics()
-			d.year = f.year
-			d.siteId = siteId
-		else:
-			d = d[0]
+		d, created = YearlyStatistics.objects.update_or_create(siteId=siteId, year=f.year)
 
 		manualDataSet = RawManualData.objects.filter(siteId = siteId).filter(year=f.year)
 		significants = {}
 		for day in manualDataSet:
 			significants = Climate.countSignificants(significants, day.weatherCode)
+
 		d.significants = significants
 		d.save()
 
@@ -570,8 +570,10 @@ def create_statistics(site, year, month):
 			firstDate = min(firstDate1, firstDate2)
 			lastDate = max(lastDate1, lastDate2)
 	if hasData:
+		print(4)
 		create_daily_statistics(firstDate, lastDate, site)
 		create_monthly_statistics(firstDate, lastDate, site)
+		print(3)
 		create_yearly_statistics(firstDate, lastDate, site)
 
 #@user_passes_test(can_upload)
@@ -606,6 +608,7 @@ class UploadClimateHandler(APIView):
 		year = dataset.get('year')
 		month = dataset.get('month')
 		data = dataset.get('data')
+		print(0)
 
 		def _saveToDb():
 			for i in range(len(data)):
@@ -628,6 +631,7 @@ class UploadClimateHandler(APIView):
 				
 
 		def _calculateStatistics():
+			print(9888)
 			create_statistics(site, year, month)
 
 		if request.user != None: # and request.user.can_upload:

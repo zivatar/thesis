@@ -61,6 +61,21 @@
 		<h4>A jellemző szélirány eloszlása</h4>
 
 		<canvas id="chart_wind" width="100%" height="100%" style="max-height:400px;"></canvas>
+
+		<h4>Szignifikáns jelenségek</h4>
+
+		<table class="table table-striped">
+			<tr>
+				<th>Megnevezés</th>
+				<th>Napok száma</th>
+			</tr>
+			{% for s,v in significants.items %}
+				<tr>
+					<td>{{s}}</td>
+					<td>{{v}}</td>
+				</tr>
+			{% endfor %}
+		</table>
 	</div>
 </div>
 
