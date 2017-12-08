@@ -242,7 +242,8 @@ def monthly_view(request, site, year, month):
 
 
 
-	if siteObj and yearly and monthly and daily and (siteObj.isPublic and siteObj.owner.is_active or siteObj.owner == request.user):
+	if siteObj and yearly and monthly and daily and (siteObj.isPublic and 
+		siteObj.owner.is_active or siteObj.owner == request.user):
 		climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
 		datasetNum = []
 		a = MonthlyReport(site, year, month, monthly, yearly, daily)
@@ -257,6 +258,10 @@ def monthly_view(request, site, year, month):
 			'month': month, 'report': a, 'climate': climate, 'significants': significants})
 	else:
 		return render(request, 'climate/main.html', {})
+
+# TODO add new pip dependency
+# TODO significant @ yearly
+# TODO observe significant -> stat
 
 def observations(request, pk):
 	site = get_object_or_404(Site, pk=pk)

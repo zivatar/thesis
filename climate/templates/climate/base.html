@@ -99,19 +99,5 @@
 	{% endblock %}
 </div> <!-- / narrow container -->
 
-<script type="text/javascript">
-	var header = document.getElementById("navbar");
-	var HEADER_TOP = header.offsetTop;
-
-	function handleFixHeader() {
-	  if (window.pageYOffset >= HEADER_TOP) {
-	    header.classList.add("sticky");
-	  } else {
-	    header.classList.remove("sticky");
-	  }
-	}
-
-	window.addEventListener("scroll", handleFixHeader);
-</script>
 </body>
 </html>
