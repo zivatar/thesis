@@ -273,7 +273,6 @@ def observations(request, pk):
 
 @login_required
 def delete_site_image(request, site, number):
-	print(number, number == 1, type(number), type(1))
 	siteObj = get_object_or_404(Site, pk=site)
 	if (siteObj.owner == request.user):
 		if (number == '1'):
@@ -326,7 +325,6 @@ def actual_month(request, pk):
 			diary = form.save(commit=False)
 			diary.year = thisMonth.year
 			diary.month = thisMonth.month
-			print (form)
 			diary.siteId = site
 			diary.save()
 			return redirect(actual_month, pk)
@@ -424,7 +422,6 @@ def create_daily_statistics(fromDate, toDate, siteId):
 			d.save()
 		if manualDataSet.count():
 			d, created = DailyStatistics.objects.update_or_create(siteId=siteId, year=f.year, month=f.month, day=f.day)
-			print(created)
 			if manualDataSet[0].tMin is not None:
 				d.tempMin = manualDataSet[0].tMin
 			if manualDataSet[0].tMax is not None:

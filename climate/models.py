@@ -154,7 +154,7 @@ class YearlyStatistics(models.Model):
 		unique_together = (('siteId', 'year'),)
 	siteId = models.ForeignKey('climate.Site')
 	year = models.IntegerField()
-	
+
 
 class MonthlyReport():
 	class Meta:
@@ -410,7 +410,6 @@ class RawManualData(models.Model):
 		self.save()
 	@property
 	def weatherCode(self):
-		print(self._weatherCode[:-1].split(','))
 		if len(self._weatherCode[:-1]) > 0:
 			return self._weatherCode[:-1].split(',')
 		else:
