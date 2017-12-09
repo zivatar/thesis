@@ -322,24 +322,6 @@ def climate(request, pk, year=None, month=None):
 	return render(request, 'climate/climate.html', {'site': site, 'actualData': json.dumps(actualDataJson), 'month': thisMonth, 'weatherCodes': Weather.WEATHER_CODE})
 
 
-# TODO remove
-@login_required
-def actual_month(request, pk):
-	site = get_object_or_404(Site, pk=pk)
-	thisMonth = Month()
-	actuals = RawManualData.objects.filter(year = thisMonth.year, month = thisMonth.month) # siteId = site, 
-	if request.method == "POST":
-		form = DiaryForm(request.POST)
-		if form.is_valid():
-			diary = form.save(commit=False)
-			diary.year = thisMonth.year
-			diary.month = thisMonth.month
-			diary.siteId = site
-			diary.save()
-			return redirect(actual_month, pk)
-	else:
-		form = DiaryForm()
-	return render(request, 'climate/actual_month.html', {'site' : site, 'month': thisMonth, 'weather_code': Weather.WEATHER_CODE, 'form': form, 'actuals': actuals })
 
 def process(var):
 	if var != "---":

@@ -15,7 +15,6 @@ urlpatterns = [
 	url(r'^admin/edit_user/(?P<user>[0-9]+)', views.edit_user, name='edit_user'),
 	url(r'^site/(?P<pk>[0-9]+)/details$', views.site_details, name='site_details'),
 	url(r'^site/(?P<pk>[0-9]+)/edit$', views.site_edit, name='site_edit'),
-	url(r'^site/(?P<pk>[0-9]+)/actual_month$', views.actual_month, name='actual_month'),
 	url(r'^site/(?P<pk>[0-9]+)/upload$', views.upload_data, name='upload'),
 	url(r'^site/(?P<pk>[0-9]+)/climate$', views.climate, name='climate'),
 	url(r'^site/(?P<pk>[0-9]+)/climate/(?P<year>[0-9]+)/(?P<month>[0-9]+)$', views.climate, name='climate'),

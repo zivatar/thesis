@@ -14,15 +14,9 @@
 			<div id="add_new" class="tab-pane fade in active">
 
 				<div class="btn-group btn-group-justified" role="group">
-				  <div class="btn-group" role="group">
 				    <a type="button" class="btn btn-default" href="{% url 'new_observation' %}">Új észlelés</a>
-				  </div>
-				  <div class="btn-group" role="group">
 				    <a type="button" class="btn btn-default" href="{% url 'site_details' pk=site.pk %}">Állomás adatai</a>
-				  </div>
-				  <div class="btn-group" role="group">
-				    <a type="button" class="btn btn-default" href="{% url 'actual_month' pk=site.pk %}">Éghajlati napló</a>
-				  </div>
+				    <a type="button" class="btn btn-default" href="{% url 'climate' pk=site.pk %}">Éghajlati napló</a>
 				</div>
 
 				<h2>Észlelések</h2>

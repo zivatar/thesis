@@ -18,7 +18,9 @@
 				
 			<div id="add_new" class="tab-pane fade in active">
 
-				<div id="site_id" class="invisible">{{site.pk}}</div>
+				<p>Mérőhely: <a href="{% url 'site_details' pk=site.pk %}">{{site.title}}</a></p>
+
+				<div id="site_id" class="hidden">{{site.pk}}</div>
 						
 				<div id="upload_container">
 					<div id="SELECT_FILE" class="state">

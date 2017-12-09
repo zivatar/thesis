@@ -1,8 +1,16 @@
 .btn, span.label {
 	border-radius: 0;
-	border: 1px solid black;
+	border: 0px solid black;
 	background-image: inherit;
 	text-shadow: initial;
+}
+
+.btn-group .btn, .btn-group span.label {
+	border-right: 3px solid;
+}
+
+.btn-group .btn:last-child, .btn-group span.label:last-child:after {
+	border-right: 0px;
 }
 
 .btn.btn-success {
@@ -16,7 +24,7 @@
 
 .btn.btn-default {
 	background-color: #485563;
-	border-color: #263341;
+	border-color: whitesmoke;
 	color: white;
 }
 
