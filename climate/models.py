@@ -254,6 +254,21 @@ class MonthlyReport():
 			'warmDays': Climate.getNrWarmDays(self.tempMins),
 			'hotDays': Climate.getNrHotDays(self.tempMins)
 		})
+	def calculateDataAvailable(self):
+		temp = Climate.number(self.tempMins) > 0 and Climate.number(self.tempMaxs) > 0
+		tempDist = Climate.number2(self.generateTempDistribution()) > 0
+		rhDist = Climate.number2(self.generateRhDistribution()) > 0
+		prec = Climate.number(self.getPrecipitation()[0]) > 0
+		windDist = Climate.number2(self.generateWindDistribution()) > 0
+		sign = Climate.number(self.monthObjs[0].significants) > 0
+		return {
+			"temp": temp,
+			"tempDist": tempDist,
+			"rhDist": rhDist,
+			"prec": prec,
+			"windDist": windDist,
+			"sign": sign
+		}
 	def __init__(self, siteId, year, month, monthObjs, yearObj, dayObjs):
 		self.siteId = siteId
 		self.year = year
@@ -264,14 +279,20 @@ class MonthlyReport():
 		self.days = Month(year=self.year, month=self.month).daysOfMonth()
 		self.tempMins, self.tempAvgs, self.tempMaxs = self.generateTemperatures()
 		self.indices = self.calculateIndices()
-		self.tempMins = json.dumps(self.tempMins)
-		self.tempAvgs = json.dumps(self.tempAvgs)
-		self.tempMaxs = json.dumps(self.tempMaxs)
 		self.tempDist = json.dumps(self.generateTempDistribution())
 		self.rhDist = json.dumps(self.generateRhDistribution())
 		self.prec, self.precDist = json.dumps(self.getPrecipitation()[0]), self.getPrecipitation()[1]
 		self.windDist = json.dumps(self.generateWindDistribution())
 		self.significants = json.dumps(monthObjs[0].significants)
+		self.precipitation = Climate.sum(self.getPrecipitation()[0])
+		self.tmin = Climate.avg(self.tempMins)
+		self.tmax = Climate.avg(self.tempMaxs)
+		self.tavg = Climate.avg2(self.tempMins, self.tempMaxs)
+		self.dataAvailable = self.calculateDataAvailable()
+		self.tempMins = json.dumps(self.tempMins)
+		self.tempAvgs = json.dumps(self.tempAvgs)
+		self.tempMaxs = json.dumps(self.tempMaxs)
+		
 
 class YearlyReport():
 	class Meta:

@@ -28,6 +28,23 @@ class Climate(object):
 		return sum
 
 	@staticmethod
+	def number(list):
+		num = 0
+		for i in list:
+			if i is not None:
+				num = num + 1
+		return num
+
+	@staticmethod
+	def number2(list):
+		num = 0
+		for i in list:
+			for j in i:
+				if j is not None:
+					num = num + 1
+		return num
+
+	@staticmethod
 	def avg(list):
 		sum = 0.0
 		num = 0

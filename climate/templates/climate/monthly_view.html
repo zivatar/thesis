@@ -14,32 +14,49 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<span class="glyphicon glyphicon-map-marker"></span> <a href="{% url 'site_list' %}">Meteorológiai állomások</a> >> <a href="{% url 'site_details' pk=site.pk %}">{{ site.title }}</a> >> <a href="{% url 'yearly_view' pk=site.pk year=report.year %}">{{ report.year }}</a> >> {{ report.month }}
+		<span class="glyphicon glyphicon-map-marker"></span> {{site.title}} havi adatai: {{report.year}}.{{report.month}}.
 	</div>
 	<div class="panel-body">
 
-		
+		{{report.dataAvailable}}
 
 		<table class="table table-striped">
 			<tr>
-				<td>Év</td>
-				<td>{{report.year}}</td>
+				<td>Mérőállomás</td>
+				<td><a href="{% url 'site_details' pk=site.pk %}">{{ site.title }}</a></td>
 			</tr>
 			<tr>
-				<td>Hónap</td>
-				<td>{{report.month}}</td>
+				<td>Év</td>
+				<td><a href="{% url 'yearly_view' pk=site.pk year=report.year %}">{{report.year}}</a></td>
+			</tr>
+			<tr>
+				<td>Összes csapadék</td>
+				<td>{{report.precipitation}} mm</td>
+			</tr>
+			<tr>
+				<td>Átlagos minimumhőmérséklet</td>
+				<td>{{report.tmin}} °C</td>
+			</tr>
+			<tr>
+				<td>Átlagos középhőmérséklet</td>
+				<td>{{report.tavg}} °C</td>
+			</tr>
+			<tr>
+				<td>Átlagos maximumhőmérséklet</td>
+				<td>{{report.tmax}} °C</td>
 			</tr>
 		</table>
 
-		<h4>Havi hőmérsékleti szélsőértékek és átlag</h4>
+		{% if report.dataAvailable.temp %}
+			<h4>Havi hőmérsékleti szélsőértékek és átlag (°C)</h4>
+			<canvas id="chart_temperature" width="100%" height="100%" style="max-height:400px;"></canvas>
+		{% endif %}
 
-		<canvas id="chart_temperature" width="100%" height="100%" style="max-height:400px;"></canvas>
-
-		<h4>A hőmérséklet eloszlása</h4>
-
-		<canvas id="chart_temperature_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
-
-		<h4>Hőmérsékleti jelzőnapok gyakorisága</h4>
+		{% if report.dataAvailable.tempDist %}
+			<h4>A hőmérséklet eloszlása (°C,db)</h4>
+			<canvas id="chart_temperature_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
+		
+		<h4>Hőmérsékleti jelzőnapok gyakorisága (db)</h4>
 
 		<table class="table table-striped">
 		<tr>
@@ -68,44 +85,47 @@
 		</tr>
 
 		</table>
+		{% endif %}
 
-		<h4>Relatív nedvesség eloszlása</h4>
-
+		{% if report.dataAvailable.rhDist %}
+		<h4>Relatív nedvesség eloszlása (%,db)</h4>
 		<canvas id="chart_rh_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
+		{% endif %}
 
-		{% if report.prec %} <!-- TODO -->
-			<h4>A napi csapadékmennyiség menete</h4>
+		{% if report.dataAvailable.prec %}
+		<h4>A napi csapadékmennyiség menete</h4>
 
-			<canvas id="chart_precipitation" width="100%" height="100%" style="max-height:400px;"></canvas>
+		<canvas id="chart_precipitation" width="100%" height="100%" style="max-height:400px;"></canvas>
 
-			<h4>Napi csapadékmennyiség küszöbérték meghaladása</h4>
+		<h4>Napi csapadékmennyiség küszöbérték meghaladása</h4>
 
-			<table class="table table-striped">
-				<tr>
-					<td>Csapadékos napok száma:</td>
-					<td>{{report.precDist.0}}</td>
-				</tr>
-				<tr>
-					<td>10mm fölötti csapadékú napok száma</td>
-					<td>{{report.precDist.10}}</td>
-				</tr>
-				<tr>
-					<td>30mm fölötti csapadékú napok száma</td>
-					<td>{{report.precDist.30}}</td>
-				</tr>
-				<tr>
-					 <td>50mm fölötti csapadékú napok száma</td>
-					 <td>{{report.precDist.50}}</td>
-				</tr>
-			</table>
-		{%	endif %}
+		<table class="table table-striped">
+			<tr>
+				<td>Csapadékos napok száma:</td>
+				<td>{{report.precDist.0}}</td>
+			</tr>
+			<tr>
+				<td>10mm fölötti csapadékú napok száma</td>
+				<td>{{report.precDist.10}}</td>
+			</tr>
+			<tr>
+				<td>30mm fölötti csapadékú napok száma</td>
+				<td>{{report.precDist.30}}</td>
+			</tr>
+			<tr>
+				 <td>50mm fölötti csapadékú napok száma</td>
+				 <td>{{report.precDist.50}}</td>
+			</tr>
+		</table>
+		{% endif %}
 
-		{% if report.windDist %} <!-- TODO -->
+		{% if report.dataAvailable.windDist %}
 			<h4>A szélirány eloszlása</h4>
 			<canvas id="chart_wind" width="100%" height="100%" style="max-height:400px;"></canvas>
 		{% endif %}
 
-		<h4>Szignifikáns jelenségek</h4>
+		{% if report.dataAvailable.sign %}
+		<h4>Szignifikáns jelenségek előfordulásának száma (nap)</h4>
 
 		<table class="table table-striped">
 			<tr>
@@ -119,6 +139,7 @@
 				</tr>
 			{% endfor %}
 		</table>
+		{% endif %}
 
 	</div>
 </div>

@@ -28,9 +28,15 @@ from rest_framework import status
 from threading import Timer
 
 from .utils import gravatar as gr
+from django.template.defaulttags import register
+
 
 WAIT_BEFORE_CALCULATE_STATISTICS = 10
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
+
+@register.filter
+def get_item(dictionary, key):
+	return dictionary.get(key)
 
 def is_admin(user):
 	if user:
