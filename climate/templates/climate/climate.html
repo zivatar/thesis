@@ -14,7 +14,7 @@
 	<div class="row">
 
 		<div class="col-sm-6">
-			<p>Mérőhely: {{site.title}}</p>
+			<p>Mérőhely: <a href="{% url 'site_details' pk=site.pk %}">{{site.title}}</a></p>
 			<p>Aktuális hónap: {{month.year}}.{{month.getMonth}}.</p>
 		</div>
 		<div class="col-sm-6">

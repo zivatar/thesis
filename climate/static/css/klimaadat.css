@@ -126,7 +126,6 @@ div.highlighted:hover {
 }
 
 table.observation span.label {
-	font-size: medium;
 	margin: 3px;
 }
 
@@ -303,3 +302,5 @@ input.narrow {
 .datepicker.datepicker-dropdown th, .datepicker.datepicker-dropdown td {
 	color: black;
 }
+
+

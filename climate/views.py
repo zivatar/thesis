@@ -274,7 +274,6 @@ def monthly_view(request, site, year, month):
 		return render(request, 'climate/main.html', {})
 
 # TODO add new pip dependency
-# TODO observe significant -> stat
 
 def observations(request, pk):
 	site = get_object_or_404(Site, pk=pk)

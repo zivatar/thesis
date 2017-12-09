@@ -26,12 +26,20 @@
 	<div class="panel-body">
 							
 			<div id="add_new">
-				<div class="col-sm-12">
-					<h1>{{ site.title }}</h1>
-				</div>
 
 				<div class="col-sm-12">
 					<div id="google_maps_one_station"></div>
+				</div>
+
+				<div class="col-sm-12">
+				<div class="btn-group btn-group-justified" role="group">
+				  <div class="btn-group" role="group">
+				    <a type="button" class="btn btn-default" href="{% url 'climate' pk=site.pk %}">Éghajlati napló</a>
+				  </div>
+				  <div class="btn-group" role="group">
+				    <a type="button" class="btn btn-default" href="{% url 'upload' pk=site.pk %}">Adatok feltöltése</a>
+				  </div>
+				</div>
 				</div>
 
 				{% if instruments %}
@@ -110,28 +118,22 @@
 						</tbody>
 					</table>
 				</div>
-
-				<div class="col-sm-12">
-					<h2><a href="{% url 'climate' pk=site.pk %}"> >> Éghajlati napló</a></h2>
-					<h2><a href="{% url 'upload' pk=site.pk %}"> >> Adatok feltöltése</a></h2>
-				</div>
 				
 				<div class="col-sm-12">
 					<h2>Éghajlati adatok</h2>
 
-					<table class="table table-striped">
 					{% for y in ym %}
-						<tr>
-							<td colspan="12"><a href="{% url 'yearly_view' pk=site.pk year=y.year.year %}">{{ y.year.year }}</a></td>
-						</tr>
-						<tr>
-						{% for m in y.months %}
-							<td><a href="{% url 'monthly_view' site=site.pk year=m.year month=m.month %}">{{ m.month }}</a></td>
+  						<a class="btn btn-default" href="{% url 'yearly_view' pk=site.pk year=y.year.year %}" role="button">{{ y.year.year }}</a>
+
+  						<div class="btn-group" role="group">
+  						{% for m in y.months %}
+							<a role="button" class="btn btn-default" href="{% url 'monthly_view' site=site.pk year=m.year month=m.month %}">{{ m.month }}</a>
 						{% endfor %}
-						</tr>
-					{% endfor %}
-					</table>
-				</div>	
+						</div>
+  					{% endfor %}
+				</div>
+
+				
 					
 		</div>
 

@@ -1,39 +1,54 @@
-button.btn, span.label {
+.btn, span.label {
 	border-radius: 0;
-	border: 0;
+	border: 1px solid black;
 	background-image: inherit;
+	text-shadow: initial;
 }
 
-button.btn.btn-success {
+.btn.btn-success {
 	background-color: #449d44;
+	border-color: #227b22;
 }
 
-button.btn.btn-success:hover {
+.btn.btn-success:hover {
 	background-color: #227b22;
 }
 
-button.btn.btn-default {
+.btn.btn-default {
 	background-color: #485563;
+	border-color: #263341;
+	color: white;
 }
 
-button.btn.btn-default:hover {
+.btn.btn-default:hover {
 	background-color: #263341;
 }
 
-button.btn.btn-primary, span.label.label-primary {
+.btn.btn-primary, span.label.label-primary {
 	background-color: #df691a;
+	border-color: #bd4708;
 }
 
-button.btn.btn-primary:hover {
+.btn.btn-primary:hover {
 	background-color: #bd4708;
 }
 
-button.btn.btn-warning {
+.btn.btn-warning {
 	background-color: #f0ad4e;
+	border-color: #d08b2c;
 }
 
-button.btn.btn-warning:hover {
+.btn.btn-warning:hover {
 	background-color: #d08b2c;
+}
+
+.btn.btn-info, span.label.label-info {
+	background-color: #286090;
+	border-color: #064070;
+}
+
+.btn.btn-info:hover {
+	background-color: #064070;
 }
 
 input.form-control.has-warning, input.form-control.has-warning:focus {
