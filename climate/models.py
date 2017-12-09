@@ -402,6 +402,10 @@ class RawManualData(models.Model):
 	tMax = models.FloatField(blank = True, null = True)
 	precAmount = models.FloatField(blank = True, null = True)
 	_weatherCode = models.CommaSeparatedIntegerField(max_length = 200, choices = Weather.WEATHER_CODE, blank = True)
+	def addWeatherCode(self, code):
+		weatherCodes = self._weatherCode[:-1].split(',')
+		if not code in weatherCodes:
+			self._weatherCode = self._weatherCode + code + ','
 	def populateWeatherCode(self, arr):
 		wc = ''
 		for a in arr:

@@ -153,7 +153,8 @@ def new_site(request):
 	else:
 		form = SiteForm()
 		sites = Site.objects.filter(owner=request.user)
-	return render(request, 'climate/new_site.html', {'sites': sites, 'wide_area': Site.WIDE_AREA, 'narrow_area': Site.NARROW_AREA, 'form': form})
+	return render(request, 'climate/new_site.html', 
+		{'sites': sites, 'wide_area': Site.WIDE_AREA, 'narrow_area': Site.NARROW_AREA, 'form': form})
 
 @login_required
 def new_observation(request):
@@ -164,11 +165,18 @@ def new_observation(request):
 			obs = form.save()
 			weatherCodes = form.cleaned_data.get('weatherCode')
 			obs.populateWeatherCode(weatherCodes)
+			dailyData, created = RawManualData.objects.update_or_create(year = obs.createdDate.year, 
+				month = obs.createdDate.month, siteId = obs.siteId, day = obs.createdDate.day)
+			for code in weatherCodes:
+				dailyData.addWeatherCode(code)
+			dailyData.save()
+			create_statistics(obs.siteId, obs.createdDate.year, obs.createdDate.month)
 			return redirect(main)
 	else:
 		form = ObservationForm()
-	return render(request, 'climate/new_observation.html', {'sites': sites, 'form': form, 'wind_speed': Weather.BEAUFORT_SCALE, 'weather_code': Weather.WEATHER_CODE})
-	
+	return render(request, 'climate/new_observation.html', 
+		{'sites': sites, 'form': form, 'wind_speed': Weather.BEAUFORT_SCALE, 'weather_code': Weather.WEATHER_CODE})
+
 def main(request):
 	return render(request, 'climate/main.html', {})
 	
@@ -570,10 +578,8 @@ def create_statistics(site, year, month):
 			firstDate = min(firstDate1, firstDate2)
 			lastDate = max(lastDate1, lastDate2)
 	if hasData:
-		print(4)
 		create_daily_statistics(firstDate, lastDate, site)
 		create_monthly_statistics(firstDate, lastDate, site)
-		print(3)
 		create_yearly_statistics(firstDate, lastDate, site)
 
 #@user_passes_test(can_upload)
@@ -631,7 +637,6 @@ class UploadClimateHandler(APIView):
 				
 
 		def _calculateStatistics():
-			print(9888)
 			create_statistics(site, year, month)
 
 		if request.user != None: # and request.user.can_upload:
