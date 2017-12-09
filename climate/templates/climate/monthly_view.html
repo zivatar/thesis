@@ -18,8 +18,6 @@
 	</div>
 	<div class="panel-body">
 
-		{{report.dataAvailable}}
-
 		<table class="table table-striped">
 			<tr>
 				<td>Mérőállomás</td>
@@ -93,7 +91,7 @@
 		{% endif %}
 
 		{% if report.dataAvailable.prec %}
-		<h4>A napi csapadékmennyiség menete</h4>
+		<h4>A napi csapadékmennyiség menete (mm)</h4>
 
 		<canvas id="chart_precipitation" width="100%" height="100%" style="max-height:400px;"></canvas>
 
@@ -148,19 +146,27 @@
 
 var data = [{{report.tempMins}}, {{report.tempAvgs}}, {{report.tempMaxs}}];
 var dataLabels = ["Minimumhőmérséklet", "Átlaghőmérséklet", "Maximumhőmérséklet"]
-new LineChart("chart_temperature", data, dataLabels).draw();
+{% if report.dataAvailable.temp %}
+	new LineChart("chart_temperature", data, dataLabels).draw();
+{% endif %}
 
-new StackedBarChart("chart_temperature_distribution", {{report.tempDist}}, {{climate.temp}}).draw();
+{% if report.dataAvailable.tempDist %}
+	new StackedBarChart("chart_temperature_distribution", {{report.tempDist}}, {{climate.temp}}).draw();
+{% endif %}
 
-new StackedBarChart("chart_rh_distribution", {{report.rhDist}}, {{climate.rh}}).draw();
+{% if report.dataAvailable.rhDist %}
+	new StackedBarChart("chart_rh_distribution", {{report.rhDist}}, {{climate.rh}}).draw();
+{% endif %}
 
-var dataLabels = ["Napi csapadékmennyiség"];
-new StackedBarChart("chart_precipitation", [{{report.prec}}], dataLabels).draw();
+{% if report.dataAvailable.prec %}
+	var dataLabels = ["Napi csapadékmennyiség"];
+	new StackedBarChart("chart_precipitation", [{{report.prec}}], dataLabels).draw();
+{% endif %}
 
-var dataLabels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-new StackedBarChart("chart_wind", {{report.windDist}}, dataLabels).draw();
-
-//console.log({{climate}});
+{% if report.dataAvailable.windDist %}
+	var dataLabels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+	new StackedBarChart("chart_wind", {{report.windDist}}, dataLabels).draw();
+{% endif %}
 
 </script>
 
