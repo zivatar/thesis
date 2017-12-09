@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class SiteForm(forms.ModelForm):
 	class Meta:
 		model = Site
-		fields = ('title', 'comment', 'narrowArea', 'wideArea', 'lat', 'lon', 'isActive', 'isPublic', 'primaryImage', 'secondaryImage')
+		fields = ('title', 'comment', 'narrowArea', 'wideArea', 'lat', 'lon', 'isActive', 'isPublic', 'primaryImage')
 
 class ObservationForm(forms.ModelForm):
 	weatherCode = forms.MultipleChoiceField(choices=Weather.WEATHER_CODE, widget=forms.CheckboxSelectMultiple(), required=False)
@@ -38,4 +38,4 @@ class UserForm(forms.Form):
 class InstrumentForm(forms.ModelForm):
 	class Meta:
 		model = Instrument
-		fields = ('title', 'comment', 'siteId', 'type', 'isActive', 'primaryImage', 'secondaryImage')
+		fields = ('title', 'comment', 'siteId', 'type', 'isActive', 'primaryImage')

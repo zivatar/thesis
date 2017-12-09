@@ -69,23 +69,16 @@
 				{% endif %}
 				
 				
-				{% if site.primaryImage or site.secondaryImage %}
+				{% if site.primaryImage %}
 					<div class="col-sm-12">
 						<h2>Fényképek a mérőállomásról</h2>
 					</div>
 					{% if site.primaryImage %}
-						<div class="col-sm-6 col-xs-12">
+						<div class="col-sm-12">
 							<img class="upload" src="{{site.primaryImage.url}}" width="100%">
 						</div>
 					{% endif %}
-										
-					{% if site.secondaryImage %}
-						<div class="col-sm-6 col-xs-12">
-							<img class="upload" src="{{site.secondaryImage.url}}" width="100%">
-						</div>
-					{% endif %}
 					
-					<div class="clearfix"></div>
 				{% endif %}
 				
 

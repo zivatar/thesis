@@ -287,10 +287,7 @@ def observations(request, pk):
 def delete_site_image(request, site, number):
 	siteObj = get_object_or_404(Site, pk=site)
 	if (siteObj.owner == request.user):
-		if (number == '1'):
-			siteObj.primaryImage.delete()
-		else:
-			siteObj.secondaryImage.delete()
+		siteObj.primaryImage.delete()
 		siteObj.save()
 		return redirect(site_edit, pk=site)
 	else:

@@ -63,7 +63,6 @@ class Site(models.Model):
 	narrowArea = models.IntegerField(choices = NARROW_AREA, default = 1)
 	wideArea = models.IntegerField(choices = WIDE_AREA, default = 1) # site.wideArea; site.get_wideArea_display() https://docs.djangoproject.com/en/1.9/topics/db/models/#field-options
 	primaryImage = models.ImageField(upload_to=get_image_path_site1, blank=True, null=True)
-	secondaryImage = models.ImageField(upload_to=get_image_path_site2, blank=True, null=True)
 	
 	def __str__(self):
 		return self.title
