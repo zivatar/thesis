@@ -94,7 +94,7 @@ new StackedBarChart("chart_temperature_distribution", {{report.tempDist}}, {{cli
 new StackedBarChart("chart_rh_distribution", {{report.rhDist}}, {{climate.rh}}).draw();
 
 var dataLabels = ["Havi csapadékmennyiség"];
-new LineChart("chart_precipitation", [{{report.prec}}], dataLabels).draw();
+new StackedBarChart("chart_precipitation", [{{report.prec}}], dataLabels).draw();
 
 var dataLabels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 new StackedBarChart("chart_wind", {{report.windDist}}, dataLabels).draw();
