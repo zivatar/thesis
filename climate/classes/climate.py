@@ -20,6 +20,35 @@ class Climate(object):
 		return len([x for x in maxTemps if x != None and x >= 35])
 
 	@staticmethod
+	def sum(list):
+		sum = 0.0
+		for i in list:
+			if i is not None:
+				sum = sum + float(i)
+		return sum
+
+	@staticmethod
+	def avg(list):
+		sum = 0.0
+		num = 0
+		for i in list:
+			if i is not None:
+				sum = sum + float(i)
+				num = num + 1
+		return sum / num
+
+	@staticmethod
+	def avg2(list1, list2):
+		sum = 0.0
+		num = 0
+		list = zip(list1, list2)
+		for i in list:
+			if i[0] is not None and i[1] is not None:
+				sum = sum + float(i[0]) + float(i[1])
+				num = num + 2
+		return sum / num
+
+	@staticmethod
 	def calculateDistribution(data, limits):
 		res = []
 		for i in range(len(limits)):

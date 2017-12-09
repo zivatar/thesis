@@ -360,6 +360,10 @@ class YearlyReport():
 		self.tempDist = json.dumps(self.generateTempDistribution())
 		self.rhDist = json.dumps(self.generateRhDistribution())
 		self.windDist = json.dumps(self.generateWindDistribution())
+		self.precipitation = Climate.sum(self.collectData('precipitation'))
+		self.tmin = Climate.avg(self.collectData('tempMin'))
+		self.tmax = Climate.avg(self.collectData('tempMax'))
+		self.tavg = Climate.avg2(self.collectData('tempMin'), self.collectData('tempMax'))
 
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
