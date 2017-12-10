@@ -350,12 +350,34 @@ class YearlyReport():
 					if j.month == i:
 						hasData = True
 						dailyData = j.windDistribution
+						print(dailyData)
 						if dailyData != None and dailyData != "":
 							sublist.append(int(float(dailyData.split(',')[l])))
 				if not hasData:
 					sublist.append(None)
 			dist.append(sublist)
 		return dist
+	def calculateDataAvailable(self):
+		temp = Climate.number(self.collectData('tempMin')) > 0 and Climate.number(self.collectData('tempMinAvg')) > 0
+		print(self.generateWindDistribution())
+		tempDist = Climate.number2(self.generateTempDistribution()) > 0
+		rhDist = Climate.number2(self.generateRhDistribution()) > 0
+		prec = Climate.number(self.collectData('precipitation')) > 0
+		windDist = Climate.number2(self.generateWindDistribution()) > 0
+		sign = False
+		for m in self.monthObjs:
+			if Climate.number(m.significants) > 0:
+				sign = True
+				break
+
+		return {
+			"temp": temp,
+			"tempDist": tempDist,
+			"rhDist": rhDist,
+			"prec": prec,
+			"windDist": windDist,
+			"sign": sign
+		}
 	def __init__(self, siteId, year, monthObjs, yearObj):
 		self.siteId = siteId
 		self.year = year
@@ -385,6 +407,7 @@ class YearlyReport():
 		self.tmin = Climate.avg(self.collectData('tempMin'))
 		self.tmax = Climate.avg(self.collectData('tempMax'))
 		self.tavg = Climate.avg2(self.collectData('tempMin'), self.collectData('tempMax'))
+		self.dataAvailable = self.calculateDataAvailable()
 
 class RawObservation(models.Model):
 	siteId = models.ForeignKey('climate.Site')
