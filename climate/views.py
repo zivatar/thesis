@@ -200,9 +200,10 @@ def site_details(request, pk):
 	site = get_object_or_404(Site, pk=pk)
 	if (site.isPublic and site.owner.is_active or site.owner == request.user):
 		observations = RawObservation.objects.filter(siteId = site).order_by('-createdDate')[:3]
-		yearly = YearlyStatistics.objects.filter(siteId = site)
-		monthly = MonthlyStatistics.objects.filter(siteId = site)
+		yearly = YearlyStatistics.objects.filter(siteId = site).order_by('year')
+		monthly = MonthlyStatistics.objects.filter(siteId = site).order_by('month')
 		ym = createYearlyMonthly(yearly, monthly)
+		print(ym)
 		instruments = Instrument.objects.filter(siteId = site).filter(isDeleted = False).order_by('title')
 		return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE, 'ym': ym, 'instruments': instruments})
 	else:
