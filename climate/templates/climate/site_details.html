@@ -77,7 +77,7 @@
 					
 				{% endif %}
 				
-
+				{% if observations %}
 				<div class="col-sm-12">
 					<h2>Legutóbbi észlelések</h2>
 
@@ -107,7 +107,9 @@
 						</tbody>
 					</table>
 				</div>
+				{% endif %}
 				
+				{% if ym %}
 				<div class="col-sm-12">
 					<h2>Éghajlati adatok</h2>
 
@@ -121,7 +123,7 @@
 						</div>
   					{% endfor %}
 				</div>
-
+				{% endif %}
 				
 					
 		</div>
