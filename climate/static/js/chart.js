@@ -78,6 +78,11 @@ LineChart.prototype.draw = function() {
         	backgroundColor: 'rgba(0, 0, 0, 0)'
     	},
     	maintainAspectRatio: false,
+        layout: {
+        padding: {
+            right: 10
+        }
+    }
     }
 });
 }
