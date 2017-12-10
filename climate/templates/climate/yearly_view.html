@@ -14,27 +14,27 @@
 
 		<table class="table table-striped">
 			<tr>
-				<td>Mérőállomás</td>
+				<td><span class="glyphicon glyphicon-map-marker"></span> Mérőállomás</td>
 				<td><a href="{% url 'site_details' pk=site.pk %}">{{ site.title }}</a></td>
 			</tr>
 			<tr>
-				<td>Év</td>
+				<td><span class="glyphicon glyphicon-calendar"></span> Év</td>
 				<td>{{year.year}}</td>
 			</tr>
 			<tr>
-				<td>Összes csapadék</td>
+				<td><span class="glyphicon glyphicon-tint"></span> Összes csapadék</td>
 				<td>{{report.precipitation}} mm</td>
 			</tr>
 			<tr>
-				<td>Átlagos minimumhőmérséklet</td>
+				<td><span class="glyphicon glyphicon-collapse-down"></span> Átlagos minimumhőmérséklet</td>
 				<td>{{report.tmin}} °C</td>
 			</tr>
 			<tr>
-				<td>Átlagos középhőmérséklet</td>
+				<td><span class="glyphicon glyphicon-sound-stereo"></span> Átlagos középhőmérséklet</td>
 				<td>{{report.tavg}} °C</td>
 			</tr>
 			<tr>
-				<td>Átlagos maximumhőmérséklet</td>
+				<td><span class="glyphicon glyphicon-collapse-up"></span> Átlagos maximumhőmérséklet</td>
 				<td>{{report.tmax}} °C</td>
 			</tr>
 		</table>
