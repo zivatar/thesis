@@ -31,12 +31,14 @@
 					<div id="google_maps_one_station"></div>
 				</div>
 
+				{% if user and user == site.owner %}
 				<div class="col-sm-12">
 				<div class="btn-group btn-group-justified" role="group">
 				    <a type="button" class="btn btn-default" href="{% url 'climate' pk=site.pk %}">Éghajlati napló</a>
 				    <a type="button" class="btn btn-default" href="{% url 'upload' pk=site.pk %}">Adatok feltöltése</a>
 				</div>
 				</div>
+				{% endif %}
 
 				{% if instruments %}
 					<div class="col-sm-12">
