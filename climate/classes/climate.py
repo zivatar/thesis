@@ -36,11 +36,11 @@ class Climate(object):
 		return num
 
 	@staticmethod
-	def number2(list):
+	def number2(list, strict=False):
 		num = 0
 		for i in list:
 			for j in i:
-				if j is not None:
+				if j is not None and (not strict or j != 0):
 					num = num + 1
 		return num
 
