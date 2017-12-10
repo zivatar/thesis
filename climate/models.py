@@ -258,7 +258,7 @@ class MonthlyReport():
 		temp = Climate.number(self.tempMins) > 0 and Climate.number(self.tempMaxs) > 0
 		tempDist = Climate.number2(self.generateTempDistribution()) > 0
 		rhDist = Climate.number2(self.generateRhDistribution()) > 0
-		prec = Climate.number(self.getPrecipitation()[0]) > 0
+		prec = Climate.number(self.getPrecipitation()[0]) > 0 and Climate.sum(self.getPrecipitation()[0]) > 0
 		windDist = Climate.number2(self.generateWindDistribution()) > 0
 		sign = Climate.number(self.monthObjs[0].significants) > 0
 		return {
@@ -359,10 +359,9 @@ class YearlyReport():
 		return dist
 	def calculateDataAvailable(self):
 		temp = Climate.number(self.collectData('tempMin')) > 0 and Climate.number(self.collectData('tempMinAvg')) > 0
-		print(self.generateWindDistribution())
 		tempDist = Climate.number2(self.generateTempDistribution()) > 0
 		rhDist = Climate.number2(self.generateRhDistribution()) > 0
-		prec = Climate.number(self.collectData('precipitation')) > 0
+		prec = Climate.number(self.collectData('precipitation')) > 0 and Climate.sum(self.collectData('precipitation')) > 0
 		windDist = Climate.number2(self.generateWindDistribution()) > 0
 		sign = False
 		for m in self.monthObjs:
