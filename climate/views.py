@@ -543,7 +543,7 @@ def upload_data(request, pk):
 	else:
 		redirect(main)
 
-def create_statistics(site, year, month):
+def create_statistics(site, year=None, month=None):
 	hasData = False
 	if year is not None and month is not None:
 		if RawData.objects.filter(siteId=site).filter(createdDate__year=year).filter(createdDate__month=month).count() > 0 or RawManualData.objects.filter(siteId=site).filter(year=year).filter(month=month).count() > 0:
@@ -555,8 +555,8 @@ def create_statistics(site, year, month):
 			hasData = True
 			firstDate1 = RawData.objects.filter(siteId=site).order_by('createdDate')[0].createdDate
 			lastDate1 = RawData.objects.filter(siteId=site).order_by('-createdDate')[0].createdDate
-			fd2 = RawManualData.objects.filter(siteId=site).order_by('year').order_by('month').order_by('day')[0].createdDate
-			ld2 = RawManualData.objects.filter(siteId=site).order_by('-year').order_by('-month').order_by('-day')[0].createdDate
+			fd2 = RawManualData.objects.filter(siteId=site).order_by('year').order_by('month').order_by('day')[0]
+			ld2 = RawManualData.objects.filter(siteId=site).order_by('-year').order_by('-month').order_by('-day')[0]
 			firstDate2 = datetime.datetime(fd2.year, fd2.month, fd2.day, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
 			lastDate2 = datetime.datetime(ld2.year, ld2.month, ld2.day, 23, 59, tzinfo=pytz.timezone("Europe/Budapest"))
 			firstDate = min(firstDate1, firstDate2)
