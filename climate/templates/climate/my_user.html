@@ -13,7 +13,7 @@
 
 		<ul class="pull-left">
 			<li><a href="{% url 'logout' %}">Kilépés</a></li>
-			{% if user.groups.all.0.name == "is_admin" or user.groups.all.1.name == "is_admin" %}
+			{% if user.is_superuser %}
 				<li><a href="{% url 'edit_users' %}">Felhasználók karbantartása</a></li>
 			{% endif %}
 		</ul>
@@ -40,7 +40,7 @@
 			</tr>
 			<tr>
 				<td>Admin</td>
-				{% if user.groups.all.0.name == "is_admin" or user.groups.all.1.name == "is_admin" %}
+				{% if user.is_superuser %}
 					<td class="yes">igen</td>
 				{% else %}
 					<td class="no">nem</td>

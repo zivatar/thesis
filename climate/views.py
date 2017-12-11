@@ -40,7 +40,7 @@ def get_item(dictionary, key):
 
 def is_admin(user):
 	if user:
-		return user.groups.filter(name='is_admin').exists()
+		return user.is_superuser
 	return False
 
 def can_upload(user):

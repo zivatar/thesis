@@ -19,7 +19,7 @@
 			<tr>
 				<td><a href="{% url 'edit_user' user=u.pk %}">{{u}}</a></td>
 				<td>{{u.email}}</td>
-				{% if u.groups.all.0.name == "is_admin" or u.groups.all.1.name == "is_admin" %}
+				{% if u.is_superuser %}
 					<td class="yes">igen</td>
 				{% else %}
 					<td class="no">nem</td>
