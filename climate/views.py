@@ -103,7 +103,7 @@ def my_user(request):
 @user_passes_test(is_admin, login_url='/accounts/login/')
 def edit_users(request):
 	myUser = request.user
-	users = User.objects.filter()
+	users = User.objects.all().select_related('profile')
 	return render(request, 'climate/edit_users.html', {'user': myUser, 'users': users})
 
 @login_required
@@ -117,15 +117,11 @@ def edit_user(request, user):
 			cd = form.cleaned_data
 			userObj.is_active = cd.get('isActive')
 			userObj.is_superuser = cd.get('isAdmin')
-			userObj.groups.clear()
-			if cd.get('canUpload'):
-				pass
-				#g = Group.objects.get(name='can_upload') 
-				#userObj.groups.add(g)
+			userObj.profile.canUpload = cd.get('canUpload')
 			userObj.save()
 			return redirect(edit_users)
 	else:
-		form = UserForm(initial={"isAdmin": is_admin(userObj), "isActive": userObj.is_active, "canUpload": can_upload(userObj)})
+		form = UserForm(initial={"isAdmin": is_admin(userObj), "isActive": userObj.is_active, "canUpload": userObj.profile.canUpload})
 	return render(request, 'climate/edit_user.html', {'editUser': userObj, 'form': form, 'gravatar': gravatar})
 
 def guide(request):

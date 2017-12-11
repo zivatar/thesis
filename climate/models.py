@@ -15,6 +15,10 @@ from .classes.month import Month
 from .classes.year import Year
 from .classes.climate import Climate
 
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 def get_image_path_site1(instance, filename):
 	return os.path.join('uploads', 'site', str(instance.id)+'1')
 
@@ -67,6 +71,20 @@ class Site(models.Model):
 	def __str__(self):
 		return self.title
 
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    canUpload = models.BooleanField(default = False)
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
 
 
 class Instrument(models.Model):

@@ -29,7 +29,7 @@
 				{% else %}
 					<td class="no">nem</td>
 				{% endif %}
-				{% if "can_upload" in u.groups %}
+				{% if u.profile.canUpload %}
 					<td class="yes">igen</td>
 				{% else %}
 					<td class="no">nem</td>
