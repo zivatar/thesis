@@ -116,13 +116,12 @@ def edit_user(request, user):
 		if form.is_valid():
 			cd = form.cleaned_data
 			userObj.is_active = cd.get('isActive')
+			userObj.is_superuser = cd.get('isAdmin')
 			userObj.groups.clear()
-			if cd.get('isAdmin'):
-				g = Group.objects.get(name='is_admin') 
-				userObj.groups.add(g)
 			if cd.get('canUpload'):
-				g = Group.objects.get(name='can_upload') 
-				userObj.groups.add(g)
+				pass
+				#g = Group.objects.get(name='can_upload') 
+				#userObj.groups.add(g)
 			userObj.save()
 			return redirect(edit_users)
 	else:

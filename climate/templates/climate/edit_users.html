@@ -29,7 +29,7 @@
 				{% else %}
 					<td class="no">nem</td>
 				{% endif %}
-				{% if u.groups.all.0.name == "can_upload" or u.groups.all.1.name == "can_upload" %}
+				{% if "can_upload" in u.groups %}
 					<td class="yes">igen</td>
 				{% else %}
 					<td class="no">nem</td>
