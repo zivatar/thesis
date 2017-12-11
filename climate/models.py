@@ -260,8 +260,7 @@ class MonthlyReport():
 		rhDist = Climate.number2(self.generateRhDistribution()) > 0
 		prec = Climate.number(self.getPrecipitation()[0]) > 0 and Climate.sum(self.getPrecipitation()[0]) > 0
 		windDist = Climate.number2(self.generateWindDistribution(), True) > 0
-		sign = Climate.number(self.monthObjs[0].significants) > 0
-		print(self.monthObjs[0].significants)
+		sign = Climate.sum([self.monthObjs[0].significants.get(i) for i in self.monthObjs[0].significants]) > 0
 		return {
 			"temp": temp,
 			"tempDist": tempDist,
