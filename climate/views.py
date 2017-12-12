@@ -534,10 +534,10 @@ def upload(request, pk):
 @login_required
 def upload_data(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	if site.owner == request.user and site.isActive and request.user.profile.canUpload:
+	if site.owner == request.user and site.isActive:
 		return render(request, 'climate/upload.html', {'site': site})
 	else:
-		redirect(main)
+		return render(request, 'climate/main.html', {})
 
 def create_statistics(site, year=None, month=None):
 	hasData = False
