@@ -45,7 +45,7 @@ def is_admin(user):
 
 def can_upload(user):
 	if user:
-		return user.groups.filter(name='can_upload').exists()
+		return user.profile.canUpload
 	return False
 
 def site_list(request):
@@ -275,7 +275,6 @@ def monthly_view(request, site, year, month):
 	else:
 		return render(request, 'climate/main.html', {})
 
-# TODO add new pip dependency
 
 def observations(request, pk):
 	site = get_object_or_404(Site, pk=pk)
@@ -531,10 +530,11 @@ def upload(request, pk):
 	else:
 		return render(request, 'climate/main.html', {})
 
+
 @login_required
 def upload_data(request, pk):
 	site = get_object_or_404(Site, pk=pk)
-	if site.owner == request.user and site.isActive: # and request.user.can_upload:
+	if site.owner == request.user and site.isActive and request.user.profile.canUpload:
 		return render(request, 'climate/upload.html', {'site': site})
 	else:
 		redirect(main)
@@ -562,9 +562,8 @@ def create_statistics(site, year=None, month=None):
 		create_monthly_statistics(firstDate, lastDate, site)
 		create_yearly_statistics(firstDate, lastDate, site)
 
-#@user_passes_test(can_upload)
-class UploadHandler(APIView):
-	
+
+class UploadHandler(APIView):	
 	def post(self, request, *args, **kw):
 		def _saveToDb():
 			handle_uploaded_data(site, request.data.get('data', None))
@@ -572,7 +571,7 @@ class UploadHandler(APIView):
 		def _calculateStatistics():
 			create_statistics(site)
 
-		if request.user != None: # and request.user.can_upload:
+		if request.user != None and request.user.profile.canUpload:
 			if request.data != None and 'site' in request.data:
 				site = get_object_or_404(Site, pk=request.data.get('site', None))
 				if site.isActive and 'data' in request.data:
@@ -584,8 +583,6 @@ class UploadHandler(APIView):
 						t.start()		
 		return response
 
-
-#@user_passes_test(can_upload)
 class UploadClimateHandler(APIView):
 	
 	def post(self, request, *args, **kw):
