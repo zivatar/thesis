@@ -52,6 +52,8 @@ class Climate(object):
 			if i is not None:
 				sum = sum + float(i)
 				num = num + 1
+		if num == 0:
+			return 0
 		return sum / num
 
 	@staticmethod
@@ -63,6 +65,8 @@ class Climate(object):
 			if i[0] is not None and i[1] is not None:
 				sum = sum + float(i[0]) + float(i[1])
 				num = num + 2
+		if num == 0:
+			return 0
 		return sum / num
 
 	@staticmethod

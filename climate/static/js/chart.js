@@ -20,6 +20,8 @@ function LineChart(canvas, data, labels) {
 }
 
 LineChart.prototype.draw = function() {
+    console.log(this.canvas);
+    console.log(document.getElementById(this.canvas));
 	var ctx = document.getElementById(this.canvas).getContext('2d');
     var xLabels = [];
     for (var i = 0; i < this.data[0].length; i++) {

@@ -368,7 +368,6 @@ class YearlyReport():
 					if j.month == i:
 						hasData = True
 						dailyData = j.windDistribution
-						print(dailyData)
 						if dailyData != None and dailyData != "":
 							sublist.append(int(float(dailyData.split(',')[l])))
 				if not hasData:
@@ -377,13 +376,13 @@ class YearlyReport():
 		return dist
 	def calculateDataAvailable(self):
 		temp = Climate.number(self.collectData('tempMin')) > 0 and Climate.number(self.collectData('tempMinAvg')) > 0
-		tempDist = Climate.number2(self.generateTempDistribution()) > 0
-		rhDist = Climate.number2(self.generateRhDistribution()) > 0
+		tempDist = Climate.number2(self.generateTempDistribution(), strict=True) > 0
+		rhDist = Climate.number2(self.generateRhDistribution(), strict=True) > 0
 		prec = Climate.number(self.collectData('precipitation')) > 0 and Climate.sum(self.collectData('precipitation')) > 0
-		windDist = Climate.number2(self.generateWindDistribution()) > 0
+		windDist = Climate.number2(self.generateWindDistribution(), strict=True) > 0
 		sign = False
 		for m in self.monthObjs:
-			if Climate.number(m.significants) > 0:
+			if Climate.sum([self.monthObjs[0].significants.get(i) for i in self.monthObjs[0].significants]) > 0:
 				sign = True
 				break
 

@@ -198,7 +198,6 @@ def site_details(request, pk):
 		yearly = YearlyStatistics.objects.filter(siteId = site).order_by('year')
 		monthly = MonthlyStatistics.objects.filter(siteId = site).order_by('month')
 		ym = createYearlyMonthly(yearly, monthly)
-		print(ym)
 		instruments = Instrument.objects.filter(siteId = site).filter(isDeleted = False).order_by('title')
 		return render(request, 'climate/site_details.html', {'site' : site, 'observations' : observations, 'weather_code': Weather.WEATHER_CODE, 'ym': ym, 'instruments': instruments})
 	else:
@@ -591,7 +590,6 @@ class UploadClimateHandler(APIView):
 		year = dataset.get('year')
 		month = dataset.get('month')
 		data = dataset.get('data')
-		print(0)
 
 		def _saveToDb():
 			for i in range(len(data)):

@@ -10,8 +10,6 @@
 	</div>
 	<div class="panel-body">
 
-		{{report.dataAvailable}}
-
 		<table class="table table-striped">
 			<tr>
 				<td><span class="glyphicon glyphicon-map-marker"></span> Mérőállomás</td>
@@ -60,20 +58,20 @@
 		</table>
 
 		{% if report.dataAvailable.temp %}
-		<h4>Havi hőmérsékleti szélsőértékek és átlagok (°C)</h4>
+			<h4>Havi hőmérsékleti szélsőértékek és átlagok (°C)</h4>
 
-		<canvas id="chart_temperature" width="100%" height="100%" style="max-height:400px;"></canvas>
+			<canvas id="chart_temperature" width="100%" height="100%" style="max-height:400px;"></canvas>
 
-		<h4>Hőmérsékleti jelzőnapok gyakorisága (db)</h4>
+			<h4>Hőmérsékleti jelzőnapok gyakorisága (db)</h4>
 
-		{{report.summerDays}}
+			{{report.summerDays}}
 
-		<canvas id="chart_temperature_indices" width="100%" height="100%" style="max-height:400px;"></canvas>
+			<canvas id="chart_temperature_indices" width="100%" height="100%" style="max-height:400px;"></canvas>
 		{% endif %}
 
 		{% if report.dataAvailable.tempDist %}
-		<h4>A hőmérséklet eloszlása (db,°C)</h4>
-		<canvas id="chart_temperature_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
+			<h4>A hőmérséklet eloszlása (db,°C)</h4>
+			<canvas id="chart_temperature_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
 		{% endif %}
 
 		{% if report.dataAvailable.rhDist %}
@@ -81,14 +79,19 @@
 		<canvas id="chart_rh_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
 		{% endif %}
 
+		{% if report.dataAvailable.prec %}
 		<h4>Havi csapadékmennyiség éves menete (mm)</h4>
 
 		<canvas id="chart_precipitation" width="100%" height="100%" style="max-height:400px;"></canvas>
+		{% endif %}
 
+		{% if report.dataAvailable.windDist %}
 		<h4>A jellemző szélirány eloszlása</h4>
 
 		<canvas id="chart_wind" width="100%" height="100%" style="max-height:400px;"></canvas>
+		{% endif %}
 
+		{% if report.dataAvailable.sign %}
 		<h4>Szignifikáns jelenségek előfordulásának száma (nap)</h4>
 
 		<table class="table table-striped">
@@ -103,28 +106,38 @@
 				</tr>
 			{% endfor %}
 		</table>
+		{% endif %}
 	</div>
 </div>
 
 <script>
 
+{% if report.dataAvailable.temp %}
 var data = [{{report.temps.mins}}, {{report.temps.minAvgs}}, {{report.temps.avgs}}, {{report.temps.maxAvgs}}, {{report.temps.maxs}}];
 var dataLabels = ["Minimum", "Átlagos minimum", "Átlag", "Átlagos maximum", "Maximumhőmérséklet"]
 new LineChart("chart_temperature", data, dataLabels).draw();
-
 var data = [{{report.tempIndices.summerDays}}, {{report.tempIndices.frostDays}}, {{report.tempIndices.coldDays}}, {{report.tempIndices.warmNights}}, {{report.tempIndices.warmDays}}, {{report.tempIndices.hotDays}}];
 var dataLabels = ["Nyári napok", "Fagyos napok", "Hideg napok", "Meleg éjszakák", "Meleg napok", "Forró napok"]
 new LineChart("chart_temperature_indices", data, dataLabels).draw();
+{% endif %}
 
+{% if report.dataAvailable.tempDist %}
 new StackedBarChart("chart_temperature_distribution", {{report.tempDist}}, {{climate.temp}}).draw();
+{% endif %}
 
+{% if report.dataAvailable.rhDist %}
 new StackedBarChart("chart_rh_distribution", {{report.rhDist}}, {{climate.rh}}).draw();
+{% endif %}
 
+{% if report.dataAvailable.prec %}
 var dataLabels = ["Havi csapadékmennyiség"];
 new StackedBarChart("chart_precipitation", [{{report.prec}}], dataLabels).draw();
+{% endif %}
 
+{% if report.dataAvailable.windDist %}
 var dataLabels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 new StackedBarChart("chart_wind", {{report.windDist}}, dataLabels).draw();
+{% endif %}
 
 </script>
 {% endblock content %}
