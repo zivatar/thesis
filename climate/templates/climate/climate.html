@@ -81,7 +81,11 @@
 			month: {{month.getMonth}},
 			data: data
 		}
-		sendDataToServer(API_ENDPOINTS.UPLOAD_CLIMATE_DATA, {{site.pk}}, dataToSend, true)
+		var path = "{% url 'site_details' pk=site.pk %}";
+		var cb = function() {
+			window.location.href = path;
+		}
+		sendDataToServer(API_ENDPOINTS.UPLOAD_CLIMATE_DATA, {{site.pk}}, dataToSend, true, cb)
 	}
 
 	window.onload = function() {

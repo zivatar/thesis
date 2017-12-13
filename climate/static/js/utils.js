@@ -10,10 +10,9 @@ function sendDataToServer(endPoint, siteId, data, isLastPart, onload) {
   if (isLastPart) {
     sendData.isLastPart = true;
   }
-  if (!!onload) {
+  if (!!onload && typeof onload == "function") {
     xhr.onload = function() {
-      var data = JSON.parse(this.responseText);
-      console.log(data);
+      onload();
     }
   }
   xhr.send(JSON.stringify(sendData));
