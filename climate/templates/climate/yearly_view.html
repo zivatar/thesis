@@ -19,10 +19,13 @@
 				<td><span class="glyphicon glyphicon-calendar"></span> Év</td>
 				<td>{{year.year}}</td>
 			</tr>
+			{% if report.dataAvailable.prec %}
 			<tr>
 				<td><span class="glyphicon glyphicon-tint"></span> Összes csapadék</td>
 				<td>{{report.precipitation}} mm</td>
 			</tr>
+			{% endif %}
+			{% if report.dataAvailable.temp %}
 			<tr>
 				<td><span class="glyphicon glyphicon-collapse-down"></span> Átlagos minimumhőmérséklet</td>
 				<td>{{report.tmin}} °C</td>
@@ -35,6 +38,7 @@
 				<td><span class="glyphicon glyphicon-collapse-up"></span> Átlagos maximumhőmérséklet</td>
 				<td>{{report.tmax}} °C</td>
 			</tr>
+			{% endif %}
 		</table>
 
 		<h4>Adatok száma</h4>
