@@ -6,18 +6,38 @@ class Climate(object):
 	windDirLimits = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5]
 
 	# input list of Tmins or list of Tmaxs
+	@staticmethod
 	def getNrFrostDays(minTemps):
 		return len([x for x in minTemps if x != None and x < 0])
+
+	@staticmethod
 	def getNrColdDays(minTemps):
 		return len([x for x in minTemps if x != None and x < -10])
+
+	@staticmethod
 	def getNrWarmNights(minTemps):
 		return len([x for x in minTemps if x != None and x > 20])
+
+	@staticmethod
 	def getNrSummerDays(maxTemps):
 		return len([x for x in maxTemps if x != None and x > 25])
+
+	@staticmethod
 	def getNrWarmDays(maxTemps):
 		return len([x for x in maxTemps if x != None and x >= 30])
+
+	@staticmethod
 	def getNrHotDays(maxTemps):
 		return len([x for x in maxTemps if x != None and x >= 35])
+
+	@staticmethod
+	def getPrecDistribution(precList):
+		prec = {}
+		precDay0 = len([j for j in precList if j != None and j > 0])
+		precDay10 = len([j for j in precList if j != None and j >= 10])
+		precDay30 = len([j for j in precList if j != None and j >= 30])
+		precDay50 = len([j for j in precList if j != None and j >= 50])
+		return { 0: precDay0, 10: precDay10, 30: precDay30, 50: precDay50}
 
 	@staticmethod
 	def sum(list):

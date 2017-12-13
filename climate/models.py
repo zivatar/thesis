@@ -194,27 +194,15 @@ class MonthlyReport():
 		return Tmin, Tavg, Tmax
 	def getPrecipitation(self):
 		prec = []
-		precDay = 0
-		precDay10 = 0
-		precDay30 = 0
-		precDay50 = 0
 		for i in self.days:
 			hasData = False
 			for j in self.dayObjs:
 				if j.day == i:
 					hasData = True
 					prec.append(j.precipitation)
-					if j.precipitation is not None and j.precipitation > 0:
-						precDay = precDay + 1
-					if j.precipitation is not None and j.precipitation >= 10:
-						precDay10 = precDay10 + 1
-					if j.precipitation is not None and j.precipitation >= 30:
-						precDay30 = precDay30 + 1
-					if j.precipitation is not None and j.precipitation >= 50:
-						precDay50 = precDay50 + 1
 			if not hasData:
 				prec.append(None)
-		return prec, { 0: precDay, 10: precDay10, 30: precDay30, 50: precDay50}
+		return prec
 	def generateTempDistribution(self):
 		dist = []
 		for l in range(len(Climate.tempDistribLimits)):
@@ -276,7 +264,7 @@ class MonthlyReport():
 		temp = Climate.number(self.tempMins) > 0 and Climate.number(self.tempMaxs) > 0
 		tempDist = Climate.number2(self.generateTempDistribution()) > 0
 		rhDist = Climate.number2(self.generateRhDistribution()) > 0
-		prec = Climate.number(self.getPrecipitation()[0]) > 0 and Climate.sum(self.getPrecipitation()[0]) > 0
+		prec = Climate.number(self.getPrecipitation()) > 0 and Climate.sum(self.getPrecipitation()) > 0
 		windDist = Climate.number2(self.generateWindDistribution(), True) > 0
 		sign = Climate.sum([self.monthObjs[0].significants.get(i) for i in self.monthObjs[0].significants]) > 0
 		return {
@@ -299,10 +287,11 @@ class MonthlyReport():
 		self.indices = self.calculateIndices()
 		self.tempDist = json.dumps(self.generateTempDistribution())
 		self.rhDist = json.dumps(self.generateRhDistribution())
-		self.prec, self.precDist = json.dumps(self.getPrecipitation()[0]), self.getPrecipitation()[1]
+		self.prec = json.dumps(self.getPrecipitation())
+		self.precDist = Climate.getPrecDistribution(self.getPrecipitation())
 		self.windDist = json.dumps(self.generateWindDistribution())
 		self.significants = json.dumps(monthObjs[0].significants)
-		self.precipitation = Climate.sum(self.getPrecipitation()[0])
+		self.precipitation = Climate.sum(self.getPrecipitation())
 		self.tmin = Climate.avg(self.tempMins)
 		self.tmax = Climate.avg(self.tempMaxs)
 		self.tavg = Climate.avg2(self.tempMins, self.tempMaxs)
@@ -320,11 +309,16 @@ class YearlyReport():
 		for i in self.months:
 			hasData = False
 			for j in self.monthObjs:
-				if j.month == i:
+				if (j.month == i):
 					hasData = True
 					dataset.append(getattr(j, prop))
 			if not hasData:
 				dataset.append(None)
+		return dataset
+	def collectDailyData(self, prop):
+		dataset = []
+		for i in self.dayObjs:
+			dataset.append(getattr(i, prop))
 		return dataset
 	def generateTempDistribution(self):
 		dist = []
@@ -394,11 +388,12 @@ class YearlyReport():
 			"windDist": windDist,
 			"sign": sign
 		}
-	def __init__(self, siteId, year, monthObjs, yearObj):
+	def __init__(self, siteId, year, monthObjs, yearObj, dayObjs):
 		self.siteId = siteId
 		self.year = year
 		self.monthObjs = monthObjs
 		self.yearObj = yearObj
+		self.dayObjs = dayObjs
 		self.months = Year.monthsOfYear()
 		self.temps ={
 			'mins': json.dumps(self.collectData('tempMin')),
@@ -420,6 +415,7 @@ class YearlyReport():
 		self.rhDist = json.dumps(self.generateRhDistribution())
 		self.windDist = json.dumps(self.generateWindDistribution())
 		self.precipitation = Climate.sum(self.collectData('precipitation'))
+		self.precDist = Climate.getPrecDistribution(self.collectDailyData('precipitation'))
 		self.tmin = Climate.avg(self.collectData('tempMin'))
 		self.tmax = Climate.avg(self.collectData('tempMax'))
 		self.tavg = Climate.avg2(self.collectData('tempMin'), self.collectData('tempMax'))

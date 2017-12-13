@@ -226,7 +226,8 @@ def yearly_view(request, pk, year):
 	yearlyList = YearlyStatistics.objects.filter(siteId = site).filter(year = year)
 	if len(yearlyList) > 0:
 		yearly = yearlyList[0]
-	monthly = MonthlyStatistics.objects.filter(siteId = site).filter(year = year)
+	monthly = MonthlyStatistics.objects.filter(siteId = site).filter(year = year).order_by('month')
+	daily = DailyStatistics.objects.filter(siteId = site).filter(year = year).order_by('month')
 	if site and yearlyList and monthly and (site.isPublic and site.owner.is_active or site.owner == request.user):
 		climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits, 'rh': Climate().rhDistribLimits}
 		datasetNum = []
@@ -238,7 +239,7 @@ def yearly_view(request, pk, year):
 					added = True
 			if not added:
 				datasetNum.append({'id': i+1, 'available':0})
-		a = YearlyReport(site, year, monthly, yearly)
+		a = YearlyReport(site, year, monthly, yearly, daily)
 
 		significants = {}
 		for code in Weather.WEATHER_CODE:
