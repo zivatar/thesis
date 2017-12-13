@@ -52,12 +52,13 @@ EMAIL_HOST_PASSWORD = 'QHvAF-W9j!)%A9K('
 EMAIL_PORT = 587
 
 # Use nose to run all tests
-#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # Tell nose to measure coverage on the 'foo' and 'bar' apps
 NOSE_ARGS = [
-    #'--with-coverage',
-    #'--cover-package=climate',
+    '--with-coverage',
+    '--cover-package=climate',
+    '--cover-erase'
 ]
 
 MIDDLEWARE_CLASSES = (

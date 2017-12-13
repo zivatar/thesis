@@ -82,7 +82,10 @@ class MonthTestCase(unittest.TestCase):
 	'''
 	def test_days_of_month_till_today(self):
 		today = timezone.now().day
-		self.assertEqual(Month.daysOfMonthTillToday(), list(range(1, today + 1)))
+		self.assertEqual(Month().daysOfMonthTillToday(), list(range(1, today + 1)))
+	def test_days_of_month_till_other_day(self):
+		otherDay = Month(year=2017, month=1)
+		self.assertEqual(otherDay.daysOfMonthTillToday(), list(range(1, 32)))
 
 class YearTestCase(unittest.TestCase):
 	'''
