@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 
 
 class SiteForm(forms.ModelForm):
+    """
+    siteform
+    """
     class Meta:
         model = Site
         fields = ('title', 'comment', 'narrowArea', 'wideArea', 'lat', 'lon', 'isActive', 'isPublic', 'primaryImage')

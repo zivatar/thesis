@@ -505,6 +505,9 @@ class RawObservation(models.Model):
 
 
 class RawManualData(models.Model):
+    """
+    Manual data from a day
+    """
     class Meta:
         unique_together = (('year', 'month', 'day', 'siteId'),)
 
@@ -521,6 +524,11 @@ class RawManualData(models.Model):
     _weatherCode = models.CommaSeparatedIntegerField(max_length=200, choices=Weather.WEATHER_CODE, blank=True)
 
     def addWeatherCode(self, code):
+        """
+        Add weather observation code
+        :param code:
+        :return:
+        """
         weatherCodes = self._weatherCode[:-1].split(',')
         if not code in weatherCodes:
             self._weatherCode = self._weatherCode + code + ','

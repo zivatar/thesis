@@ -285,6 +285,14 @@ def yearly_view(request, pk, year):
 
 
 def monthly_view(request, site, year, month):
+    """
+    Monthly view
+    :param request: HTTP request
+    :param site:
+    :param year:
+    :param month:
+    :return: html page
+    """
     siteObj = get_object_or_404(Site, pk=site)
     yearly = YearlyStatistics.objects.filter(siteId=siteObj).filter(year=year)
     monthly = MonthlyStatistics.objects.filter(siteId=siteObj).filter(year=year).filter(month=month)
