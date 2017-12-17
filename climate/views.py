@@ -258,8 +258,8 @@ def yearly_view(request, pk, year):
     dailyManual = RawManualData.objects.filter(siteId=site).filter(year=year)
 
     if site and yearlyList and monthly and (site.isPublic and site.owner.is_active or site.owner == request.user):
-        climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits,
-                   'rh': Climate().rhDistribLimits}
+        climate = {'temp': Climate().TEMP_DISTRIBUTION_LIMITS, 'wind': Climate().WIND_DIRECTION_LIMITS,
+                   'rh': Climate().RH_DISTRIBUTION_LIMITS}
         datasetNum = []
         for i in range(12):
             added = False
@@ -293,8 +293,8 @@ def monthly_view(request, site, year, month):
 
     if siteObj and yearly and monthly and daily and (siteObj.isPublic and
                                                      siteObj.owner.is_active or siteObj.owner == request.user):
-        climate = {'temp': Climate().tempDistribLimits, 'wind': Climate().windDirLimits,
-                   'rh': Climate().rhDistribLimits}
+        climate = {'temp': Climate().TEMP_DISTRIBUTION_LIMITS, 'wind': Climate().WIND_DIRECTION_LIMITS,
+                   'rh': Climate().RH_DISTRIBUTION_LIMITS}
         datasetNum = []
         a = MonthlyReport(site, year, month, monthly, yearly, daily, dailyManual)
 
@@ -345,7 +345,7 @@ def climate(request, pk, year=None, month=None):
     else:
         thisMonth = Month()
     actualDataJson = []
-    for i in thisMonth.daysOfMonthTillToday():
+    for i in thisMonth.days_of_month_till_today():
         actualData = RawManualData.objects.filter(year=thisMonth.year, month=thisMonth.month, siteId=pk, day=i)
         if len(actualData) > 0:
             actualDataJson.append({
@@ -442,11 +442,11 @@ def create_daily_statistics(fromDate, toDate, siteId):
                         precipitation = precipitation + j.precipitation
                 if j.windDir is not None:
                     winds.append(j.windDir)
-            tempDistribution = Climate.calculateTempDistrib(temps)
+            tempDistribution = Climate.calculate_temperature_distribution(temps)
             d.tempDistribution = ''.join(str(e) + ',' for e in tempDistribution)[:-1]
-            rhDistribution = Climate.calculateRhDistrib(rhs)
+            rhDistribution = Climate.calculate_rh_distribution(rhs)
             d.rhDistribution = ''.join(str(e) + ',' for e in rhDistribution)[:-1]
-            windDistribution = Climate.calculateWindDistrib(winds)
+            windDistribution = Climate.calculate_wind_distribution(winds)
             d.windDistribution = ''.join(str(e) + ',' for e in windDistribution)[:-1]
             if len(temps) > 0:
                 d.tempMin = min(temps)
@@ -514,24 +514,24 @@ def create_monthly_statistics(fromDate, toDate, siteId):
                     rhs.append(j.humidity)
                 if j.windDir is not None:
                     winds.append(j.windDir)
-            tempDistribution = Climate.calculateTempDistrib(temps)
+            tempDistribution = Climate.calculate_temperature_distribution(temps)
             d.tempDistribution = ''.join(str(e) + ',' for e in tempDistribution)[:-1]
-            rhDistribution = Climate.calculateRhDistrib(rhs)
+            rhDistribution = Climate.calculate_rh_distribution(rhs)
             d.rhDistribution = ''.join(str(e) + ',' for e in rhDistribution)[:-1]
-            windDistribution = Climate.calculateWindDistrib(winds)
+            windDistribution = Climate.calculate_wind_distribution(winds)
             d.windDistribution = ''.join(str(e) + ',' for e in windDistribution)[:-1]
             d.precipitation = precipitation
-            d.summerDays = Climate.getNrSummerDays(tempmaxs)
-            d.frostDays = Climate.getNrFrostDays(tempmins)
-            d.coldDays = Climate.getNrColdDays(tempmins)
-            d.warmNights = Climate.getNrWarmNights(tempmins)
-            d.warmDays = Climate.getNrWarmDays(tempmaxs)
-            d.hotDays = Climate.getNrHotDays(tempmaxs)
+            d.summerDays = Climate.get_nr_summer_days(tempmaxs)
+            d.frostDays = Climate.get_nr_frost_days(tempmins)
+            d.coldDays = Climate.get_nr_cold_days(tempmins)
+            d.warmNights = Climate.get_nr_warm_nights(tempmins)
+            d.warmDays = Climate.get_nr_warm_days(tempmaxs)
+            d.hotDays = Climate.get_nr_hot_days(tempmaxs)
 
             manualDataSet = RawManualData.objects.filter(siteId=siteId).filter(year=f.year).filter(month=f.month)
             significants = {}
             for day in manualDataSet:
-                significants = Climate.countSignificants(significants, day.weatherCode)
+                significants = Climate.count_significants(significants, day.weatherCode)
             d.significants = significants
             d.save()
 
@@ -552,7 +552,7 @@ def create_yearly_statistics(fromDate, toDate, siteId):
         manualDataSet = RawManualData.objects.filter(siteId=siteId).filter(year=f.year)
         significants = {}
         for day in manualDataSet:
-            significants = Climate.countSignificants(significants, day.weatherCode)
+            significants = Climate.count_significants(significants, day.weatherCode)
 
         d.significants = significants
         d.save()
@@ -594,7 +594,7 @@ def create_statistics(site, year=None, month=None):
             year=year).filter(month=month).count() > 0:
             hasData = True
             firstDate = datetime.datetime(year, month, 1, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
-            lastDate = datetime.datetime(year, month, Month(year=year, month=month).lastDay(), 23, 59,
+            lastDate = datetime.datetime(year, month, Month(year=year, month=month).last_day(), 23, 59,
                                          tzinfo=pytz.timezone("Europe/Budapest"))
     else:
         if RawData.objects.filter(siteId=site).count() > 0 or RawManualData.objects.filter(siteId=site).count():
@@ -660,7 +660,6 @@ class UploadClimateHandler(APIView):
                         d.precAmount = data[i].get('prec')
                     if data[i].get('obs') is not None:
                         d.populateWeatherCode(data[i].get('obs'))
-                    print(data[i].get('comment'))
                     if data[i].get('comment') is not None:
                         d.comment = data[i].get('comment')
                     if data[i].get('isSnow') is not None:

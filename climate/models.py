@@ -1,10 +1,6 @@
 from django.db import models
-from django.utils import timezone
 from django.template.defaultfilters import slugify
-# from django_unixdatetimefield import UnixDateTimeField
 
-import datetime
-import decimal
 import simplejson as json
 import os
 from picklefield.fields import PickledObjectField
@@ -19,20 +15,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-def get_image_path_site1(instance, filename):
+def get_image_path_site1(instance):
     return os.path.join('uploads', 'site', str(instance.id) + '1')
 
 
-def get_image_path_site2(instance, filename):
-    return os.path.join('uploads', 'site', str(instance.id) + '2')
-
-
-def get_image_path_instrument1(instance, filename):
+def get_image_path_instrument1(instance):
     return os.path.join('uploads', 'instrument', str(instance.siteId.pk), slugify(str(instance.title)) + '1')
-
-
-def get_image_path_instrument2(instance, filename):
-    return os.path.join('uploads', 'instrument', str(instance.siteId.pk), slugify(str(instance.title)) + '2')
 
 
 class Site(models.Model):
@@ -69,7 +57,7 @@ class Site(models.Model):
     lon = models.DecimalField(max_digits=20, decimal_places=15)
     narrowArea = models.IntegerField(choices=NARROW_AREA, default=1)
     wideArea = models.IntegerField(choices=WIDE_AREA,
-                                   default=1)  # site.wideArea; site.get_wideArea_display() https://docs.djangoproject.com/en/1.9/topics/db/models/#field-options
+                                   default=1)
     primaryImage = models.ImageField(upload_to=get_image_path_site1, blank=True, null=True)
 
     def __str__(self):
@@ -104,18 +92,12 @@ class Instrument(models.Model):
     primaryImage = models.ImageField(upload_to=get_image_path_instrument1, blank=True, null=True)
 
 
-# milyen szenzor van
-# melyik szenzor mikor uzemelt
-
-
 class RawData(models.Model):
     class Meta:
         unique_together = (('siteId', 'createdDate'),)
 
-    # objects = BulkInsertManager()
-
     siteId = models.ForeignKey('climate.Site')
-    createdDate = models.DateTimeField()  # UnixDateTimeField()
+    createdDate = models.DateTimeField()
     pressure = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=1)
     tempIn = models.DecimalField(blank=True, null=True, max_digits=3, decimal_places=1)
     humidityIn = models.DecimalField(blank=True, null=True, max_digits=3, decimal_places=1)
@@ -128,10 +110,6 @@ class RawData(models.Model):
     gust = models.DecimalField(blank=True, null=True, max_digits=4, decimal_places=1)
     precipitation = models.DecimalField(blank=True, null=True, max_digits=4, decimal_places=1)
 
-
-# def __init__(self, siteId, createdDate):
-#	self.siteId = siteId
-#	self.createdDate = createdDate
 
 class DailyStatistics(models.Model):
     class Meta:
@@ -244,7 +222,7 @@ class MonthlyReport(Report):
 
     def generateTempDistribution(self):
         dist = []
-        for l in range(len(Climate.tempDistribLimits)):
+        for l in range(len(Climate.TEMP_DISTRIBUTION_LIMITS)):
             sublist = []
             for i in self.days:
                 hasData = False
@@ -261,7 +239,7 @@ class MonthlyReport(Report):
 
     def generateRhDistribution(self):
         dist = []
-        for l in range(len(Climate.rhDistribLimits)):
+        for l in range(len(Climate.RH_DISTRIBUTION_LIMITS)):
             sublist = []
             for i in self.days:
                 hasData = False
@@ -278,7 +256,7 @@ class MonthlyReport(Report):
 
     def generateWindDistribution(self):
         dist = []
-        for l in range(len(Climate.windDirLimits)):
+        for l in range(len(Climate.WIND_DIRECTION_LIMITS)):
             sublist = []
             for i in self.days:
                 hasData = False
@@ -295,12 +273,12 @@ class MonthlyReport(Report):
 
     def calculateIndices(self):
         return ({
-            'frostDays': Climate.getNrFrostDays(self.tempMins),
-            'coldDays': Climate.getNrColdDays(self.tempMins),
-            'warmNights': Climate.getNrWarmNights(self.tempMins),
-            'summerDays': Climate.getNrSummerDays(self.tempMins),
-            'warmDays': Climate.getNrWarmDays(self.tempMins),
-            'hotDays': Climate.getNrHotDays(self.tempMins)
+            'frostDays': Climate.get_nr_frost_days(self.tempMins),
+            'coldDays': Climate.get_nr_cold_days(self.tempMins),
+            'warmNights': Climate.get_nr_warm_nights(self.tempMins),
+            'summerDays': Climate.get_nr_summer_days(self.tempMins),
+            'warmDays': Climate.get_nr_warm_days(self.tempMins),
+            'hotDays': Climate.get_nr_hot_days(self.tempMins)
         })
 
     def calculateDataAvailable(self):
@@ -339,13 +317,13 @@ class MonthlyReport(Report):
         self.yearObj = yearObj
         self.dayObjs = dayObjs
         self.manualDayObjs = manualDayObjs
-        self.days = Month(year=self.year, month=self.month).daysOfMonth()
+        self.days = Month(year=self.year, month=self.month).days_of_month()
         self.tempMins, self.tempAvgs, self.tempMaxs = self.generateTemperatures()
         self.indices = self.calculateIndices()
         self.tempDist = json.dumps(self.generateTempDistribution())
         self.rhDist = json.dumps(self.generateRhDistribution())
         self.prec = json.dumps(self.getPrecipitation())
-        self.precDist = Climate.getPrecDistribution(self.getPrecipitation())
+        self.precDist = Climate.get_precipitation_over_limits(self.getPrecipitation())
         self.windDist = json.dumps(self.generateWindDistribution())
         self.significants = json.dumps(monthObjs[0].significants)
         self.precipitation = Climate.sum(self.getPrecipitation())
@@ -385,7 +363,7 @@ class YearlyReport(Report):
 
     def generateTempDistribution(self):
         dist = []
-        for l in range(len(Climate.tempDistribLimits)):
+        for l in range(len(Climate.TEMP_DISTRIBUTION_LIMITS)):
             sublist = []
             for i in self.months:
                 hasData = False
@@ -402,7 +380,7 @@ class YearlyReport(Report):
 
     def generateRhDistribution(self):
         dist = []
-        for l in range(len(Climate.rhDistribLimits)):
+        for l in range(len(Climate.RH_DISTRIBUTION_LIMITS)):
             sublist = []
             for i in self.months:
                 hasData = False
@@ -419,7 +397,7 @@ class YearlyReport(Report):
 
     def generateWindDistribution(self):
         dist = []
-        for l in range(len(Climate.windDirLimits)):
+        for l in range(len(Climate.WIND_DIRECTION_LIMITS)):
             sublist = []
             for i in self.months:
                 hasData = False
@@ -463,7 +441,7 @@ class YearlyReport(Report):
         self.yearObj = yearObj
         self.dayObjs = dayObjs
         self.manualDayObjs = manualDayObjs
-        self.months = Year.monthsOfYear()
+        self.months = Year.months_of_year()
         self.temps = {
             'mins': json.dumps(self.collectData('tempMin')),
             'minAvgs': json.dumps(self.collectData('tempMinAvg')),
@@ -484,7 +462,7 @@ class YearlyReport(Report):
         self.rhDist = json.dumps(self.generateRhDistribution())
         self.windDist = json.dumps(self.generateWindDistribution())
         self.precipitation = Climate.sum(self.collectData('precipitation'))
-        self.precDist = Climate.getPrecDistribution(self.collectDailyData('precipitation'))
+        self.precDist = Climate.get_precipitation_over_limits(self.collectDailyData('precipitation'))
         self.tmin = Climate.avg(self.collectData('tempMin'))
         self.tmax = Climate.avg(self.collectData('tempMax'))
         self.tavg = Climate.avg2(self.collectData('tempMin'), self.collectData('tempMax'))
@@ -523,7 +501,7 @@ class RawObservation(models.Model):
         return out
 
     def convertToReadable(self, code):
-        return Weather.getWeatherCodeText(code)
+        return Weather.get_weather_code_text(code)
 
 
 class RawManualData(models.Model):

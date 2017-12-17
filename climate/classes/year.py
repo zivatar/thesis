@@ -1,5 +1,6 @@
 class Year:
-	def monthsOfYear():
-		a = []
-		[a.append(i) for i in range(1, 13)]
-		return a
+    @staticmethod
+    def months_of_year():
+        a = []
+        [a.append(i) for i in range(1, 13)]
+        return a
