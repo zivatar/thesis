@@ -39,6 +39,12 @@
 				<td>{{report.tmax}} °C</td>
 			</tr>
 			{% endif %}
+			{% if report.snowDays > 0 %}
+				<tr>
+					<td><span class="glyphicon glyphicon-certificate"></span> Havas napok száma</td>
+					<td>{{report.snowDays}}</td>
+				</tr>
+			{% endif %}
 		</table>
 
 		<h4>Adatok száma</h4>

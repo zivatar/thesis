@@ -47,6 +47,12 @@
 				<td>{{report.tmax}} °C</td>
 			</tr>
 			{% endif %}
+			{% if report.snowDays > 0 %}
+				<tr>
+					<td><span class="glyphicon glyphicon-certificate"></span> Havas napok száma</td>
+					<td>{{report.snowDays}}</td>
+				</tr>
+			{% endif %}
 		</table>
 
 		{% if report.dataAvailable.temp %}
@@ -126,6 +132,12 @@
 			<canvas id="chart_wind" width="100%" height="100%" style="max-height:400px;"></canvas>
 		{% endif %}
 
+		{% if report.dataAvailable.snowDepth %}
+			<h4>A reggeli hóvastagság menete (mm)</h4>
+
+			<canvas id="chart_snow_depth" width="100%" height="100%" style="max-height:400px;"></canvas>
+		{% endif %}
+
 		{% if report.dataAvailable.sign %}
 		<h4>Szignifikáns jelenségek előfordulásának száma (nap)</h4>
 
@@ -165,6 +177,11 @@ var dataLabels = ["Minimumhőmérséklet", "Átlaghőmérséklet", "Maximumhőm�
 {% if report.dataAvailable.prec %}
 	var dataLabels = ["Napi csapadékmennyiség"];
 	new StackedBarChart("chart_precipitation", [{{report.prec}}], dataLabels).draw();
+{% endif %}
+
+{% if report.dataAvailable.snowDepth %}
+	var dataLabels = ["Napi hóvastagság"];
+	new StackedBarChart("chart_snow_depth", [{{report.snowDepths}}], dataLabels).draw();
 {% endif %}
 
 {% if report.dataAvailable.windDist %}

@@ -1,7 +1,9 @@
 	function handleInputChange(inputName, day, elemId) {
-		console.log(1);
 		handleInputChangeBefore(inputName, day, elemId);
 		var value = document.getElementById(elemId).value;
+		if (inputName == "snowDepth" && value == 0) {
+			value = undefined;
+		}
 		data[day][inputName] = value == "" ? undefined : value;
 		handleInputChangeAfter(inputName, day, elemId);
 	}
