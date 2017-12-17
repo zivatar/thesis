@@ -20,31 +20,24 @@ function LineChart(canvas, data, labels) {
 }
 
 LineChart.prototype.draw = function() {
+    console.log(this.canvas);
+    console.log(document.getElementById(this.canvas));
 	var ctx = document.getElementById(this.canvas).getContext('2d');
-	Chart.defaults.global.defaultFontSize = 18;
-	Chart.defaults.global.defaultFontStyle = 'bold'
-	Chart.defaults.global.defaultFontFamily = "Quicksand";
     var xLabels = [];
     for (var i = 0; i < this.data[0].length; i++) {
         xLabels.push("");
     }
 
     var colors = [
-        '#F27991',
-        '#8888AA',
-        '#557755',
-        '#338811',
-        '#7F3F4C',
-        '#992233',
-        '#3D404C',
-        '#881133',
-        '#112288',
-        '#111010',
-        '#001166',
-        '#220000',
-        '#F2DADE',
-        '#BBDDAA',
-        '#99ADFF',
+        '#34495e',
+        '#9b59b6',
+        '#3498db',
+        '#1abc9c',
+        '#f1c40f',
+        '#f39c12',
+        '#d35400',
+        '#e74c3c',
+        '#c0392b',
     ];
 
     var datasetOpts = [];
@@ -53,10 +46,10 @@ LineChart.prototype.draw = function() {
             label: this.labels[i],
             data: this.data[i],
             borderColor: colors[i],
-            backgroundColor: colors[i],
             borderWidth: 3,
             pointHoverBorderColor: colors[i],
-            pointHoverBackgroundColor: colors[i]
+            pointHoverBackgroundColor: colors[i],
+            pointSize: 6
         });
     }
 
@@ -84,9 +77,14 @@ LineChart.prototype.draw = function() {
         	borderWidth: 1
         },
         chartArea: {
-        	backgroundColor: 'rgba(0, 0, 0, 0.6)'
+        	backgroundColor: 'rgba(0, 0, 0, 0)'
     	},
-    	maintainAspectRatio: false
+    	maintainAspectRatio: false,
+        layout: {
+        padding: {
+            right: 10
+        }
+    }
     }
 });
 }
@@ -99,9 +97,6 @@ function StackedBarChart(canvas, data, labels) {
 
 StackedBarChart.prototype.draw = function() {
 	var ctx = document.getElementById(this.canvas).getContext('2d');
-	Chart.defaults.global.defaultFontSize = 18;
-	Chart.defaults.global.defaultFontStyle = 'bold'
-	Chart.defaults.global.defaultFontFamily = "Quicksand";
 
     var xLabels = [];
     for (var i = 0; i < this.data[0].length; i++) {
@@ -109,21 +104,21 @@ StackedBarChart.prototype.draw = function() {
     }
 
     var colors = [
-        '#F27991',
-        '#8888AA',
-        '#557755',
-        '#338811',
-        '#7F3F4C',
-        '#992233',
-        '#3D404C',
-        '#881133',
-        '#112288',
-        '#111010',
-        '#001166',
-        '#220000',
-        '#F2DADE',
-        '#BBDDAA',
-        '#99ADFF',
+        '#2c3e50',
+        '#34495e',
+        '#8e44ad',
+        '#9b59b6',
+        '#2980b9',
+        '#3498db',
+        '#16a085',
+        '#1abc9c',
+        '#ecf0f1',
+        '#f1c40f',
+        '#f39c12',
+        '#e67e22',
+        '#d35400',
+        '#e74c3c',
+        '#c0392b',
     ];
 
     var datasetOpts = [];
@@ -166,10 +161,10 @@ StackedBarChart.prototype.draw = function() {
         	borderWidth: 1
         },
         chartArea: {
-        	backgroundColor: 'rgba(0, 0, 0, 0.6)'
+        	backgroundColor: 'rgba(0, 0, 0, 0)'
     	},
     	maintainAspectRatio: false,
-    	barPercentage: 0.9
+    	barPercentage: 0.9,
     }
 });
 }

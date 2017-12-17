@@ -126,7 +126,6 @@ div.highlighted:hover {
 }
 
 table.observation span.label {
-	font-size: medium;
 	margin: 3px;
 }
 
@@ -142,7 +141,15 @@ table.observation span.label {
 	background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    background-attachment: fixed;
 }
+
+@media only screen and (max-device-width: 1024px) {
+    #big-main-header {
+        background-attachment: scroll;
+    }
+}
+
 
 .text-vertical-center {
 	display: table-cell;
@@ -162,6 +169,17 @@ table.observation span.label {
     color: #fff;
     padding: 18px;
     letter-spacing: 10px;
+}
+
+#navbar.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%
+}
+
+#navbar {
+	z-index: 100;
+	position: inherit;
 }
 
 .navbar {
@@ -283,4 +301,8 @@ input.narrow {
 
 .datepicker.datepicker-dropdown th, .datepicker.datepicker-dropdown td {
 	color: black;
+}
+
+td.narrow {
+    width: 0;
 }

@@ -4,6 +4,8 @@
 {% block content %}
 
 <script src="{% static 'js/papaparse.min.js' %}"></script>
+<script src="{% static 'js/constant.js' %}"></script>
+<script src="{% static 'js/utils.js' %}"></script>
 <script src="{% static 'js/upload.js' %}"></script>
 
 <div class="panel panel-primary">
@@ -15,8 +17,10 @@
 		<div class="tab-content">
 				
 			<div id="add_new" class="tab-pane fade in active">
+				{% if request.user.profile.canUpload %}
+				<p>Mérőhely: <a href="{% url 'site_details' pk=site.pk %}">{{site.title}}</a></p>
 
-				<div id="site_id" class="invisible">{{site.pk}}</div>
+				<div id="site_id" class="hidden">{{site.pk}}</div>
 						
 				<div id="upload_container">
 					<div id="SELECT_FILE" class="state">
@@ -36,7 +40,10 @@
 						<p>Befejeződött a feltöltés, a statisztika számolás néhány percig fog tartani.</p>
 					</div>
 				</div>
-				
+				{% else %}
+				<p>Nincs jogosultságod adatot feltölteni, kérj e-mailben!</p>
+				<p>django.zivatar@gmail.com</p>
+				{% endif %}
 			</div>
 					
 		</div>

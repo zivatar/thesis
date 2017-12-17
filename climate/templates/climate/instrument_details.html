@@ -32,19 +32,13 @@
 
 				
 				
-				{% if instrument.primaryImage or instrument.secondaryImage %}
+				{% if instrument.primaryImage %}
 					<div class="col-sm-12">
 						<p>Fényképek róla:</p>
 					</div>
 					{% if instrument.primaryImage %}
-						<div class="col-sm-6 col-xs-12">
+						<div class="col-sm-12">
 							<img class="upload" src="{{instrument.primaryImage.url}}" width="100%">
-						</div>
-					{% endif %}
-										
-					{% if instrument.secondaryImage %}
-						<div class="col-sm-6 col-xs-12">
-							<img class="upload" src="{{instrument.secondaryImage.url}}" width="100%">
 						</div>
 					{% endif %}
 					

@@ -15,7 +15,6 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -27,7 +26,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
 
-
 # Application definition
 
 INSTALLED_APPS = (
@@ -37,13 +35,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'widget_tweaks',
+    'widget_tweaks',
     'captcha',
     'django_nose',
     'climate',
 )
 
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
@@ -52,12 +50,13 @@ EMAIL_HOST_PASSWORD = 'QHvAF-W9j!)%A9K('
 EMAIL_PORT = 587
 
 # Use nose to run all tests
-#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # Tell nose to measure coverage on the 'foo' and 'bar' apps
 NOSE_ARGS = [
-    #'--with-coverage',
-    #'--cover-package=climate',
+    '--with-coverage',
+    '--cover-package=climate',
+    '--cover-erase'
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -91,7 +90,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'zivatar.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
@@ -101,7 +99,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -130,8 +127,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_REDIRECT_URL = 'main'
 
-#RECAPTCHA_PUBLIC_KEY = 'MyRecaptchaKey124'
-#RECAPTCHA_PRIVATE_KEY = 'MyRecaptchaPrivateKey457'
+# RECAPTCHA_PUBLIC_KEY = 'MyRecaptchaKey124'
+# RECAPTCHA_PRIVATE_KEY = 'MyRecaptchaPrivateKey457'
 # TODO register key
 NOCAPTCHA = True
 RECAPTCHA_PROXY = 'http://127.0.0.1:8000'

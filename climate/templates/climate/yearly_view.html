@@ -1,19 +1,50 @@
 {% extends 'climate/base.html' %}
 {% load staticfiles %}
+
+{% block title %}Évi klímalap: {{site.title}}, {{year.year}}. {% endblock %}
+
 {% block content %}
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<span class="glyphicon glyphicon-map-marker"></span> {{ site.title }}, {{ year.year }}
+		<span class="glyphicon glyphicon-map-marker"></span> {{ site.title }} éves adatai: {{ year.year }}
 	</div>
 	<div class="panel-body">
 
-		<a href="{% url 'site_list' %}">Meteorológiai állomások</a> >> <a href="{% url 'site_details' pk=site.pk %}">{{ site.title }}</a>
-
 		<table class="table table-striped">
 			<tr>
-				<td>Év</td>
+				<td><span class="glyphicon glyphicon-map-marker"></span> Mérőállomás</td>
+				<td><a href="{% url 'site_details' pk=site.pk %}">{{ site.title }}</a></td>
+			</tr>
+			<tr>
+				<td><span class="glyphicon glyphicon-calendar"></span> Év</td>
 				<td>{{year.year}}</td>
 			</tr>
+			{% if report.dataAvailable.prec %}
+			<tr>
+				<td><span class="glyphicon glyphicon-tint"></span> Összes csapadék</td>
+				<td>{{report.precipitation}} mm</td>
+			</tr>
+			{% endif %}
+			{% if report.dataAvailable.temp %}
+			<tr>
+				<td><span class="glyphicon glyphicon-collapse-down"></span> Átlagos minimumhőmérséklet</td>
+				<td>{{report.tmin}} °C</td>
+			</tr>
+			<tr>
+				<td><span class="glyphicon glyphicon-sound-stereo"></span> Átlagos középhőmérséklet</td>
+				<td>{{report.tavg}} °C</td>
+			</tr>
+			<tr>
+				<td><span class="glyphicon glyphicon-collapse-up"></span> Átlagos maximumhőmérséklet</td>
+				<td>{{report.tmax}} °C</td>
+			</tr>
+			{% endif %}
+			{% if report.snowDays > 0 %}
+				<tr>
+					<td><span class="glyphicon glyphicon-certificate"></span> Havas napok száma</td>
+					<td>{{report.snowDays}}</td>
+				</tr>
+			{% endif %}
 		</table>
 
 		<h4>Adatok száma</h4>
@@ -36,53 +67,108 @@
 			</tr>
 		</table>
 
-		<h4>Havi hőmérsékleti szélsőértékek és átlagok</h4>
+		{% if report.dataAvailable.temp %}
+			<h4>Havi hőmérsékleti szélsőértékek és átlagok (°C)</h4>
 
-		<canvas id="chart_temperature" width="100%" height="100%" style="max-height:400px;"></canvas>
+			<canvas id="chart_temperature" width="100%" height="100%" style="max-height:400px;"></canvas>
 
-		<h4>Hőmérsékleti jelzőnapok gyakorisága</h4>
+			<h4>Hőmérsékleti jelzőnapok gyakorisága (db)</h4>
 
-		{{report.summerDays}}
+			{{report.summerDays}}
 
-		<canvas id="chart_temperature_indices" width="100%" height="100%" style="max-height:400px;"></canvas>
+			<canvas id="chart_temperature_indices" width="100%" height="100%" style="max-height:400px;"></canvas>
+		{% endif %}
 
-		<h4>A hőmérséklet eloszlása</h4>
+		{% if report.dataAvailable.tempDist %}
+			<h4>A hőmérséklet eloszlása (db,°C)</h4>
+			<canvas id="chart_temperature_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
+		{% endif %}
 
-		<canvas id="chart_temperature_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
-
-		<h4>Relatív nedvesség eloszlása</h4>
-
+		{% if report.dataAvailable.rhDist %}
+		<h4>Relatív nedvesség eloszlása (db,%)</h4>
 		<canvas id="chart_rh_distribution" width="100%" height="100%" style="max-height:400px;"></canvas>
+		{% endif %}
 
-		<h4>Havi csapadékmennyiség éves menete</h4>
+		{% if report.dataAvailable.prec %}
+		<h4>Havi csapadékmennyiség éves menete (mm)</h4>
 
 		<canvas id="chart_precipitation" width="100%" height="100%" style="max-height:400px;"></canvas>
 
+		<h4>Napi csapadékmennyiség küszöbérték meghaladása</h4>
+
+		<table class="table table-striped">
+			<tr>
+				<td><span class="glyphicon glyphicon-record"></span> Csapadékos napok száma:</td>
+				<td>{{report.precDist.0}}</td>
+			</tr>
+			<tr>
+				<td><span class="glyphicon glyphicon-tint"></span> 10mm fölötti csapadékú napok száma</td>
+				<td>{{report.precDist.10}}</td>
+			</tr>
+			<tr>
+				<td><span class="glyphicon glyphicon-tint"></span><span class="glyphicon glyphicon-tint"></span> 30mm fölötti csapadékú napok száma</td>
+				<td>{{report.precDist.30}}</td>
+			</tr>
+			<tr>
+				 <td><span class="glyphicon glyphicon-tint"></span><span class="glyphicon glyphicon-tint"></span><span class="glyphicon glyphicon-tint"></span> 50mm fölötti csapadékú napok száma</td>
+				 <td>{{report.precDist.50}}</td>
+			</tr>
+		</table>
+		{% endif %}
+
+		{% if report.dataAvailable.windDist %}
 		<h4>A jellemző szélirány eloszlása</h4>
 
 		<canvas id="chart_wind" width="100%" height="100%" style="max-height:400px;"></canvas>
+		{% endif %}
+
+		{% if report.dataAvailable.sign %}
+		<h4>Szignifikáns jelenségek előfordulásának száma (nap)</h4>
+
+		<table class="table table-striped">
+			<tr>
+				<th>Megnevezés</th>
+				<th>Napok száma</th>
+			</tr>
+			{% for s,v in significants.items %}
+				<tr>
+					<td>{{s}}</td>
+					<td>{{v}}</td>
+				</tr>
+			{% endfor %}
+		</table>
+		{% endif %}
 	</div>
 </div>
 
 <script>
 
+{% if report.dataAvailable.temp %}
 var data = [{{report.temps.mins}}, {{report.temps.minAvgs}}, {{report.temps.avgs}}, {{report.temps.maxAvgs}}, {{report.temps.maxs}}];
 var dataLabels = ["Minimum", "Átlagos minimum", "Átlag", "Átlagos maximum", "Maximumhőmérséklet"]
 new LineChart("chart_temperature", data, dataLabels).draw();
-
 var data = [{{report.tempIndices.summerDays}}, {{report.tempIndices.frostDays}}, {{report.tempIndices.coldDays}}, {{report.tempIndices.warmNights}}, {{report.tempIndices.warmDays}}, {{report.tempIndices.hotDays}}];
 var dataLabels = ["Nyári napok", "Fagyos napok", "Hideg napok", "Meleg éjszakák", "Meleg napok", "Forró napok"]
 new LineChart("chart_temperature_indices", data, dataLabels).draw();
+{% endif %}
 
+{% if report.dataAvailable.tempDist %}
 new StackedBarChart("chart_temperature_distribution", {{report.tempDist}}, {{climate.temp}}).draw();
+{% endif %}
 
+{% if report.dataAvailable.rhDist %}
 new StackedBarChart("chart_rh_distribution", {{report.rhDist}}, {{climate.rh}}).draw();
+{% endif %}
 
+{% if report.dataAvailable.prec %}
 var dataLabels = ["Havi csapadékmennyiség"];
-new LineChart("chart_precipitation", [{{report.prec}}], dataLabels).draw();
+new StackedBarChart("chart_precipitation", [{{report.prec}}], dataLabels).draw();
+{% endif %}
 
+{% if report.dataAvailable.windDist %}
 var dataLabels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 new StackedBarChart("chart_wind", {{report.windDist}}, dataLabels).draw();
+{% endif %}
 
 </script>
 {% endblock content %}

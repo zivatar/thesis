@@ -1,6 +1,9 @@
 {% extends 'climate/base.html' %}
 {% load staticfiles %}
 {% load widget_tweaks %}
+
+{% block title %}Saját felhasználó{% endblock %}
+
 {% block content %}
 <div class="panel panel-primary">
 	<div class="panel-heading">
@@ -13,7 +16,7 @@
 
 		<ul class="pull-left">
 			<li><a href="{% url 'logout' %}">Kilépés</a></li>
-			{% if user.groups.all.0.name == "is_admin" or user.groups.all.1.name == "is_admin" %}
+			{% if user.is_superuser %}
 				<li><a href="{% url 'edit_users' %}">Felhasználók karbantartása</a></li>
 			{% endif %}
 		</ul>
@@ -40,7 +43,7 @@
 			</tr>
 			<tr>
 				<td>Admin</td>
-				{% if user.groups.all.0.name == "is_admin" or user.groups.all.1.name == "is_admin" %}
+				{% if user.is_superuser %}
 					<td class="yes">igen</td>
 				{% else %}
 					<td class="no">nem</td>
@@ -48,7 +51,7 @@
 			</tr>
 			<tr>
 				<td>Van joga adatot feltölteni</td>
-				{% if user.groups.all.0.name == "can_upload" or user.groups.all.1.name == "can_upload" %}
+				{% if user.profile.canUpload %}
 					<td class="yes">igen</td>
 				{% else %}
 					<td class="no">nincs, e-mailben kérhetsz</td>

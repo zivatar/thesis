@@ -12,8 +12,9 @@
 	<div class="panel-body">
 
 	<div class="row">
+
 		<div class="col-sm-6">
-			<p>Mérőhely: {{site.title}}</p>
+			<p>Mérőhely: <a href="{% url 'site_details' pk=site.pk %}">{{site.title}}</a></p>
 			<p>Aktuális hónap: {{month.year}}.{{month.getMonth}}.</p>
 		</div>
 		<div class="col-sm-6">
@@ -27,19 +28,21 @@
 				<thead>
 					<tr>
 						<th>Nap</th>
-						<th>Tmin</th>
-						<th>Tmax</th>
-						<th>Csapadék</th>
+						<th>Tmin (°C)</th>
+						<th>Tmax (°C)</th>
+						<th>Csapadék (mm)</th>
 						<th>Szignifikáns jelenségek</th>
+						<th>Volt hó</th>
+						<th>Hó- vastagság</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for day in month.daysOfMonthTillToday %}
 						<tr>
-							<td>{{day}}</td>
-							<td><input class="full-width" type="number" step=0.1 id="Tmin{{day}}"></td>
-							<td><input class="full-width" type="number" step=0.1 id="Tmax{{day}}"></td>
-							<td><input class="full-width" type="number" min=0 step=0.5 id="prec{{day}}"></td>
+							<td>#{{day}}</td>
+							<td><input class="full-width" type="number" step=0.1 id="Tmin{{day}}" placeholder="Tmin"></td>
+							<td><input class="full-width" type="number" step=0.1 id="Tmax{{day}}" placeholder="Tmax"></td>
+							<td><input class="full-width" type="number" min=0.5 step=0.5 id="prec{{day}}" placeholder="csapadék"></td>
 							<td>
 								<select id="obs{{day}}">
     								<option value="-1">Időjárási jelenség hozzáadása</option>
@@ -51,81 +54,95 @@
 
   								</div>
   							</td>
+  							<td><input class="full-width" type="checkbox" id="isSnow{{day}}"></td>
+  							<td><input class="full-width" type="number" min=0 step=0.5 id="snowDepth{{day}}" placeholder="hóvastagság"></td>
+						</tr>
+						<tr>
+							<td colspan="7">
+								<textarea class="full-width" id="comment{{day}}" placeholder="Megjegyzés" cols="40" rows="3"></textarea>
+							</td>
 						</tr>
 					{% endfor %}
 				</tbody>
 			</table>
 
-			<button class="btn btn-success btn-block">Adatok beküldése</button>
+			<button id="push-data" class="btn btn-success btn-block">Adatok beküldése</button>
 		</div>
 	</div>
 </div>
 
+<script src="{% static 'js/constant.js' %}"></script>
+<script src="{% static 'js/utils.js' %}"></script>
+<script src="{% static 'js/climate.js' %}"></script>
+
 <script>
-	var data = {{actualData}};
+
+	var data = {{ actualData|safe }};
+
 	var obsCodes = {};
 	{% for o in weatherCodes %}
 		obsCodes[{{o.0}}] = "{{o.1}}";
 	{% endfor %}
 
-	{% for day in month.daysOfMonthTillToday %}
-		function handleInputChange(inputName, day, elemId) {
-			var value = document.getElementById(elemId).value;
-			if (!data[day]) {
-				data[day] = {}
-			}
-			switch (inputName) {
-				case "Tmax":
-					data[day].Tmax = value == "" ? undefined : value;
-					break;
-				case "Tmin":
-					data[day].Tmin = value == "" ? undefined : value;
-					break;
-				case "prec":
-					data[day].prec = value == "" ? undefined : value;
-					break;
-			}
-			if (data[day].Tmin == undefined && data[day].Tmax == undefined && data[day].prec == undefined) {
-				data[day] = null;
-			}
+	document.getElementById("push-data").onclick = function() {
+		var dataToSend = {
+			year: {{month.year}},
+			month: {{month.getMonth}},
+			data: data
 		}
+		var path = "{% url 'site_details' pk=site.pk %}";
+		var cb = function() {
+			window.location.href = path;
+		}
+		sendDataToServer(API_ENDPOINTS.UPLOAD_CLIMATE_DATA, {{site.pk}}, dataToSend, true, cb)
+	}
 
-		function handleAddObservation(day, elemId) {
-			var value = document.getElementById(elemId).value;
-			if (value != -1) {
-				if (!data[day]) {
-					data[day] = { obs: [] }
+	window.onload = function() {
+		{% for day in month.daysOfMonthTillToday %}
+			document.getElementById("Tmax{{day}}").onchange = function() { 
+				handleInputChange("Tmax",{{day}}-1,"Tmax{{day}}");
+			};
+			document.getElementById("Tmin{{day}}").onchange = function() { 
+				handleInputChange("Tmin",{{day}}-1,"Tmin{{day}}");
+			};
+			document.getElementById("prec{{day}}").onchange = function() { 
+				handleInputChange("prec",{{day}}-1,"prec{{day}}");
+			};
+			document.getElementById("obs{{day}}").onchange = function() { 
+				handleAddObservation({{day}}-1,"obs{{day}}");
+			};
+			renderLabels({{day}}-1,"obsLabels{{day}}");
+			document.getElementById("isSnow{{day}}").onchange = function() { 
+				handleInputChangeCheckbox("isSnow",{{day}}-1,"isSnow{{day}}");
+			};
+			document.getElementById("snowDepth{{day}}").onchange = function() { 
+				handleInputChange("snowDepth",{{day}}-1,"snowDepth{{day}}");
+			};
+			document.getElementById("comment{{day}}").oninput = function() { 
+				handleInputChange("comment",{{day}}-1,"comment{{day}}");
+			};
+			document.getElementById("comment{{day}}").onpropertychange = function() { 
+				handleInputChange("comment",{{day}}-1,"comment{{day}}");
+			};
+
+			if (!!data[{{day}}-1]) {
+				document.getElementById("Tmax{{day}}").value = data[{{day}}-1].Tmax;
+				document.getElementById("Tmin{{day}}").value = data[{{day}}-1].Tmin;
+				document.getElementById("prec{{day}}").value = data[{{day}}-1].prec;
+				document.getElementById("snowDepth{{day}}").value = data[{{day}}-1].snowDepth;
+				if (data[{{day}}-1].comment != undefined) {
+					document.getElementById("comment{{day}}").value = data[{{day}}-1].comment;
 				}
-				if (data[day].obs.indexOf(value) == -1) {
-					data[day].obs.push(value);
+				if (!!data[{{day}}-1].isSnow) {
+					document.getElementById("isSnow{{day}}").checked = true;
+
 				}
 				
-				document.getElementById(elemId).value = -1;
-			}
-			renderLabels(day, "obsLabels"+day);
-		}
-
-		function renderLabels(day, elemId) {
-			var elem = document.getElementById(elemId);
-			elem.innerHTML = '';
-			if (!!data && !!data[day] && !!data[day].obs) {
-				for (var i = 0; i < data[day].obs.length; i++) {
-					var span = document.createElement("span");
-	    			span.className = "label label-info inline-block";
-	    			span.appendChild(document.createTextNode(obsCodes[data[day].obs[i]]));
-	    			elem.appendChild(span);
-	    			//console.log(obsCodes);
-				}
 			}
 			
-		}
+		{% endfor %}
 
-		document.getElementById("Tmax{{day}}").onchange = function() { handleInputChange("Tmax",{{day}},"Tmax{{day}}") };
-		document.getElementById("Tmin{{day}}").onchange = function() { handleInputChange("Tmin",{{day}},"Tmin{{day}}") };
-		document.getElementById("prec{{day}}").onchange = function() { handleInputChange("prec",{{day}},"prec{{day}}") };
-		document.getElementById("obs{{day}}").onchange = function() { handleAddObservation({{day}},"obs{{day}}") };
-		renderLabels({{day}},"obsLabels{{day}}");
-	{% endfor %}
+	}
 </script>
 <script>
 	$('#datePicker').datepicker({

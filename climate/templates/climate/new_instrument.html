@@ -43,11 +43,9 @@
 				</div>
 
 	    		<div class="col-12 margin-h-2em">
-					{{ form.primaryImage.errors }} {{ form.secondaryImage.errors }}
-					<label for="{{ form.primaryImage.id_for_label }}">Elsődleges kép módosítása:</label>
+					{{ form.primaryImage.errors }}
+					<label for="{{ form.primaryImage.id_for_label }}">Kép módosítása:</label>
 					{% render_field form.primaryImage class+="form-control" %}
-					<label for="{{ form.primaryImage.id_for_label }}">Másodlagos kép módosítása:</label>
-					{% render_field form.secondaryImage class+="form-control" %}
 				</div>
 
 	    		<button type="submit" class="btn btn-success">Rögzítés</button>
