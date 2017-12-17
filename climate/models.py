@@ -321,6 +321,16 @@ class MonthlyReport(Report):
             "snowDepth": snowDepth,
         }
 
+    def getComments(self):
+        s = []
+        for d in self.manualDayObjs:
+            if d.comment and d.comment != "":
+                s.append({
+                    "day": d.day,
+                    "comment": d.comment
+                })
+        return s
+
     def __init__(self, siteId, year, month, monthObjs, yearObj, dayObjs, manualDayObjs):
         self.siteId = siteId
         self.year = year
@@ -348,6 +358,7 @@ class MonthlyReport(Report):
         self.tempMaxs = json.dumps(self.tempMaxs)
         self.snowDepths = json.dumps(self.getSnowDepth())
         self.snowDays = self.getNrOfSnowDays()
+        self.comments = self.getComments()
 
 
 class YearlyReport(Report):

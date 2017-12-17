@@ -303,4 +303,6 @@ input.narrow {
 	color: black;
 }
 
-
+td.narrow {
+    width: 0;
+}
