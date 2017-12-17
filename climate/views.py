@@ -316,7 +316,10 @@ def climate(request, pk, year=None, month=None):
 				"Tmin": actualData[0].tMin,
 				"Tmax": actualData[0].tMax,
 				"prec": actualData[0].precAmount,
-				"obs": actualData[0].weatherCode
+				"obs": actualData[0].weatherCode,
+				"isSnow": actualData[0].isSnow,
+				"snowDepth": actualData[0].snowDepth,
+				"comment": actualData[0].comment
 			})
 		else:
 			actualDataJson.append(None)
@@ -609,6 +612,13 @@ class UploadClimateHandler(APIView):
 						d.precAmount = data[i].get('prec')
 					if data[i].get('obs') is not None:
 						d.populateWeatherCode(data[i].get('obs'))
+					print(data[i].get('comment'))
+					if data[i].get('comment') is not None:
+						d.comment = data[i].get('comment')
+					if data[i].get('isSnow') is not None:
+						d.isSnow = data[i].get('isSnow')
+					if data[i].get('snowDepth') is not None:
+						d.snowDepth = data[i].get('snowDepth')
 					d.save()
 				
 

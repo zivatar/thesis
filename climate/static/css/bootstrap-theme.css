@@ -75,7 +75,7 @@ input.form-control.has-success, input.form-control.has-success:focus {
 	border: 4px solid #5cb85c
 }
 
-input, select, .form-control, input[type=checkbox], input.datepicker {
+input, select, .form-control, input[type=checkbox], input.datepicker, textarea {
 	background-color: #d6dee2;
 	border-radius: 0;
 	border: 0px;

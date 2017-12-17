@@ -1,22 +1,36 @@
-function handleInputChange(inputName, day, elemId) {
-			var value = document.getElementById(elemId).value;
-			if (!data[day]) {
-				data[day] = {}
-			}
-			switch (inputName) {
-				case "Tmax":
-					data[day].Tmax = value == "" ? undefined : value;
+	function handleInputChange(inputName, day, elemId) {
+		console.log(1);
+		handleInputChangeBefore(inputName, day, elemId);
+		var value = document.getElementById(elemId).value;
+		data[day][inputName] = value == "" ? undefined : value;
+		handleInputChangeAfter(inputName, day, elemId);
+	}
+
+	function handleInputChangeCheckbox(inputName, day, elemId) {
+		handleInputChangeBefore(inputName, day, elemId);
+		var elem = document.getElementById(elemId);
+		data[day][inputName] = !!elem.checked;
+		handleInputChangeAfter(inputName, day, elemId);
+	}
+
+	function handleInputChangeBefore(inputName, day, elemId) {
+		if (!data[day]) {
+			data[day] = {}
+		}
+	}
+
+	function handleInputChangeAfter(inputName, day, elemId) {
+		var empty = true;
+			for (var i in data[day]) {
+				if (data[day][i] != undefined) {
+					empty = false;
 					break;
-				case "Tmin":
-					data[day].Tmin = value == "" ? undefined : value;
-					break;
-				case "prec":
-					data[day].prec = value == "" ? undefined : value;
-					break;
+				}
 			}
-			if (data[day].Tmin == undefined && data[day].Tmax == undefined && data[day].prec == undefined) {
-				data[day] = null;
+			if (!!empty) {
+				delete data[day];
 			}
+			console.log(data[day]);
 	}
 
 	function handleAddObservation(day, elemId) {

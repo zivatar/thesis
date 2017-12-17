@@ -32,15 +32,17 @@
 						<th>Tmax (°C)</th>
 						<th>Csapadék (mm)</th>
 						<th>Szignifikáns jelenségek</th>
+						<th>Volt hó</th>
+						<th>Hó- vastagság</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for day in month.daysOfMonthTillToday %}
 						<tr>
-							<td>{{day}}</td>
-							<td><input class="full-width" type="number" step=0.1 id="Tmin{{day}}"></td>
-							<td><input class="full-width" type="number" step=0.1 id="Tmax{{day}}"></td>
-							<td><input class="full-width" type="number" min=0 step=0.5 id="prec{{day}}"></td>
+							<td>#{{day}}</td>
+							<td><input class="full-width" type="number" step=0.1 id="Tmin{{day}}" placeholder="Tmin"></td>
+							<td><input class="full-width" type="number" step=0.1 id="Tmax{{day}}" placeholder="Tmax"></td>
+							<td><input class="full-width" type="number" min=0 step=0.5 id="prec{{day}}" placeholder="csapadék"></td>
 							<td>
 								<select id="obs{{day}}">
     								<option value="-1">Időjárási jelenség hozzáadása</option>
@@ -52,6 +54,13 @@
 
   								</div>
   							</td>
+  							<td><input class="full-width" type="checkbox" id="isSnow{{day}}"></td>
+  							<td><input class="full-width" type="number" min=0 step=0.5 id="snowDepth{{day}}" placeholder="hóvastagság"></td>
+						</tr>
+						<tr>
+							<td colspan="7">
+								<textarea class="full-width" id="comment{{day}}" placeholder="Megjegyzés" cols="40" rows="3"></textarea>
+							</td>
 						</tr>
 					{% endfor %}
 				</tbody>
@@ -90,16 +99,45 @@
 
 	window.onload = function() {
 		{% for day in month.daysOfMonthTillToday %}
-			document.getElementById("Tmax{{day}}").onchange = function() { handleInputChange("Tmax",{{day}}-1,"Tmax{{day}}") };
-			document.getElementById("Tmin{{day}}").onchange = function() { handleInputChange("Tmin",{{day}}-1,"Tmin{{day}}") };
-			document.getElementById("prec{{day}}").onchange = function() { handleInputChange("prec",{{day}}-1,"prec{{day}}") };
-			document.getElementById("obs{{day}}").onchange = function() { handleAddObservation({{day}}-1,"obs{{day}}") };
+			document.getElementById("Tmax{{day}}").onchange = function() { 
+				handleInputChange("Tmax",{{day}}-1,"Tmax{{day}}");
+			};
+			document.getElementById("Tmin{{day}}").onchange = function() { 
+				handleInputChange("Tmin",{{day}}-1,"Tmin{{day}}");
+			};
+			document.getElementById("prec{{day}}").onchange = function() { 
+				handleInputChange("prec",{{day}}-1,"prec{{day}}");
+			};
+			document.getElementById("obs{{day}}").onchange = function() { 
+				handleAddObservation({{day}}-1,"obs{{day}}");
+			};
 			renderLabels({{day}}-1,"obsLabels{{day}}");
+			document.getElementById("isSnow{{day}}").onchange = function() { 
+				handleInputChangeCheckbox("isSnow",{{day}}-1,"isSnow{{day}}");
+			};
+			document.getElementById("snowDepth{{day}}").onchange = function() { 
+				handleInputChange("snowDepth",{{day}}-1,"snowDepth{{day}}");
+			};
+			document.getElementById("comment{{day}}").oninput = function() { 
+				handleInputChange("comment",{{day}}-1,"comment{{day}}");
+			};
+			document.getElementById("comment{{day}}").onpropertychange = function() { 
+				handleInputChange("comment",{{day}}-1,"comment{{day}}");
+			};
 
 			if (!!data[{{day}}-1]) {
 				document.getElementById("Tmax{{day}}").value = data[{{day}}-1].Tmax;
 				document.getElementById("Tmin{{day}}").value = data[{{day}}-1].Tmin;
 				document.getElementById("prec{{day}}").value = data[{{day}}-1].prec;
+				document.getElementById("snowDepth{{day}}").value = data[{{day}}-1].snowDepth;
+				if (data[{{day}}-1].comment != undefined) {
+					document.getElementById("comment{{day}}").value = data[{{day}}-1].comment;
+				}
+				if (!!data[{{day}}-1].isSnow) {
+					document.getElementById("isSnow{{day}}").checked = true;
+
+				}
+				
 			}
 			
 		{% endfor %}
