@@ -51,7 +51,7 @@
 			</tr>
 			<tr>
 				<td>Van joga adatot feltölteni</td>
-				{% if user.groups.all.0.name == "can_upload" or user.groups.all.1.name == "can_upload" %}
+				{% if user.profile.canUpload %}
 					<td class="yes">igen</td>
 				{% else %}
 					<td class="no">nincs, e-mailben kérhetsz</td>
