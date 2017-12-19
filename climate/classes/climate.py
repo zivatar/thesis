@@ -73,11 +73,13 @@ class Climate(object):
                 summary = summary + float(i)
                 num = num + 1
         if num == 0:
-            return 0
+            return None
         return summary / num
 
     @staticmethod
     def avg2(list1, list2):
+        if len(list1) != len(list2):
+            return None
         summary = 0.0
         num = 0
         for i in zip(list1, list2):
@@ -85,7 +87,7 @@ class Climate(object):
                 summary = summary + float(i[0]) + float(i[1])
                 num = num + 2
         if num == 0:
-            return 0
+            return None
         return summary / num
 
     @staticmethod

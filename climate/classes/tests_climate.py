@@ -201,6 +201,31 @@ class ClimateTestCase(unittest.TestCase):
     def test_num2_not_none_strict(self):
         self.assertEqual(Climate.number2([[-5, 10, 0], [1, 3, 4]], strict=True), 5)
 
+    # avg
+
+    def test_avg_empty(self):
+        self.assertEqual(Climate.avg([]), None)
+
+    def test_avg_with_none(self):
+        self.assertEqual(Climate.avg([-2, None, -1]), -1.5)
+
+    def test_avg_only_none(self):
+        self.assertEqual(Climate.avg([None, None, None]), None)
+
+    def test_avg_not_none(self):
+        self.assertEqual(Climate.avg([0, 5, 10]), 5)
+
+    # avg2
+
+    def test_avg2_empty(self):
+        self.assertEqual(Climate.avg2([], []), None)
+
+    def test_avg2_half_empty(self):
+        self.assertEqual(Climate.avg2([], [1, 2, 3]), None)
+
+    def test_avg2_different_length(self):
+        self.assertEqual(Climate.avg2([1, 2, 3], [1, 2]), None)
+
 
 if __name__ == '__main__':
     unittest.main()
