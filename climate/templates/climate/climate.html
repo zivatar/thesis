@@ -15,7 +15,7 @@
 
 		<div class="col-sm-6">
 			<p>Mérőhely: <a href="{% url 'site_details' pk=site.pk %}">{{site.title}}</a></p>
-			<p>Aktuális hónap: {{month.year}}.{{month.getMonth}}.</p>
+			<p>Aktuális hónap: {{month.year}}.{{month.get_month_two_digits}}.</p>
 		</div>
 		<div class="col-sm-6">
 			<p>Másik hónap választása</p>
@@ -37,7 +37,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for day in month.daysOfMonthTillToday %}
+					{% for day in month.days_of_month_till_today %}
 						<tr>
 							<td>#{{day}}</td>
 							<td><input class="full-width" type="number" step=0.1 id="Tmin{{day}}" placeholder="Tmin"></td>

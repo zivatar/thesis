@@ -25,9 +25,9 @@ class Weather(models.Model):
 
     @staticmethod
     def get_weather_code_text(ndx=None):
-        if ndx is None:
+        if ndx is None or ndx == '':
             return
-        if type(ndx) == str and ndx != '':
+        if type(ndx) == str:
             ndx = int(ndx)
         find = [x[1] for x in Weather.WEATHER_CODE if x[0] == ndx]
         if len(find) > 0:

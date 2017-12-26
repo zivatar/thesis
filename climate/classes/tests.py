@@ -17,10 +17,16 @@ class WeatherTestCase(unittest.TestCase):
     # Transform weather code to its name
 
     def test_valid_code(self):
-        self.assertEqual(Weather.get_weather_code_text(1), 'füst')
+        self.assertEqual(Weather.get_weather_code_text(ndx=1), 'füst')
+
+    def test_valid_code_string(self):
+        self.assertEqual(Weather.get_weather_code_text(ndx='1'), 'füst')
+
+    def test_empty_string(self):
+        self.assertEqual(Weather.get_weather_code_text(ndx=''), None)
 
     def test_invalid_code(self):
-        self.assertEqual(Weather.get_weather_code_text(9999), None)
+        self.assertEqual(Weather.get_weather_code_text(ndx=9999), None)
 
     def test_empty_code(self):
         self.assertEqual(Weather.get_weather_code_text(), None)

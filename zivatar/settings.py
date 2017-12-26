@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'captcha',
     'django_nose',
-    'climate',
+    'climate'
 )
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
@@ -132,3 +132,7 @@ LOGIN_REDIRECT_URL = 'main'
 # TODO register key
 NOCAPTCHA = True
 RECAPTCHA_PROXY = 'http://127.0.0.1:8000'
+
+
+
+

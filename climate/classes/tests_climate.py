@@ -226,6 +226,11 @@ class ClimateTestCase(unittest.TestCase):
     def test_avg2_different_length(self):
         self.assertEqual(Climate.avg2([1, 2, 3], [1, 2]), None)
 
+    # const
+
+    def test_TEMP_DISTRIBUTION_LIMITS(self):
+        self.assertEqual(Climate.TEMP_DISTRIBUTION_LIMITS,
+                         [-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40])
 
 if __name__ == '__main__':
     unittest.main()

@@ -344,17 +344,17 @@ def delete_site_image(request, site, number):
 def climate(request, pk, year=None, month=None):
     site = get_object_or_404(Site, pk=pk)
     if year and month:
-        realMonth = Month()
-        thisMonth = Month(year=year, month=month)
-        if thisMonth.year > realMonth.year or thisMonth.month > realMonth.month:
+        real_month = Month()
+        this_month = Month(year=year, month=month)
+        if this_month.year > real_month.year or this_month.month > real_month.month:
             return redirect(main)
-        elif thisMonth.year == realMonth.year and thisMonth.month == realMonth.month:
-            thisMonth = realMonth
+        elif this_month.year == real_month.year and this_month.month == real_month.month:
+            this_month = real_month
     else:
-        thisMonth = Month()
+        this_month = Month()
     actualDataJson = []
-    for i in thisMonth.days_of_month_till_today():
-        actualData = RawManualData.objects.filter(year=thisMonth.year, month=thisMonth.month, siteId=pk, day=i)
+    for i in this_month.days_of_month_till_today():
+        actualData = RawManualData.objects.filter(year=this_month.year, month=this_month.month, siteId=pk, day=i)
         if len(actualData) > 0:
             actualDataJson.append({
                 "Tmin": actualData[0].tMin,
@@ -368,7 +368,7 @@ def climate(request, pk, year=None, month=None):
         else:
             actualDataJson.append(None)
     return render(request, 'climate/climate.html',
-                  {'site': site, 'actualData': json.dumps(actualDataJson), 'month': thisMonth,
+                  {'site': site, 'actualData': json.dumps(actualDataJson), 'month': this_month,
                    'weatherCodes': Weather.WEATHER_CODE})
 
 
