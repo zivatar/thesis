@@ -15,12 +15,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-def get_image_path_site1(instance):
-    return os.path.join('uploads', 'site', str(instance.id) + '1')
+def get_image_path_site1(instance, filename):
+    return os.path.join('uploads', 'site', str(instance.id))
 
 
-def get_image_path_instrument1(instance):
-    return os.path.join('uploads', 'instrument', str(instance.siteId.pk), slugify(str(instance.title)) + '1')
+def get_image_path_instrument1(instance, filename):
+    return os.path.join('uploads', 'instrument', str(instance.siteId.pk))
 
 
 class Site(models.Model):

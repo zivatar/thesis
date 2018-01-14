@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'captcha',
     'django_nose',
-    'climate'
+    'climate',
+    'django_cleanup', # should go after your apps
 )
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
