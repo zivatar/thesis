@@ -123,7 +123,7 @@ class Climate(object):
         return data
 
     @staticmethod
-    def count_significant(significant, daily):
+    def count_significants(significant, daily):
         for code in Weather.WEATHER_CODE:
             number = significant.get(code[0], 0)
             if str(code[0]) in daily:
