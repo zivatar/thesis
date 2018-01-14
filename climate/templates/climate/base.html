@@ -81,7 +81,7 @@
 			
 			{% if user.is_authenticated %}
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="{% url 'own_site_list' %}"><span class="glyphicon glyphicon-home"></span> Saját helyek</a></li>
+					<li><a href="{% url 'new_site' %}"><span class="glyphicon glyphicon-home"></span> Saját helyek</a></li>
 					<li><a href="{% url 'my_user' %}"><span class="glyphicon glyphicon-user"></span> Felhasználó</a></li>
 				</ul>
 			{% else %}
