@@ -30,7 +30,7 @@ from threading import Timer
 from .utils import gravatar as gr
 from django.template.defaulttags import register
 
-WAIT_BEFORE_CALCULATE_STATISTICS = 10
+WAIT_BEFORE_CALCULATE_STATISTICS = 1 # sec
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
 
@@ -377,50 +377,8 @@ def process(var):
         return int(float(var))
 
 
-def handle_uploaded_file(f, site):
-    lineNumber = 0
-    for line in f:
-        line = line.decode('cp437')
-        lineNumber = lineNumber + 1
-        if lineNumber > 1:
-
-            line = sub('"', '', line).split(';')
-            date = line[1]
-
-            data, created = RawData.objects.get_or_create(siteId=site, createdDate=dtparser.parse(date + "+0100"))
-
-            if lineNumber == 2:
-                firstDate = dtparser.parse(date + "+0100")
-            lastDate = dtparser.parse(date + "+0100")
-
-            if created:
-                if process(line[2]):
-                    data.pressure = process(line[2])
-                if process(line[3]):
-                    data.tempIn = process(line[3])
-                if process(line[4]):
-                    data.humidityIn = process(line[4])
-                if process(line[5]):
-                    data.temperature = process(line[5])
-                if process(line[6]):
-                    data.humidity = process(line[6])
-                if process(line[7]):
-                    data.dewpoint = process(line[7])
-                if process(line[8]):
-                    data.windChill = process(line[8])
-                if process(line[9]):
-                    data.windSpeed = process(line[9])
-                if process(line[10]):
-                    data.windDir = process(line[10])
-                if process(line[11]):
-                    data.gust = process(line[11])
-                if process(line[12]):
-                    data.precipitation = process(line[12])
-                data.save()
-    return firstDate, lastDate
-
-
-def create_daily_statistics(fromDate, toDate, siteId):
+def create_daily_statistics(fromDate, toDate, siteId, limitInMins=10):
+    limit = datetime.timedelta(minutes=(limitInMins))
     fromDate = fromDate.replace(hour=0, minute=0, second=0)
     delta = toDate - fromDate
     for i in range(delta.days + 1):
@@ -438,18 +396,22 @@ def create_daily_statistics(fromDate, toDate, siteId):
             temps = []
             rhs = []
             winds = []
+            last_timestamp = None
             for j in rawDataSet:
-                if j.temperature is not None:
-                    temps.append(j.temperature)
-                if j.humidity is not None:
-                    rhs.append(j.humidity)
-                if j.precipitation is not None:
-                    if precipitation is None:
-                        precipitation = decimal.Decimal(0.0)
-                    else:
-                        precipitation = precipitation + j.precipitation
-                if j.windDir is not None:
-                    winds.append(j.windDir)
+                current_timestamp = j.createdDate
+                if not last_timestamp or (current_timestamp - last_timestamp) >= limit:
+                    if j.temperature is not None:
+                        temps.append(j.temperature)
+                    if j.humidity is not None:
+                        rhs.append(j.humidity)
+                    if j.precipitation is not None:
+                        if precipitation is None:
+                            precipitation = decimal.Decimal(0.0)
+                        else:
+                            precipitation = precipitation + j.precipitation
+                    if j.windDir is not None:
+                        winds.append(j.windDir)
+                    last_timestamp = current_timestamp
             tempDistribution = Climate.calculate_temperature_distribution(temps)
             d.tempDistribution = ''.join(str(e) + ',' for e in tempDistribution)[:-1]
             rhDistribution = Climate.calculate_rh_distribution(rhs)
@@ -570,22 +532,6 @@ def create_yearly_statistics(fromDate, toDate, siteId):
 
 
 @login_required
-def upload(request, pk):
-    site = get_object_or_404(Site, pk=pk)
-    if site.owner == request.user:
-        if request.method == "POST":
-            firstDate, lastDate = handle_uploaded_file(request.FILES['myfile'], site)
-            create_daily_statistics(firstDate, lastDate, site)
-            create_monthly_statistics(firstDate, lastDate, site)
-            create_yearly_statistics(firstDate, lastDate, site)
-            return redirect(site_details, pk)
-        else:
-            return render(request, 'climate/upload.html', {'site': site})
-    else:
-        return render(request, 'climate/main.html', {})
-
-
-@login_required
 def upload_data(request, pk):
     site = get_object_or_404(Site, pk=pk)
     if site.owner == request.user and site.isActive:
@@ -594,7 +540,7 @@ def upload_data(request, pk):
         return render(request, 'climate/main.html', {})
 
 
-def create_statistics(site, year=None, month=None):
+def create_statistics(site, year=None, month=None, limitInMins=10):
     hasData = False
     if year is not None and month is not None:
         if RawData.objects.filter(siteId=site).filter(createdDate__year=year).filter(
@@ -616,7 +562,7 @@ def create_statistics(site, year=None, month=None):
             firstDate = min(firstDate1, firstDate2)
             lastDate = max(lastDate1, lastDate2)
     if hasData:
-        create_daily_statistics(firstDate, lastDate, site)
+        create_daily_statistics(firstDate, lastDate, site, limitInMins)
         create_monthly_statistics(firstDate, lastDate, site)
         create_yearly_statistics(firstDate, lastDate, site)
 
@@ -713,6 +659,7 @@ def handle_uploaded_data(site, data):
                 windDir=line.get('windDirection', None),
                 gust=line.get('windGustSpeed', None)
                 )
+
         for line in data
         if datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
                                            tz=pytz.timezone("Europe/Budapest")) not in existing_dates
