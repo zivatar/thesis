@@ -24,7 +24,7 @@ SECRET_KEY = '7^0$52i1ao#lq@@u^wsck&sfv+g$d)p2q4+8y#hqh7hry&b)hs'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'raspberrypi']
 
 # Application definition
 
