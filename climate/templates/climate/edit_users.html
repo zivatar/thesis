@@ -20,7 +20,7 @@
 		</tr>
 		{% for u in users %}
 			<tr>
-				<td><a href="{% url 'edit_user' user=u.pk %}">{{u}}</a></td>
+				<td><a href="{% url 'edit_user' user=u.pk %}"><span class="underline">{{u}}</span></a> <span class="glyphicon glyphicon-pencil"></span></td>
 				<td>{{u.email}}</td>
 				{% if u.is_superuser %}
 					<td class="yes">igen</td>

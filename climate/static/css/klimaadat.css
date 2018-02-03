@@ -305,3 +305,7 @@ input.narrow {
 td.narrow {
     width: 0;
 }
+
+.underline {
+    text-decoration: underline;
+}
