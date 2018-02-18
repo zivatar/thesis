@@ -12,17 +12,13 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from decouple import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
+SECRET_KEY = config('DJANGO_SECRET_KEY')
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '7^0$52i1ao#lq@@u^wsck&sfv+g$d)p2q4+8y#hqh7hry&b)hs'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = ['127.0.0.1', 'raspberrypi']
 
@@ -46,8 +42,8 @@ INSTALLED_APPS = (
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'django.zivatar@gmail.com'
-EMAIL_HOST_PASSWORD = 'QHvAF-W9j!)%A9K('
+EMAIL_HOST_USER = config('GMAIL_USER')
+EMAIL_HOST_PASSWORD = config('GMAIL_PASSWORD')
 EMAIL_PORT = 587
 
 # Use nose to run all tests
@@ -128,7 +124,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_REDIRECT_URL = 'main'
 
-# RECAPTCHA_PUBLIC_KEY = 'MyRecaptchaKey124'
-# RECAPTCHA_PRIVATE_KEY = 'MyRecaptchaPrivateKey457'
-# TODO register key
+RECAPTCHA_PUBLIC_KEY = config('RECAPTCHA_PUBLIC_KEY')
+RECAPTCHA_PRIVATE_KEY = config('RECAPTCHA_PRIVATE_KEY')
 NOCAPTCHA = True
