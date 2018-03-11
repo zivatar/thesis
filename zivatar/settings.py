@@ -20,7 +20,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = ['127.0.0.1', 'raspberrypi']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS')
 
 # Application definition
 
