@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
 
-{% block title %}Havi adatlap: {{site.title}}, {{month.year}}.{{month.getMonth}}. {% endblock %}
+{% block title %}Éghajlati napló: {{site.title}}, {{month.year}}.{{month.getMonth}}. {% endblock %}
 
 {% block content %}
 <div class="panel panel-primary">
@@ -87,7 +87,7 @@
 	document.getElementById("push-data").onclick = function() {
 		var dataToSend = {
 			year: {{month.year}},
-			month: {{month.getMonth}},
+			month: {{month.get_month_two_digits}},
 			data: data
 		}
 		var path = "{% url 'site_details' pk=site.pk %}";
@@ -98,8 +98,8 @@
 	}
 
 	window.onload = function() {
-		{% for day in month.daysOfMonthTillToday %}
-			document.getElementById("Tmax{{day}}").onchange = function() { 
+		{% for day in month.days_of_month_till_today %}
+			document.getElementById("Tmax{{day}}").onchange = function() {
 				handleInputChange("Tmax",{{day}}-1,"Tmax{{day}}");
 			};
 			document.getElementById("Tmin{{day}}").onchange = function() { 
