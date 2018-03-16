@@ -440,7 +440,6 @@ def create_daily_statistics(fromDate, toDate, siteId, limitInMins=10):
 
 
 def create_monthly_statistics(fromDate, toDate, siteId):
-    print("monthly")
     fromDate = fromDate.replace(hour=0, minute=0, second=0, day=1)
     if (toDate.month < 12):
         toDate = toDate.replace(month=toDate.month + 1, day=1, hour=0, minute=0, second=0)
@@ -516,7 +515,6 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 
 
 def create_yearly_statistics(fromDate, toDate, siteId):
-    print("yearly")
     fromDate = fromDate.replace(month=1, day=1, hour=0, minute=0, second=0)
     toDate = toDate.replace(month=12, day=31, hour=23, minute=59, second=59)
     f = fromDate
@@ -575,7 +573,6 @@ def create_statistics(site, year=None, month=None, limitInMins=10):
             elif RawManualData.objects.filter(siteId=site).count():
                 firstDate = firstDate2
                 lastDate = lastDate2
-    print(firstDate, lastDate, hasData)
     if hasData:
         create_daily_statistics(firstDate, lastDate, site, limitInMins)
         create_monthly_statistics(firstDate, lastDate, site)

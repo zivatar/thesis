@@ -25,7 +25,7 @@ LineChart.prototype.draw = function() {
 	var ctx = document.getElementById(this.canvas).getContext('2d');
     var xLabels = [];
     for (var i = 0; i < this.data[0].length; i++) {
-        xLabels.push("");
+        xLabels.push(i+1);
     }
 
     var colors = [
@@ -100,7 +100,7 @@ StackedBarChart.prototype.draw = function() {
 
     var xLabels = [];
     for (var i = 0; i < this.data[0].length; i++) {
-        xLabels.push("");
+        xLabels.push(i+1);
     }
 
     var colors = [
@@ -157,7 +157,7 @@ StackedBarChart.prototype.draw = function() {
         	}
         },
         tooltips: {
-        	mode: 'index',
+        	mode: 'nearest',
         	borderWidth: 1
         },
         chartArea: {

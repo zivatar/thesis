@@ -35,21 +35,21 @@
             {% if report.dataAvailable.prec %}
             <tr>
                 <td><span class="glyphicon glyphicon-tint"></span> Összes csapadék</td>
-                <td>{{report.precipitation}} mm</td>
+                <td>{{report.precipitation|floatformat}} mm</td>
             </tr>
             {% endif %}
             {% if report.dataAvailable.temp %}
             <tr>
                 <td><span class="glyphicon glyphicon-collapse-down"></span> Átlagos minimumhőmérséklet</td>
-                <td>{{report.tmin}} °C</td>
+                <td>{{report.tmin|floatformat}} °C</td>
             </tr>
             <tr>
                 <td><span class="glyphicon glyphicon-sound-stereo"></span> Átlagos középhőmérséklet</td>
-                <td>{{report.tavg}} °C</td>
+                <td>{{report.tavg|floatformat}} °C</td>
             </tr>
             <tr>
                 <td><span class="glyphicon glyphicon-collapse-up"></span> Átlagos maximumhőmérséklet</td>
-                <td>{{report.tmax}} °C</td>
+                <td>{{report.tmax|floatformat}} °C</td>
             </tr>
             {% endif %}
             {% if report.snowDays > 0 %}
