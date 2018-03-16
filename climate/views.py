@@ -378,10 +378,12 @@ def process(var):
 
 
 def create_daily_statistics(fromDate, toDate, siteId, limitInMins=10):
+    print("daily", fromDate, toDate)
     limit = datetime.timedelta(minutes=(limitInMins))
     fromDate = fromDate.replace(hour=0, minute=0, second=0)
     delta = toDate - fromDate
     for i in range(delta.days + 1):
+        print(i)
         f = fromDate + datetime.timedelta(days=i)
         t = fromDate + datetime.timedelta(days=i + 1)
         rawDataSet = RawData.objects.filter(createdDate__year=f.year,
@@ -438,6 +440,7 @@ def create_daily_statistics(fromDate, toDate, siteId, limitInMins=10):
 
 
 def create_monthly_statistics(fromDate, toDate, siteId):
+    print("monthly")
     fromDate = fromDate.replace(hour=0, minute=0, second=0, day=1)
     if (toDate.month < 12):
         toDate = toDate.replace(month=toDate.month + 1, day=1, hour=0, minute=0, second=0)
@@ -513,6 +516,7 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 
 
 def create_yearly_statistics(fromDate, toDate, siteId):
+    print("yearly")
     fromDate = fromDate.replace(month=1, day=1, hour=0, minute=0, second=0)
     toDate = toDate.replace(month=12, day=31, hour=23, minute=59, second=59)
     f = fromDate
@@ -541,6 +545,7 @@ def upload_data(request, pk):
 
 
 def create_statistics(site, year=None, month=None, limitInMins=10):
+    print(site, year, month, limitInMins)
     hasData = False
     if year is not None and month is not None:
         if RawData.objects.filter(siteId=site).filter(createdDate__year=year).filter(
@@ -551,16 +556,26 @@ def create_statistics(site, year=None, month=None, limitInMins=10):
             lastDate = datetime.datetime(year, month, Month(year=year, month=month).last_day(), 23, 59,
                                          tzinfo=pytz.timezone("Europe/Budapest"))
     else:
-        if RawData.objects.filter(siteId=site).count() > 0 or RawManualData.objects.filter(siteId=site).count():
+        if RawData.objects.filter(siteId=site).count() or RawManualData.objects.filter(siteId=site).count():
             hasData = True
-            firstDate1 = RawData.objects.filter(siteId=site).order_by('createdDate')[0].createdDate
-            lastDate1 = RawData.objects.filter(siteId=site).order_by('-createdDate')[0].createdDate
-            fd2 = RawManualData.objects.filter(siteId=site).order_by('year').order_by('month').order_by('day')[0]
-            ld2 = RawManualData.objects.filter(siteId=site).order_by('-year').order_by('-month').order_by('-day')[0]
-            firstDate2 = datetime.datetime(fd2.year, fd2.month, fd2.day, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
-            lastDate2 = datetime.datetime(ld2.year, ld2.month, ld2.day, 23, 59, tzinfo=pytz.timezone("Europe/Budapest"))
-            firstDate = min(firstDate1, firstDate2)
-            lastDate = max(lastDate1, lastDate2)
+            if RawData.objects.filter(siteId=site).count():
+                firstDate1 = RawData.objects.filter(siteId=site).order_by('createdDate')[0].createdDate
+                lastDate1 = RawData.objects.filter(siteId=site).order_by('-createdDate')[0].createdDate
+            if RawManualData.objects.filter(siteId=site).count():
+                fd2 = RawManualData.objects.filter(siteId=site).order_by('year').order_by('month').order_by('day')[0]
+                ld2 = RawManualData.objects.filter(siteId=site).order_by('-year').order_by('-month').order_by('-day')[0]
+                firstDate2 = datetime.datetime(fd2.year, fd2.month, fd2.day, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
+                lastDate2 = datetime.datetime(ld2.year, ld2.month, ld2.day, 23, 59, tzinfo=pytz.timezone("Europe/Budapest"))
+            if RawData.objects.filter(siteId=site).count() and RawManualData.objects.filter(siteId=site).count():
+                firstDate = min(firstDate1, firstDate2)
+                lastDate = max(lastDate1, lastDate2)
+            elif RawData.objects.filter(siteId=site).count():
+                firstDate = firstDate1
+                lastDate = lastDate1
+            elif RawManualData.objects.filter(siteId=site).count():
+                firstDate = firstDate2
+                lastDate = lastDate2
+    print(firstDate, lastDate, hasData)
     if hasData:
         create_daily_statistics(firstDate, lastDate, site, limitInMins)
         create_monthly_statistics(firstDate, lastDate, site)
@@ -573,6 +588,7 @@ class UploadHandler(APIView):
             handle_uploaded_data(site, request.data.get('data', None))
 
         def _calculateStatistics():
+            print("calc", site)
             create_statistics(site)
 
         if request.user != None and request.user.profile.canUpload:
