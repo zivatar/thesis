@@ -146,6 +146,7 @@ class MonthlyStatistics(models.Model):
     tempMaxAvg = models.DecimalField(blank=True, null=True, max_digits=3, decimal_places=1)
     summerDays = models.IntegerField(blank=True, null=True)
     frostDays = models.IntegerField(blank=True, null=True)
+    winterDays = models.IntegerField(blank=True, null=True)
     coldDays = models.IntegerField(blank=True, null=True)
     warmNights = models.IntegerField(blank=True, null=True)
     warmDays = models.IntegerField(blank=True, null=True)
@@ -274,6 +275,7 @@ class MonthlyReport(Report):
     def calculateIndices(self):
         return ({
             'frostDays': Climate.get_nr_frost_days(self.tempMins),
+            'winterDays': Climate.get_nr_winter_days(self.tempMaxs),
             'coldDays': Climate.get_nr_cold_days(self.tempMins),
             'warmNights': Climate.get_nr_warm_nights(self.tempMins),
             'summerDays': Climate.get_nr_summer_days(self.tempMins),
@@ -452,6 +454,7 @@ class YearlyReport(Report):
         self.tempIndices = {
             'summerDays': json.dumps(self.collectData('summerDays')),
             'frostDays': json.dumps(self.collectData('frostDays')),
+            'winterDays': json.dumps(self.collectData('winterDays')),
             'coldDays': json.dumps(self.collectData('coldDays')),
             'warmNights': json.dumps(self.collectData('warmNights')),
             'warmDays': json.dumps(self.collectData('warmDays')),

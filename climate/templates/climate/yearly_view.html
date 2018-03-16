@@ -147,8 +147,10 @@
 var data = [{{report.temps.mins}}, {{report.temps.minAvgs}}, {{report.temps.avgs}}, {{report.temps.maxAvgs}}, {{report.temps.maxs}}];
 var dataLabels = ["Minimum", "Átlagos minimum", "Átlag", "Átlagos maximum", "Maximumhőmérséklet"]
 new LineChart("chart_temperature", data, dataLabels).draw();
-var data = [{{report.tempIndices.summerDays}}, {{report.tempIndices.frostDays}}, {{report.tempIndices.coldDays}}, {{report.tempIndices.warmNights}}, {{report.tempIndices.warmDays}}, {{report.tempIndices.hotDays}}];
-var dataLabels = ["Nyári napok", "Fagyos napok", "Zord napok", "Meleg éjszakák", "Meleg napok", "Forró napok"]
+var data = [{{report.tempIndices.summerDays}}, {{report.tempIndices.frostDays}},
+{{report.tempIndices.coldDays}}, {{report.tempIndices.winterDays}},
+{{report.tempIndices.warmNights}}, {{report.tempIndices.warmDays}}, {{report.tempIndices.hotDays}}];
+var dataLabels = ["Nyári napok", "Fagyos napok", "Zord napok", "Téli napok", "Meleg éjszakák", "Meleg napok", "Forró napok"]
 new LineChart("chart_temperature_indices", data, dataLabels).draw();
 {% endif %}
 

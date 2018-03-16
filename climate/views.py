@@ -495,6 +495,7 @@ def create_monthly_statistics(fromDate, toDate, siteId):
             d.precipitation = precipitation
             d.summerDays = Climate.get_nr_summer_days(tempmaxs)
             d.frostDays = Climate.get_nr_frost_days(tempmins)
+            d.winterDays = Climate.get_nr_winter_days(tempmaxs)
             d.coldDays = Climate.get_nr_cold_days(tempmins)
             d.warmNights = Climate.get_nr_warm_nights(tempmins)
             d.warmDays = Climate.get_nr_warm_days(tempmaxs)

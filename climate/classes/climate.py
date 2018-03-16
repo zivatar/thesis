@@ -12,6 +12,10 @@ class Climate(object):
         return len([x for x in min_temperature_list if x is not None and x < 0])
 
     @staticmethod
+    def get_nr_winter_days(max_temperature_list):
+        return len([x for x in max_temperature_list if x is not None and x <= 0])
+
+    @staticmethod
     def get_nr_cold_days(min_temperature_list):
         return len([x for x in min_temperature_list if x is not None and x < -10])
 
