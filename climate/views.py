@@ -58,13 +58,13 @@ def site_list(request):
 
 @login_required
 def own_site_list(request):
-    sites = Site.objects.filter(owner=request.user).order_by('title')
+    sites = Site.objects.filter(owner=request.user).filter(isDeleted=False).order_by('title')
     return render(request, 'climate/site_list.html', {'sites': sites})
 
 
 @login_required
 def own_instrument_list(request):
-    instruments = Instrument.objects.filter(owner=request.user).filter(isDeleted=False).order_by('title')
+    instruments = Instrument.objects.filter(siteId__owner=request.user).filter(isDeleted=False).order_by('title')
     return render(request, 'climate/instrument_list.html', {'instruments': instruments})
 
 
@@ -230,8 +230,8 @@ def site_details(request, pk):
 
 def instrument_details(request, pk):
     instrument = get_object_or_404(Instrument, pk=pk)
-    if instrument.owner.is_active and not instrument.isDeleted:
-        isOwner = request.user == instrument.owner
+    if instrument.siteId.owner.is_active and not instrument.isDeleted:
+        isOwner = request.user == instrument.siteId.owner
         return render(request, 'climate/instrument_details.html', {'instrument': instrument, 'isOwner': isOwner})
     else:
         return render(request, 'climate/main.html', {})
@@ -240,7 +240,7 @@ def instrument_details(request, pk):
 @login_required
 def instrument_delete(request, pk):
     instrument = get_object_or_404(Instrument, pk=pk)
-    if request.user == instrument.owner:
+    if request.user == instrument.siteId.owner:
         instrument.isDeleted = True
         instrument.save()
         return redirect(own_instrument_list)
