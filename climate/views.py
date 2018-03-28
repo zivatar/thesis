@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, get_object_or_404
@@ -29,6 +30,8 @@ from threading import Timer
 
 from .utils import gravatar as gr
 from django.template.defaulttags import register
+
+logger = logging.getLogger(__name__)
 
 WAIT_BEFORE_CALCULATE_STATISTICS = 1 # sec
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
@@ -105,6 +108,7 @@ def new_instrument(request):
 
 @login_required
 def my_user(request):
+    logger.debug("views.my_user")
     user = request.user
     gravatar = gr.gravatar_url(user.email)
     return render(request, 'climate/my_user.html', {'user': user, 'gravatar': gravatar})
@@ -582,6 +586,8 @@ def create_statistics(site, year=None, month=None, limitInMins=10):
 
 class UploadHandler(APIView):
     def post(self, request, *args, **kw):
+        print(1)
+        logger.debug('POST request at UploadHandler')
         def _saveToDb():
             handle_uploaded_data(site, request.data.get('data', None))
 
