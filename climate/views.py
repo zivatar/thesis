@@ -109,7 +109,7 @@ def new_instrument(request):
 
 @login_required
 def my_user(request):
-    logger.notice("views.my_user")
+    logger.debug("views.my_user")
     print(1)
     logger.error(2)
     user = request.user
