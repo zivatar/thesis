@@ -204,7 +204,7 @@ function sendData(allParams, dateFormat) {
 
   var iterations = fileData.data.length;
   var dataToSend = [];
-  var limit = 1000;
+  var limit = 5000;
 
   var loop = function (l) {
     if (l < iterations) {

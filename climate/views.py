@@ -589,18 +589,23 @@ def create_statistics(site, year=None, month=None, limitInMins=10):
 
 class UploadHandler(APIView):
     def post(self, request, *args, **kw):
-        print(1)
-        logger.debug('POST request at UploadHandler')
+
         def _saveToDb():
+            if request.data.get('data', None) is None:
+                logger.error("try to save empty data")
+            else:
+                data = request.data.get('data', None)
+                logger.error("try to save data from {} to {}".format(data[0], data[-1]))
             handle_uploaded_data(site, request.data.get('data', None))
 
         def _calculateStatistics():
-            print("calc", site)
+            logger.error("calculate statistics for site {}".format(site))
             create_statistics(site)
 
         if request.user != None and request.user.profile.canUpload:
             if request.data != None and 'site' in request.data:
                 site = get_object_or_404(Site, pk=request.data.get('site', None))
+                logger.error('POST request at UploadHandler for site {}'.format(site))
                 if site.isActive and 'data' in request.data:
                     response = Response(None, status=status.HTTP_204_NO_CONTENT)
                     t = Timer(0, _saveToDb)
@@ -687,3 +692,10 @@ def handle_uploaded_data(site, data):
         if datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
                                            tz=pytz.timezone("Europe/Budapest")) not in existing_dates
     )
+
+    logger.error("lines to insert:")
+    for line in data:
+        if datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
+                                        tz=pytz.timezone("Europe/Budapest")) not in existing_dates:
+            logger.error(datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
+                                        tz=pytz.timezone("Europe/Budapest")))
