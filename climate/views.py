@@ -32,6 +32,7 @@ from .utils import gravatar as gr
 from django.template.defaulttags import register
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 WAIT_BEFORE_CALCULATE_STATISTICS = 1 # sec
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
@@ -108,7 +109,7 @@ def new_instrument(request):
 
 @login_required
 def my_user(request):
-    logger.debug("views.my_user")
+    logger.notice("views.my_user")
     print(1)
     logger.error(2)
     user = request.user
