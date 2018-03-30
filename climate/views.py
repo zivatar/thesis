@@ -21,6 +21,7 @@ import calendar
 import datetime
 import decimal
 import time
+from .utils.number import is_number, to_float, to_int
 import pytz
 import simplejson as json
 from rest_framework.views import APIView
@@ -44,15 +45,15 @@ def get_item(dictionary, key):
 
 
 def is_admin(user):
-    if user:
+    if user and user.is_superuser is not None:
         return user.is_superuser
-    return False
+    raise ValueError("User does not have is_superuser property")
 
 
 def can_upload(user):
-    if user:
+    if user and user.profile is not None and user.profile.canUpload is not None:
         return user.profile.canUpload
-    return False
+    raise ValueError("User does not have canUpload property")
 
 
 def site_list(request):
@@ -75,7 +76,7 @@ def own_instrument_list(request):
 @login_required
 def site_edit(request, pk):
     site = get_object_or_404(Site, pk=pk)
-    if (site.owner == request.user):
+    if site.owner == request.user:
         if request.method == "POST":
             form = SiteForm(request.POST, request.FILES, instance=site)
             if form.is_valid():
@@ -109,9 +110,6 @@ def new_instrument(request):
 
 @login_required
 def my_user(request):
-    logger.debug("views.my_user")
-    print(1)
-    logger.error(2)
     user = request.user
     gravatar = gr.gravatar_url(user.email)
     return render(request, 'climate/my_user.html', {'user': user, 'gravatar': gravatar})
@@ -385,12 +383,10 @@ def process(var):
 
 
 def create_daily_statistics(fromDate, toDate, siteId, limitInMins=10):
-    print("daily", fromDate, toDate)
     limit = datetime.timedelta(minutes=(limitInMins))
     fromDate = fromDate.replace(hour=0, minute=0, second=0)
     delta = toDate - fromDate
     for i in range(delta.days + 1):
-        print(i)
         f = fromDate + datetime.timedelta(days=i)
         t = fromDate + datetime.timedelta(days=i + 1)
         rawDataSet = RawData.objects.filter(createdDate__year=f.year,
@@ -589,6 +585,7 @@ def create_statistics(site, year=None, month=None, limitInMins=10):
 
 class UploadHandler(APIView):
     def post(self, request, *args, **kw):
+        logger.error("POST request on UploadHandler")
 
         def _saveToDb():
             if request.data.get('data', None) is None:
@@ -602,8 +599,8 @@ class UploadHandler(APIView):
             logger.error("calculate statistics for site {}".format(site))
             create_statistics(site)
 
-        if request.user != None and request.user.profile.canUpload:
-            if request.data != None and 'site' in request.data:
+        if request.user is not None and request.user.profile.canUpload:
+            if request.data is not None and 'site' in request.data:
                 site = get_object_or_404(Site, pk=request.data.get('site', None))
                 logger.error('POST request at UploadHandler for site {}'.format(site))
                 if site.isActive and 'data' in request.data:
@@ -634,12 +631,12 @@ class UploadClimateHandler(APIView):
                         month=month,
                         day=i + 1
                     )
-                    if data[i].get('Tmin') is not None:
-                        d.tMin = data[i].get('Tmin')
-                    if data[i].get('Tmax') is not None:
-                        d.tMax = data[i].get('Tmax')
-                    if data[i].get('prec') is not None:
-                        d.precAmount = data[i].get('prec')
+                    if is_number(data[i].get('Tmin', None)):
+                        d.tMin = float(data[i].get('Tmin'))
+                    if is_number(data[i].get('Tmax', None)):
+                        d.tMax = float(data[i].get('Tmax'))
+                    if is_number(data[i].get('prec', None)):
+                        d.precAmount = float(data[i].get('prec'))
                     if data[i].get('obs') is not None:
                         d.populateWeatherCode(data[i].get('obs'))
                     if data[i].get('comment') is not None:
@@ -671,21 +668,29 @@ def handle_uploaded_data(site, data):
     existing = RawData.objects.filter(createdDate__range=(start, end), siteId=site)
     existing_dates = existing.values_list('createdDate', flat=True)
 
+    logger.error("lines to insert:")
+    for line in data:
+        if datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
+                                           tz=pytz.timezone("Europe/Budapest")) not in existing_dates:
+            logger.error(datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
+                                                         tz=pytz.timezone("Europe/Budapest")))
+            logger.error(line)
+
     RawData.objects.bulk_create(
         RawData(siteId=site,
                 createdDate=datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
                                                             tz=pytz.timezone("Europe/Budapest")),
-                dewpoint=line.get('dewpoint', None),
-                precipitation=line.get('precipitation', None),
-                humidity=line.get('relativeHumidity', None),
-                pressure=line.get('relativePressure', None),
-                humidityIn=line.get('rhIndoor', None),
-                tempIn=line.get('tempIndoor', None),
-                temperature=line.get('temperature', None),
-                windChill=line.get('windChill', None),
-                windSpeed=line.get('windSpeed', None),
-                windDir=line.get('windDirection', None),
-                gust=line.get('windGustSpeed', None)
+                dewpoint=to_float(line.get('dewpoint', None)),
+                precipitation=to_float(line.get('precipitation', None)),
+                humidity=to_int(line.get('relativeHumidity', None)),
+                pressure=to_float(line.get('relativePressure', None)),
+                humidityIn=to_int(line.get('rhIndoor', None)),
+                tempIn=to_float(line.get('tempIndoor', None)),
+                temperature=to_float(line.get('temperature', None)),
+                windChill=to_float(line.get('windChill', None)),
+                windSpeed=to_float(line.get('windSpeed', None)),
+                windDir=to_float(line.get('windDirection', None)),
+                gust=to_float(line.get('windGustSpeed', None))
                 )
 
         for line in data
@@ -693,9 +698,3 @@ def handle_uploaded_data(site, data):
                                            tz=pytz.timezone("Europe/Budapest")) not in existing_dates
     )
 
-    logger.error("lines to insert:")
-    for line in data:
-        if datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
-                                        tz=pytz.timezone("Europe/Budapest")) not in existing_dates:
-            logger.error(datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
-                                        tz=pytz.timezone("Europe/Budapest")))
