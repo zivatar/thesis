@@ -52,13 +52,23 @@
 			renderLabels(day, "obsLabels"+(day+1));
 	}
 
+	function deleteLabel(day, i, button) {
+	    data[day].obs.splice(i, 1);
+	    button.remove();
+	}
+
 	function renderLabels(day, elemId) {
 			var elem = document.getElementById(elemId);
 			elem.innerHTML = '';
 			if (!!data && !!data[day] && !!data[day].obs) {
 				for (var i = 0; i < data[day].obs.length; i++) {
-					var span = document.createElement("span");
-	    			span.className = "label label-info inline-block";
+					var span = document.createElement("button");
+					span.onclick = function(day, i, span) {
+					    return function() {
+					        deleteLabel(day, i, span);
+					    }
+					}(day, i, span);
+	    			span.className = "inline-block btn btn-warning";
 	    			span.appendChild(document.createTextNode(obsCodes[data[day].obs[i]]));
 	    			elem.appendChild(span);
 	    			//console.log(obsCodes);
