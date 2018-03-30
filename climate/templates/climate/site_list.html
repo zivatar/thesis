@@ -21,11 +21,15 @@
 					<tr>
 						<th>Név</th>
 						<th>User</th>
+						<th>Tágabb környezet</th>
+						<th>Szűkebb környezet</th>
 					</tr>
 					{% for site in sites %}
 						<tr>
 							<td><a href="{% url 'site_details' pk=site.pk %}">{{ site.title }}</a></td>
 							<td>{{ site.owner }}</td>
+							<td>{{ site.get_wide_area }}</td>
+							<td>{{ site.get_narrow_area }}</td>
 						</tr>
 					{% endfor %}
 				</table>

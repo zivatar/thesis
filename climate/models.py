@@ -63,6 +63,16 @@ class Site(models.Model):
     def __str__(self):
         return self.title
 
+    def get_wide_area(self):
+        find = [x[1] for x in Site.WIDE_AREA if x[0] == self.wideArea]
+        if len(find) > 0:
+            return find[0]
+
+    def get_narrow_area(self):
+        find = [x[1] for x in Site.NARROW_AREA if x[0] == self.narrowArea]
+        if len(find) > 0:
+            return find[0]
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
