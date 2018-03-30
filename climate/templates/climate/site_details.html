@@ -130,8 +130,9 @@
                 <h2>Éghajlati adatok</h2>
 
                 {% for y in ym %}
-                <a class="btn btn-default" href="{% url 'yearly_view' pk=site.pk year=y.year.year %}" role="button">{{
-                    y.year.year }}</a>
+                <a class="btn btn-default" href="{% url 'yearly_view' pk=site.pk year=y.year.year %}" role="button">
+                    {{ y.year.year }}
+                </a>
 
                 <div class="btn-group" role="group">
                     {% for m in y.months %}
