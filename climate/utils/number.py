@@ -5,6 +5,8 @@ string: string
 
 
 def is_number(string):
+    if string is None:
+        return False
     try:
         float(string)
         return True

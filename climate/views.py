@@ -523,15 +523,19 @@ def create_yearly_statistics(fromDate, toDate, siteId):
     toDate = toDate.replace(month=12, day=31, hour=23, minute=59, second=59)
     f = fromDate
     while f < toDate:
-        d, created = YearlyStatistics.objects.update_or_create(siteId=siteId, year=f.year)
 
-        manualDataSet = RawManualData.objects.filter(siteId=siteId).filter(year=f.year)
-        significants = {}
-        for day in manualDataSet:
-            significants = Climate.count_significants(significants, day.weatherCode)
+        manual_data_set = RawManualData.objects.filter(siteId=siteId).filter(year=f.year)
+        automatic_data_set = RawData.objects.filter(siteId=siteId).filter(createdDate__year=f.year)
 
-        d.significants = significants
-        d.save()
+        if len(manual_data_set) or len(automatic_data_set):
+            d, created = YearlyStatistics.objects.update_or_create(siteId=siteId, year=f.year)
+
+            significants = {}
+            for day in manual_data_set:
+                significants = Climate.count_significants(significants, day.weatherCode)
+
+            d.significants = significants
+            d.save()
 
         f = f.replace(year=f.year + 1)
     return 1
