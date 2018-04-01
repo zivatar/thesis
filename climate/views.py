@@ -195,7 +195,7 @@ def new_observation(request):
             for code in weatherCodes:
                 dailyData.addWeatherCode(code)
             dailyData.save()
-            create_statistics(obs.siteId, obs.createdDate.year, obs.createdDate.month)
+            create_statistics(site=obs.siteId, year=obs.createdDate.year, month=obs.createdDate.month)
             return redirect(main)
     else:
         form = ObservationForm()
@@ -384,7 +384,7 @@ def process(var):
 
 
 def create_daily_statistics(fromDate, toDate, siteId, limitInMins=3):
-    logger.error("create daily stat")
+    logger.error("create daily stat from {} to {}".format(fromDate, toDate))
 
     limit = datetime.timedelta(minutes=(limitInMins))
     fromDate = fromDate.replace(hour=0, minute=0, second=0)
@@ -571,7 +571,7 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 
 
 def create_yearly_statistics(fromDate, toDate, siteId):
-    logger.error("create yearly stat")
+    logger.error("create yearly stat from {} to {}".format(fromDate, toDate))
     fromDate = fromDate.replace(month=1, day=1, hour=0, minute=0, second=0)
     toDate = toDate.replace(month=12, day=31, hour=23, minute=59, second=59)
     f = fromDate
@@ -591,6 +591,7 @@ def create_yearly_statistics(fromDate, toDate, siteId):
             d.save()
 
         f = f.replace(year=f.year + 1)
+    logger.error("create yearly stat finished")
     return 1
 
 
@@ -603,13 +604,17 @@ def upload_data(request, pk):
         return render(request, 'climate/main.html', {})
 
 
-def create_statistics(site, year=None, month=None, limitInMins=10):
-    print(site, year, month, limitInMins)
+def create_statistics(site, year=None, month=None, from_date=None, to_date=None, limitInMins=10):
     hasData = False
-    if year is not None and month is not None:
-        if RawData.objects.filter(siteId=site).filter(createdDate__year=year).filter(
-                createdDate__month=month).count() > 0 or RawManualData.objects.filter(siteId=site).filter(
-            year=year).filter(month=month).count() > 0:
+    if from_date is not None and to_date is not None:
+        firstDate = from_date
+        lastDate = to_date
+        hasData = True
+    elif year is not None and month is not None:
+        if RawData.objects.filter(siteId=site,
+                                  createdDate__year=year,
+                                  createdDate__month=month).count() > 0 or \
+                RawManualData.objects.filter(siteId=site, year=year, month=month).count() > 0:
             hasData = True
             firstDate = datetime.datetime(year, month, 1, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
             lastDate = datetime.datetime(year, month, Month(year=year, month=month).last_day(), 23, 59,
@@ -651,10 +656,18 @@ class UploadHandler(APIView):
                 data = request.data.get('data', None)
                 logger.error("try to save data from {} to {}".format(data[0], data[-1]))
             handle_uploaded_data(site, request.data.get('data', None))
+            _calculateStatistics()
 
         def _calculateStatistics():
             logger.error("calculate statistics for site {}".format(site))
-            create_statistics(site)
+            data = request.data.get('data', None)
+            from_date = datetime.datetime.fromtimestamp(data[0].get('date') / 1000,
+                                                        tz=pytz.timezone("Europe/Budapest"))
+            to_date = datetime.datetime.fromtimestamp(data[-1].get('date') / 1000,
+                                                        tz=pytz.timezone("Europe/Budapest"))
+            logger.error(from_date)
+            logger.error(to_date)
+            create_statistics(site=site, from_date=from_date, to_date=to_date)
 
         if request.user is not None and request.user.profile.canUpload:
             if request.data is not None and 'site' in request.data:
@@ -664,9 +677,9 @@ class UploadHandler(APIView):
                     response = Response(None, status=status.HTTP_204_NO_CONTENT)
                     t = Timer(0, _saveToDb)
                     t.start()
-                    if 'isLastPart' in request.data and request.data.get('isLastPart', None):
-                        t = Timer(WAIT_BEFORE_CALCULATE_STATISTICS, _calculateStatistics)
-                        t.start()
+                    # if 'isLastPart' in request.data and request.data.get('isLastPart', None):
+                    #     t = Timer(WAIT_BEFORE_CALCULATE_STATISTICS, _calculateStatistics)
+                    #     t.start()
         return response
 
 
@@ -705,7 +718,7 @@ class UploadClimateHandler(APIView):
                     d.save()
 
         def _calculateStatistics():
-            create_statistics(site, year, month)
+            create_statistics(site=site, year=year, mont=month)
 
         if request.user != None:  # and request.user.can_upload:
             if request.data != None and 'site' in request.data:
