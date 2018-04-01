@@ -13,6 +13,7 @@ from .models import RawObservation, RawManualData, Month, RawData
 from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
 from .models import MonthlyReport, YearlyReport
 from .forms import SiteForm, ObservationForm, DiaryForm, RegistrationForm, UserForm, InstrumentForm
+from django.db import transaction
 from django.utils import timezone
 from re import sub
 from datetime import datetime
@@ -382,10 +383,21 @@ def process(var):
         return int(float(var))
 
 
-def create_daily_statistics(fromDate, toDate, siteId, limitInMins=10):
+def create_daily_statistics(fromDate, toDate, siteId, limitInMins=3):
+    logger.error("create daily stat")
+
     limit = datetime.timedelta(minutes=(limitInMins))
     fromDate = fromDate.replace(hour=0, minute=0, second=0)
     delta = toDate - fromDate
+
+    existing = DailyStatistics.objects.filter(year__range=(fromDate.year, toDate.year), siteId=siteId).values()
+    existing_dates = []
+    for i in existing:
+        existing_dates.append(datetime.date(year=i.get('year'),
+                                            month=i.get('month'),
+                                            day=i.get('day')))
+    daily_data = []
+
     for i in range(delta.days + 1):
         f = fromDate + datetime.timedelta(days=i)
         t = fromDate + datetime.timedelta(days=i + 1)
@@ -395,9 +407,12 @@ def create_daily_statistics(fromDate, toDate, siteId, limitInMins=10):
         manualDataSet = RawManualData.objects.filter(siteId=siteId).filter(year=f.year).filter(month=f.month).filter(
             day=f.day)
         precipitation = None
+        if rawDataSet.count() or manualDataSet.count():
+            d = {'year': f.year, 'month': f.month, 'day': f.day, 'siteId': siteId}
+            d['existing'] = datetime.date(year=f.year, month=f.month, day=f.day) in existing_dates
+            daily_data.append(d)
         if rawDataSet.count():
-            d, created = DailyStatistics.objects.update_or_create(siteId=siteId, year=f.year, month=f.month, day=f.day)
-            d.dataAvailable = rawDataSet.count()
+            d['dataAvailable'] = rawDataSet.count()
             temps = []
             rhs = []
             winds = []
@@ -418,31 +433,68 @@ def create_daily_statistics(fromDate, toDate, siteId, limitInMins=10):
                         winds.append(j.windDir)
                     last_timestamp = current_timestamp
             tempDistribution = Climate.calculate_temperature_distribution(temps)
-            d.tempDistribution = ''.join(str(e) + ',' for e in tempDistribution)[:-1]
+            d['tempDistribution'] = ''.join(str(e) + ',' for e in tempDistribution)[:-1]
             rhDistribution = Climate.calculate_rh_distribution(rhs)
-            d.rhDistribution = ''.join(str(e) + ',' for e in rhDistribution)[:-1]
+            d['rhDistribution'] = ''.join(str(e) + ',' for e in rhDistribution)[:-1]
             windDistribution = Climate.calculate_wind_distribution(winds)
-            d.windDistribution = ''.join(str(e) + ',' for e in windDistribution)[:-1]
+            d['windDistribution'] = ''.join(str(e) + ',' for e in windDistribution)[:-1]
             if len(temps) > 0:
-                d.tempMin = min(temps)
-                d.tempMax = max(temps)
-                d.tempAvg = sum(temps) / len(temps)
+                d['tempMin'] = min(temps)
+                d['tempMax'] = max(temps)
+                d['tempAvg'] = sum(temps) / len(temps)
             if precipitation is not None:
-                d.precipitation = precipitation
-            d.save()
+                d['precipitation'] = precipitation
         if manualDataSet.count():
-            d, created = DailyStatistics.objects.update_or_create(siteId=siteId, year=f.year, month=f.month, day=f.day)
+            d['dataAvailable'] = d.get('dataAvailable', 0)
             if manualDataSet[0].tMin is not None:
-                d.tempMin = manualDataSet[0].tMin
+                d['tempMin'] = manualDataSet[0].tMin
             if manualDataSet[0].tMax is not None:
-                d.tempMax = manualDataSet[0].tMax
+                d['tempMax'] = manualDataSet[0].tMax
             if manualDataSet[0].precAmount is not None:
-                d.precipitation = manualDataSet[0].precAmount
-            d.save()
+                d['precipitation'] = manualDataSet[0].precAmount
+
+    logger.error("bulk create")
+    DailyStatistics.objects.bulk_create(
+        DailyStatistics(
+            year=d.get('year'),
+            month=d.get('month'),
+            day=d.get('day'),
+            siteId=d.get('siteId'),
+            dataAvailable=d.get('dataAvailable'),
+            tempMin=d.get('tempMin'),
+            tempMax=d.get('tempMax'),
+            tempAvg=d.get('tempAvg'),
+            precipitation=d.get('precipitation'),
+            tempDistribution=d.get('tempDistribution', ''),
+            rhDistribution=d.get('rhDistribution', ''),
+            windDistribution=d.get('windDistribution', '')
+        )
+        for d in daily_data
+        if not d.get('existing')
+    )
+
+    logger.error("almost bulk update")
+    with transaction.atomic():
+        for d in daily_data:
+            if d.get(existing):
+                DailyStatistics.objects.filter(siteID=d.get('siteId'), year=d.get('year'),
+                                               month=d.get('month'), day=d.get('day')).update(
+                    dataAvailable=d.get('dataAvailable'),
+                    tempMin=d.get('tempMin'),
+                    tempMax=d.get('tempMax'),
+                    tempAvg=d.get('tempAvg'),
+                    precipitation=d.get('precipitation'),
+                    tempDistribution=d.get('tempDistribution', ''),
+                    rhDistribution=d.get('rhDistribution', ''),
+                    windDistribution=d.get('windDistribution', '')
+                )
+    logger.error("daily stat finished")
+
     return 1
 
 
 def create_monthly_statistics(fromDate, toDate, siteId):
+    logger.error("create monthly stat")
     fromDate = fromDate.replace(hour=0, minute=0, second=0, day=1)
     if (toDate.month < 12):
         toDate = toDate.replace(month=toDate.month + 1, day=1, hour=0, minute=0, second=0)
@@ -519,6 +571,7 @@ def create_monthly_statistics(fromDate, toDate, siteId):
 
 
 def create_yearly_statistics(fromDate, toDate, siteId):
+    logger.error("create yearly stat")
     fromDate = fromDate.replace(month=1, day=1, hour=0, minute=0, second=0)
     toDate = toDate.replace(month=12, day=31, hour=23, minute=59, second=59)
     f = fromDate
