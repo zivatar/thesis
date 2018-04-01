@@ -392,6 +392,7 @@ def create_daily_statistics(fromDate, toDate, siteId, limitInMins=3):
 
     existing = DailyStatistics.objects.filter(year__range=(fromDate.year, toDate.year), siteId=siteId).values()
     existing_dates = []
+    logger.error(existing_dates)
     for i in existing:
         existing_dates.append(datetime.date(year=i.get('year'),
                                             month=i.get('month'),
@@ -401,11 +402,9 @@ def create_daily_statistics(fromDate, toDate, siteId, limitInMins=3):
     for i in range(delta.days + 1):
         f = fromDate + datetime.timedelta(days=i)
         t = fromDate + datetime.timedelta(days=i + 1)
-        rawDataSet = RawData.objects.filter(createdDate__year=f.year,
-                                            createdDate__month=f.month,
-                                            createdDate__day=f.day).filter(siteId=siteId)
-        manualDataSet = RawManualData.objects.filter(siteId=siteId).filter(year=f.year).filter(month=f.month).filter(
-            day=f.day)
+        rawDataSet = RawData.objects.filter(siteId=siteId, createdDate__year=f.year,
+                                            createdDate__month=f.month, createdDate__day=f.day)
+        manualDataSet = RawManualData.objects.filter(siteId=siteId, year=f.year, month=f.month, day=f.day)
         precipitation = None
         if rawDataSet.count() or manualDataSet.count():
             d = {'year': f.year, 'month': f.month, 'day': f.day, 'siteId': siteId}
@@ -494,7 +493,7 @@ def create_daily_statistics(fromDate, toDate, siteId, limitInMins=3):
 
 
 def create_monthly_statistics(fromDate, toDate, siteId):
-    logger.error("create monthly stat")
+    logger.error("create monthly stat from {} to {}".format(fromDate, toDate))
     fromDate = fromDate.replace(hour=0, minute=0, second=0, day=1)
     if (toDate.month < 12):
         toDate = toDate.replace(month=toDate.month + 1, day=1, hour=0, minute=0, second=0)
@@ -502,8 +501,8 @@ def create_monthly_statistics(fromDate, toDate, siteId):
         toDate = toDate.replace(year=toDate.year + 1, month=1, day=1, hour=0, minute=0, second=0)
     f = fromDate
     while f < toDate:
-
         rawDataSet = DailyStatistics.objects.filter(year=f.year, month=f.month).filter(siteId=siteId)
+        logger.error("dailystat number: {}".format(rawDataSet.count()))
         if rawDataSet.count():
             d, created = MonthlyStatistics.objects.update_or_create(siteId=siteId, month=f.month, year=f.year)
             d.dataAvailable = rawDataSet.count()
@@ -718,7 +717,7 @@ class UploadClimateHandler(APIView):
                     d.save()
 
         def _calculateStatistics():
-            create_statistics(site=site, year=year, mont=month)
+            create_statistics(site=site, year=year, month=month)
 
         if request.user != None:  # and request.user.can_upload:
             if request.data != None and 'site' in request.data:
@@ -742,9 +741,9 @@ def handle_uploaded_data(site, data):
     for line in data:
         if datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
                                            tz=pytz.timezone("Europe/Budapest")) not in existing_dates:
-            logger.error(datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
+            logger.debug(datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
                                                          tz=pytz.timezone("Europe/Budapest")))
-            logger.error(line)
+            logger.debug(line)
 
     RawData.objects.bulk_create(
         RawData(siteId=site,
