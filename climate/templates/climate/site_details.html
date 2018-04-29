@@ -7,10 +7,6 @@
 
 	var lat;
 	var lon;
-	//function setLatLon(lat, lon) {
-	//	document.getElementById("new_site_lat").value = lat;
-	//	document.getElementById("new_site_lon").value = lon;
-	//};
 
 	function getPos() {
 		var positions = [{ position: {lat: {{ site.lat|safe }}, lng: {{ site.lon|safe }}}, title: "{{ site.title }}" }];
@@ -107,16 +103,21 @@
                     </thead>
                     <tbody>
                     {% for o in observations %}
-                    <tr>
-                        <td>{{ o.createdDate|date:'Y-m-d H:i' }}
-                        <td>{{ o.windSpeed }}</td>
-                        <td>
-                            {% for wc in o.weatherCode %}
-                            {% if wc %}<span class="label label-primary">{{ wc }}</span>{% endif %}
-                            {% endfor %}
-                        </td>
-                    <tr>
-                        {% endfor %}
+                        <tr>
+                            <td>{{ o.createdDate|date:'Y-m-d H:i' }}
+                            <td>{{ o.windSpeed }}</td>
+                            <td>
+                                {% for wc in o.weatherCode %}
+                                {% if wc %}<span class="label label-primary">{{ wc }}</span>{% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% if o.comment %}
+                            <tr>
+                                <td colspan="3">{{ o.comment }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
                     <tr>
                         <td colspan=3><a href="{% url 'observations' pk=site.pk %}">További észlelések</a></td>
                     </tr>

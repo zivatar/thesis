@@ -41,6 +41,11 @@
 								{% endfor %}
 						</td>
 						</tr>
+						{% if o.comment %}
+                            <tr>
+                                <td colspan="3">{{ o.comment }}</td>
+                            </tr>
+                        {% endif %}
 					{% endfor %}
 					</tbody>
 				</table>
