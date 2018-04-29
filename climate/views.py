@@ -5,7 +5,9 @@ from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 
+from climate.classes.Gravatar import Gravatar
 from climate.classes.MonthlyReport import MonthlyReport
+from climate.classes.Number import Number
 from climate.classes.YearlyReport import YearlyReport
 from climate.classes.Climate import Climate
 from climate.classes.Month import Month
@@ -25,8 +27,6 @@ from climate.models.RawManualData import RawManualData
 from climate.models.RawObservation import RawObservation
 from climate.models.Site import Site
 from climate.models.YearlyStatistics import YearlyStatistics
-from climate.utils.number import is_number, to_float, to_int
-from .utils import gravatar as gr
 import pytz
 import simplejson as json
 from rest_framework.views import APIView
@@ -113,7 +113,7 @@ def new_instrument(request):
 @login_required
 def my_user(request):
     user = request.user
-    gravatar = gr.gravatar_url(user.email)
+    gravatar = Gravatar.get_gravatar_url(user.email)
     return render(request, 'climate/my_user.html', {'user': user, 'gravatar': gravatar})
 
 
@@ -129,7 +129,7 @@ def edit_users(request):
 @user_passes_test(is_admin, login_url='/accounts/login/')
 def edit_user(request, user):
     userObj = get_object_or_404(User, pk=user)
-    gravatar = gr.gravatar_url(userObj.email)
+    gravatar = Gravatar.get_gravatar_url(userObj.email)
     if request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
@@ -703,11 +703,11 @@ class UploadClimateHandler(APIView):
                         month=month,
                         day=i + 1
                     )
-                    if is_number(data[i].get('Tmin', None)):
+                    if Number.is_number(data[i].get('Tmin', None)):
                         d.tMin = float(data[i].get('Tmin'))
-                    if is_number(data[i].get('Tmax', None)):
+                    if Number.is_number(data[i].get('Tmax', None)):
                         d.tMax = float(data[i].get('Tmax'))
-                    if is_number(data[i].get('prec', None)):
+                    if Number.is_number(data[i].get('prec', None)):
                         d.precAmount = float(data[i].get('prec'))
                     if data[i].get('obs') is not None:
                         d.populateWeatherCode(data[i].get('obs'))
@@ -752,17 +752,17 @@ def handle_uploaded_data(site, data):
         RawData(siteId=site,
                 createdDate=datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
                                                             tz=pytz.timezone("Europe/Budapest")),
-                dewpoint=to_float(line.get('dewpoint', None)),
-                precipitation=to_float(line.get('precipitation', None)),
-                humidity=to_int(line.get('relativeHumidity', None)),
-                pressure=to_float(line.get('relativePressure', None)),
-                humidityIn=to_int(line.get('rhIndoor', None)),
-                tempIn=to_float(line.get('tempIndoor', None)),
-                temperature=to_float(line.get('temperature', None)),
-                windChill=to_float(line.get('windChill', None)),
-                windSpeed=to_float(line.get('windSpeed', None)),
-                windDir=to_float(line.get('windDirection', None)),
-                gust=to_float(line.get('windGustSpeed', None))
+                dewpoint=Number.to_float(line.get('dewpoint', None)),
+                precipitation=Number.to_float(line.get('precipitation', None)),
+                humidity=Number.to_int(line.get('relativeHumidity', None)),
+                pressure=Number.to_float(line.get('relativePressure', None)),
+                humidityIn=Number.to_int(line.get('rhIndoor', None)),
+                tempIn=Number.to_float(line.get('tempIndoor', None)),
+                temperature=Number.to_float(line.get('temperature', None)),
+                windChill=Number.to_float(line.get('windChill', None)),
+                windSpeed=Number.to_float(line.get('windSpeed', None)),
+                windDir=Number.to_float(line.get('windDirection', None)),
+                gust=Number.to_float(line.get('windGustSpeed', None))
                 )
 
         for line in data
