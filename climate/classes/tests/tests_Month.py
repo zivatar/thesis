@@ -1,6 +1,10 @@
+# TODO MEG NEM MUKODIK PYCHARMBOL
+
 import unittest
 from datetime import datetime
 
+import django
+import os
 from django.utils import timezone
 
 from climate.classes.Month import Month
@@ -8,9 +12,19 @@ from climate.classes.Month import Month
 
 class MonthTestCase(unittest.TestCase):
 
+    def setUpClass(self, cls):
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zivatar.settings")
+        django.setup()
+
+    def setUp(self):
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zivatar.settings")
+        django.setup()
+
     # Init and get month, day
 
     def test_init_get_valid(self):
+
+
         month = Month()
         now = timezone.now()
         self.assertEqual(month.get_date_readable(), str(now.year) + "." + str(now.month) + ".")
