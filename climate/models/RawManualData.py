@@ -1,6 +1,6 @@
 from django.db import models
 
-from climate.classes.weather import Weather
+from climate.classes.Weather import Weather
 
 
 class RawManualData(models.Model):

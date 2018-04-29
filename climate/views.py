@@ -7,9 +7,9 @@ from django.contrib.auth.models import User
 
 from climate.classes.MonthlyReport import MonthlyReport
 from climate.classes.YearlyReport import YearlyReport
-from climate.classes.climate import Climate
-from climate.classes.month import Month
-from climate.classes.weather import Weather
+from climate.classes.Climate import Climate
+from climate.classes.Month import Month
+from climate.classes.Weather import Weather
 from climate.forms import SiteForm, ObservationForm, RegistrationForm, UserForm, InstrumentForm
 from django.db import transaction
 from django.template.defaulttags import register

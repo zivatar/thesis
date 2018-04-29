@@ -1,10 +1,12 @@
 import unittest
-from .climate import Climate
+
+from climate.classes.Climate import Climate
 
 
-class ClimateTestCase(unittest.TestCase):
-
-    # Frost days: Tmin < 0
+class FrostDays(unittest.TestCase):
+    """
+    Frost days: Tmin < 0 C
+    """
 
     def test_frost_days_positive(self):
         self.assertEqual(Climate.get_nr_frost_days([0.0, 0.1, 0.5, 11.0, 111.1]), 0)
@@ -27,7 +29,11 @@ class ClimateTestCase(unittest.TestCase):
     def test_frost_days_with_null(self):
         self.assertEqual(Climate.get_nr_frost_days([-0.1, None, 0.1]), 1)
 
-    # Cold days: Tmin < -10
+
+class ColdDays(unittest.TestCase):
+    """
+    Cold days: Tmin < -10 C
+    """
 
     def test_cold_days(self):
         self.assertEqual(Climate.get_nr_cold_days([2.5, 0.0, 9.9, -9.9]), 0)
@@ -47,7 +53,11 @@ class ClimateTestCase(unittest.TestCase):
     def test_cold_days_only_null(self):
         self.assertEqual(Climate.get_nr_cold_days([None, None, None]), 0)
 
-    # Warm nights: Tmin > 20
+
+class WarmNights(unittest.TestCase):
+    """
+    Warm nights: Tmin > 20 C
+    """
 
     def test_warm_nights_empty(self):
         self.assertEqual(Climate.get_nr_warm_nights([]), 0)
@@ -67,7 +77,11 @@ class ClimateTestCase(unittest.TestCase):
     def test_warm_nights_only_null(self):
         self.assertEqual(Climate.get_nr_warm_nights([None, None, None]), 0)
 
-    # Summer days: Tmax > 25
+
+class SummerDays(unittest.TestCase):
+    """
+    Summer days: Tmax > 25 C
+    """
 
     def test_summer_days_empty(self):
         self.assertEqual(Climate.get_nr_summer_days([]), 0)
@@ -87,7 +101,11 @@ class ClimateTestCase(unittest.TestCase):
     def test_summer_days_with_null(self):
         self.assertEqual(Climate.get_nr_summer_days([None, 24, 26]), 1)
 
-    # Warm days: Tmax >= 30
+
+class TestWarmDays(unittest.TestCase):
+    """
+    Warm days: Tmax >= 30 C
+    """
 
     def test_warm_days_empty(self):
         self.assertEqual(Climate.get_nr_warm_days([]), 0)
@@ -107,7 +125,11 @@ class ClimateTestCase(unittest.TestCase):
     def test_warm_days_only_null(self):
         self.assertEqual(Climate.get_nr_warm_days([None, None]), 0)
 
-    # Hot days: Tmax >= 35
+
+class HotDays(unittest.TestCase):
+    """
+    Hot days: Tmax >= 35 C
+    """
 
     def test_hot_days_empty(self):
         self.assertEqual(Climate.get_nr_hot_days([]), 0)
@@ -127,7 +149,8 @@ class ClimateTestCase(unittest.TestCase):
     def test_hot_days_only_null(self):
         self.assertEqual(Climate.get_nr_hot_days([None, None]), 0)
 
-    # Precipitation limit reaches
+
+class PrecipitationLimits(unittest.TestCase):
 
     def test_prec_dist_empty(self):
         self.assertEqual(Climate.get_precipitation_over_limits([]), {0: 0, 10: 0, 30: 0, 50: 0})
@@ -144,7 +167,11 @@ class ClimateTestCase(unittest.TestCase):
     def test_prec_high(self):
         self.assertEqual(Climate.get_precipitation_over_limits([0, 0.1, 10.0, 50.0, 150]), {0: 4, 10: 3, 30: 2, 50: 2})
 
-    # Sum of not none elements
+
+class Summarize(unittest.TestCase):
+    """
+    Summarize not none elements in list
+    """
 
     def test_sum_empty(self):
         self.assertEqual(Climate.sum([]), 0)
@@ -158,7 +185,11 @@ class ClimateTestCase(unittest.TestCase):
     def test_sum_without_null(self):
         self.assertEqual(Climate.sum([0, 2, -4]), -2)
 
-    # Number of not none elements
+
+class NumberOfElementsInList(unittest.TestCase):
+    """
+    Number of not none elements in list
+    """
 
     def test_num_empty(self):
         self.assertEqual(Climate.number([]), 0)
@@ -169,7 +200,11 @@ class ClimateTestCase(unittest.TestCase):
     def test_num_with_null(self):
         self.assertEqual(Climate.number([None, 2.1, "abc", -11]), 3)
 
-    # Number of not none elements in list2
+
+class NumberOfElementsInList2(unittest.TestCase):
+    """
+    Number of not none elements in list2
+    """
 
     def test_num2_empty(self):
         self.assertEqual(Climate.number2([]), 0)
@@ -201,8 +236,8 @@ class ClimateTestCase(unittest.TestCase):
     def test_num2_not_none_strict(self):
         self.assertEqual(Climate.number2([[-5, 10, 0], [1, 3, 4]], strict=True), 5)
 
-    # avg
 
+class AverageElementsInList(unittest.TestCase):
     def test_avg_empty(self):
         self.assertEqual(Climate.avg([]), None)
 
@@ -215,8 +250,8 @@ class ClimateTestCase(unittest.TestCase):
     def test_avg_not_none(self):
         self.assertEqual(Climate.avg([0, 5, 10]), 5)
 
-    # avg2
 
+class AverageElementsInList2(unittest.TestCase):
     def test_avg2_empty(self):
         self.assertEqual(Climate.avg2([], []), None)
 
@@ -226,11 +261,12 @@ class ClimateTestCase(unittest.TestCase):
     def test_avg2_different_length(self):
         self.assertEqual(Climate.avg2([1, 2, 3], [1, 2]), None)
 
-    # const
 
+class ClimateConstants(unittest.TestCase):
     def test_TEMP_DISTRIBUTION_LIMITS(self):
         self.assertEqual(Climate.TEMP_DISTRIBUTION_LIMITS,
                          [-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40])
+
 
 if __name__ == '__main__':
     unittest.main()

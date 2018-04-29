@@ -1,6 +1,6 @@
 from django import forms
 
-from climate.classes.weather import Weather
+from climate.classes.Weather import Weather
 from django.contrib.auth.forms import UserCreationForm
 from captcha.fields import ReCaptchaField
 from django.contrib.auth.models import User

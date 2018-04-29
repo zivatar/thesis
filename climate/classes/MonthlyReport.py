@@ -1,8 +1,8 @@
 import simplejson as json
 
 from climate.classes.Report import Report
-from climate.classes.climate import Climate
-from climate.classes.month import Month
+from climate.classes.Climate import Climate
+from climate.classes.Month import Month
 
 
 class MonthlyReport(Report):
