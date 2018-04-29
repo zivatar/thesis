@@ -12,32 +12,21 @@
     <meta name="theme-color" content="#286090">
 
 	<!-- BOOTSTRAP +++++++++++++++++++++++++++++ -->
-	
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-	<!-- Optional theme -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-
-	<!--link rel="stylesheet" href="https://bootswatch.com/superhero/bootstrap.min.css"-->
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
-
-	
+	<link rel="stylesheet" href="{%  static 'lib/bootstrap.3.3.7.min.css' %}">
+	<link rel="stylesheet" href="{% static 'lib/bootstrap.3.3.7.theme.min.css' %}">
+	<script src="{% static 'lib/jquery.3.3.1.min.js' %}"></script>
+	<script src="{% static 'lib/bootstrap.3.3.7.min.js' %}"></script>
+	<script src="{% static 'lib/moment-with-locales.2.18.1.min.js' %}"></script>
 	<link href="{%static 'css/jumbotron-narrow.css' %}" rel="stylesheet">
 	<!-- /BOOTSTRAP +++++++++++++++++++++++++++++ -->
-
 	
 	<!-- FONTS ++++++++++++++++++++++++++++++++++ -->
-	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Saira" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Saira+Semi+Condensed" rel="stylesheet">
-	<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="{%  static 'lib/Roboto.css' %}">
+	<link rel="stylesheet" href="{%  static 'lib/Saira.css' %}">
+	<link rel="stylesheet" href="{%  static 'lib/SairaSemiCondensed.css' %}">
+	<link rel="stylesheet" href="{%  static 'lib/Quicksand.css' %}">
 	<!-- /FONTS +++++++++++++++++++++++++++++++++ -->
 	
 	<!-- CSS FILES ++++++++++++++++++++++++++++++ -->
@@ -49,8 +38,8 @@
 	
 	<script src="{% static 'js/gmaps.js' %}"></script>
 	<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
-	
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"></script>
+
+	<script src="{% static 'js/lib/Chart.2.6.0.bundle.min.js' %}"></script>
 	<script src="{% static 'js/chart.js' %}"></script>
 
 	<link href="{%static 'css/bootstrap-theme.css' %}" rel="stylesheet">
