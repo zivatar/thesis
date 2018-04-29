@@ -1,6 +1,9 @@
 import unittest
 
+from random import random
+
 from climate.classes.Climate import Climate
+from climate.classes.Weather import Weather
 
 
 class FrostDays(unittest.TestCase):
@@ -102,7 +105,7 @@ class SummerDays(unittest.TestCase):
         self.assertEqual(Climate.get_nr_summer_days([None, 24, 26]), 1)
 
 
-class TestWarmDays(unittest.TestCase):
+class WarmDays(unittest.TestCase):
     """
     Warm days: Tmax >= 30 C
     """
@@ -148,6 +151,30 @@ class HotDays(unittest.TestCase):
 
     def test_hot_days_only_null(self):
         self.assertEqual(Climate.get_nr_hot_days([None, None]), 0)
+
+
+class WinterDays(unittest.TestCase):
+    """
+    Winter days: Tmax <= 0 C
+    """
+
+    def test_winter_days_only_null(self):
+        self.assertEqual(Climate.get_nr_winter_days([None, None]), 0)
+
+    def test_winter_days_with_null(self):
+        self.assertEqual(Climate.get_nr_winter_days([None, 1, 2]), 0)
+
+    def test_winter_days_empty(self):
+        self.assertEqual(Climate.get_nr_winter_days([]), 0)
+
+    def test_winter_days_above(self):
+        self.assertEqual(Climate.get_nr_winter_days([0.1, 3, 99]), 0)
+
+    def test_winter_days_below(self):
+        self.assertEqual(Climate.get_nr_winter_days([-0.1, -10, -99]), 3)
+
+    def test_winter_days_around(self):
+        self.assertEqual(Climate.get_nr_winter_days([-0.1, 0, 0.1]), 2)
 
 
 class PrecipitationLimits(unittest.TestCase):
@@ -266,6 +293,91 @@ class ClimateConstants(unittest.TestCase):
     def test_TEMP_DISTRIBUTION_LIMITS(self):
         self.assertEqual(Climate.TEMP_DISTRIBUTION_LIMITS,
                          [-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40])
+
+    def test_RH_DSTRIBUTION_LIMITS(self):
+        self.assertEqual(Climate.RH_DISTRIBUTION_LIMITS, [20, 40, 60, 80])
+
+    def test_WIND_DIRECTION_LIMITS(self):
+        self.assertEqual(Climate.WIND_DIRECTION_LIMITS,
+                         [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5])
+
+
+class Distributions(unittest.TestCase):
+    def test_empty_data(self):
+        self.assertEqual(Climate.calculate_distribution(data=[], limits=[0, 1, 2]), [0, 0, 0])
+
+    def test_none_data(self):
+        self.assertEqual(Climate.calculate_distribution(data=None, limits=[0, 1, 2]), None)
+
+    def test_empty_limits(self):
+        self.assertEqual(Climate.calculate_distribution(data=[1, 2, 3], limits=[]), [])
+
+    def test_none_limits(self):
+        self.assertEqual(Climate.calculate_distribution(data=[1, 2, 3], limits=None), None)
+
+    def test_below_limit(self):
+        self.assertEqual(Climate.calculate_distribution(data=[-1, -2], limits=[0, 1, 2]), [2, 0, 0])
+
+    def test_above_limit(self):
+        self.assertEqual(Climate.calculate_distribution(data=[4, 5], limits=[0, 1, 2]), [0, 0, 2])
+
+    def test_between_limits(self):
+        self.assertEqual(Climate.calculate_distribution(data=[1.1, 2.0], limits=[0, 1, 2]), [0, 2, 0])
+
+
+class TemperatureDistributions(unittest.TestCase):
+    data = [(random() - 0.5) * 40 for i in range(10)]
+    params = [[], None, data]
+
+    def test_temperature_distribution(self):
+        for p in self.params:
+            with self.subTest():
+                self.assertEqual(Climate.calculate_temperature_distribution(temps=p),
+                                 Climate.calculate_distribution(data=p,
+                                                                limits=Climate.TEMP_DISTRIBUTION_LIMITS))
+
+
+class RelativeHumidityDistributions(unittest.TestCase):
+    data = [random() * 100 for i in range(10)]
+    params = [[], None, data]
+
+    def test_rh_distribution(self):
+        for p in self.params:
+            with self.subTest():
+                self.assertEqual(Climate.calculate_rh_distribution(rhs=p),
+                                 Climate.calculate_distribution(data=p,
+                                                                limits=Climate.RH_DISTRIBUTION_LIMITS))
+
+
+class WindDirectionDistributions(unittest.TestCase):
+    data = [random() * 360 for i in range(10)]
+    params = [[], None, data]
+
+    def test_wind_distribution(self):
+        for p in self.params:
+            with self.subTest():
+                self.assertEqual(Climate.calculate_wind_distribution(rhs=p),
+                                 Climate.calculate_distribution(data=p,
+                                                                limits=Climate.WIND_DIRECTION_LIMITS))
+
+
+class CountSignificants(unittest.TestCase):
+    parametrize = [
+        (['4', '19'], {4: 1, 19: 1}),
+        (['1', '1'], {1: 1}),
+        (['1', '100', '99'], {1: 1, 100: 1, 99: 1}),
+        ([], {}),
+        (None, {})
+    ]
+
+    def test_valid(self):
+        for p in self.parametrize:
+            with self.subTest():
+                significant = Climate.count_significants(significant={}, daily=p[0])
+                for k in significant.keys():
+                    expected_value = p[1].get(k, 0)
+                    self.assertEqual(significant[k], expected_value)
+                    self.assertIsNotNone(Weather.get_weather_code_text(k))
 
 
 if __name__ == '__main__':

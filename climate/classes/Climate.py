@@ -96,6 +96,8 @@ class Climate(object):
 
     @staticmethod
     def calculate_distribution(data, limits):
+        if data is None or limits is None:
+            return None
         res = []
         for i in range(len(limits)):
             low = None
@@ -128,6 +130,14 @@ class Climate(object):
 
     @staticmethod
     def count_significants(significant, daily):
+        """
+        Counts number of significant weather events, increases initial dictionary
+        :param significant: dictionary {key: WEATHER_CODE.id, value: number}
+        :param daily: list of significant events existing ['WEATHER_CODE.id']
+        :return: increased dictionary
+        """
+        if daily is None:
+            return significant
         for code in Weather.WEATHER_CODE:
             number = significant.get(code[0], 0)
             if str(code[0]) in daily:
