@@ -14,7 +14,7 @@ class Month:
             self._currentMonth = False
 
     def get_date_readable(self):
-        return str(self.year) + "." + str(self.month) + "."
+        return str(self.year) + "." + str(self.month).zfill(2) + "."
 
     def is_in_month(self, dt):
         return self.year == dt.year and self.month == dt.month
@@ -39,3 +39,15 @@ class Month:
 
     def get_month_two_digits(self):
         return str(self.month).zfill(2)
+
+    def next_month(self):
+        if self.month != 12:
+            return Month(year=self.year, month=self.month+1)
+        else:
+            return Month(year=self.year+1, month=1)
+
+    def previous_month(self):
+        if self.month != 1:
+            return Month(year=self.year, month=self.month-1)
+        else:
+            return Month(year=self.year-1, month=12)

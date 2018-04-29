@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title %}
-    Havi klímalap: {{site.title}}, {{report.year}}.{{ report.monthObj.get_month_two_digits }}.
+Havi klímalap: {{site.title}}, {{report.year}}.{{ report.monthObj.get_month_two_digits }}.
 {% endblock %}
 
 {% block content %}
@@ -11,6 +11,7 @@
 	function getTempAvgs() { return {{report.tempAvgs}}; }
 	function getTempMins() { return {{report.tempMins}}; }
 	function getTempMaxs() { return {{report.tempMins}}; }
+
 </script>
 
 
@@ -20,6 +21,14 @@
         {{report.year}}.{{ report.monthObj.get_month_two_digits }}.
     </div>
     <div class="panel-body">
+
+        <div class="text-center">
+            <a href="{% url 'monthly_view' site=site.pk year=report.monthObj.previous_month.year month=report.monthObj.previous_month.month %}">
+                {{report.monthObj.previous_month.get_date_readable}}</a>
+            << >>
+            <a href="{% url 'monthly_view' site=site.pk year=report.monthObj.next_month.year month=report.monthObj.next_month.month %}">
+                {{report.monthObj.next_month.get_date_readable}}</a>
+        </div>
 
         <table class="table table-striped">
             <tr>
@@ -213,6 +222,7 @@ var dataLabels = ["Minimumhőmérséklet", "Átlaghőmérséklet", "Maximumhőm�
 	var dataLabels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 	new StackedBarChart("chart_wind", {{report.windDist}}, dataLabels).draw();
 {% endif %}
+
 
 
 
