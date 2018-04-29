@@ -1,7 +1,9 @@
 {% extends 'climate/base.html' %}
 {% load staticfiles %}
 
-{% block title %}Havi klímalap: {{site.title}}, {{report.year}}.{{report.month}}. {% endblock %}
+{% block title %}
+    Havi klímalap: {{site.title}}, {{report.year}}.{{ report.monthObj.get_month_two_digits }}.
+{% endblock %}
 
 {% block content %}
 
@@ -9,17 +11,13 @@
 	function getTempAvgs() { return {{report.tempAvgs}}; }
 	function getTempMins() { return {{report.tempMins}}; }
 	function getTempMaxs() { return {{report.tempMins}}; }
-
-
-
-
 </script>
 
 
 <div class="panel panel-primary">
     <div class="panel-heading">
         <span class="glyphicon glyphicon-map-marker"></span> {{site.title}} havi adatai:
-        {{report.year}}.{{report.month}}.
+        {{report.year}}.{{ report.monthObj.get_month_two_digits }}.
     </div>
     <div class="panel-body">
 

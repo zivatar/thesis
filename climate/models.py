@@ -328,6 +328,7 @@ class MonthlyReport(Report):
         self.yearObj = yearObj
         self.dayObjs = dayObjs
         self.manualDayObjs = manualDayObjs
+        self.monthObj = Month(year=self.year, month=self.month)
         self.days = Month(year=self.year, month=self.month).days_of_month()
         self.tempMins, self.tempAvgs, self.tempMaxs = self.generateTemperatures()
         self.indices = self.calculateIndices()
