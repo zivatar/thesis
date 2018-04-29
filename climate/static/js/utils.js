@@ -52,3 +52,7 @@ function shallowCopy(oldObj) {
     }
     return newObj;
 }
+
+function isPositiveNumeric(event) {
+    return event.keyCode >= 48 && event.keyCode <= 57 || event.code == "Period";
+}
