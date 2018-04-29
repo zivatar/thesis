@@ -1,7 +1,4 @@
-from django.db import models
-
-
-class Weather(models.Model):
+class Weather:
     WEATHER_CODE = (
         (1, 'füst'), (2, 'homály'), (3, 'párásság'), (4, 'köd'), (19, 'nyílt köd'), (13, 'homokvihar'),
         (14, 'porforgatag'),

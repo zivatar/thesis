@@ -1,4 +1,4 @@
-from .weather import Weather
+from climate.classes.weather import Weather
 
 
 class Climate(object):

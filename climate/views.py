@@ -2,27 +2,31 @@ import logging
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, get_object_or_404
-# from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
-from .classes.weather import Weather
-from .classes.climate import Climate
-from .models import Site, Instrument
-from .models import RawObservation, RawManualData, Month, RawData
-from .models import DailyStatistics, MonthlyStatistics, YearlyStatistics
-from .models import MonthlyReport, YearlyReport
-from .forms import SiteForm, ObservationForm, DiaryForm, RegistrationForm, UserForm, InstrumentForm
+
+from climate.classes.MonthlyReport import MonthlyReport
+from climate.classes.YearlyReport import YearlyReport
+from climate.classes.climate import Climate
+from climate.classes.month import Month
+from climate.classes.weather import Weather
+from climate.forms import SiteForm, ObservationForm, RegistrationForm, UserForm, InstrumentForm
 from django.db import transaction
-from django.utils import timezone
-from re import sub
+from django.template.defaulttags import register
 from datetime import datetime
-import dateutil.parser as dtparser
-import calendar
 import datetime
 import decimal
-import time
-from .utils.number import is_number, to_float, to_int
+
+from climate.models.DailyStatistics import DailyStatistics
+from climate.models.Instrument import Instrument
+from climate.models.MonthlyStatistics import MonthlyStatistics
+from climate.models.RawData import RawData
+from climate.models.RawManualData import RawManualData
+from climate.models.RawObservation import RawObservation
+from climate.models.Site import Site
+from climate.models.YearlyStatistics import YearlyStatistics
+from climate.utils.number import is_number, to_float, to_int
+from .utils import gravatar as gr
 import pytz
 import simplejson as json
 from rest_framework.views import APIView
@@ -30,13 +34,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from threading import Timer
 
-from .utils import gravatar as gr
-from django.template.defaulttags import register
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-WAIT_BEFORE_CALCULATE_STATISTICS = 1 # sec
+WAIT_BEFORE_CALCULATE_STATISTICS = 1  # sec
 monthList = ['J', 'F', 'M', 'Á', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
 
@@ -338,7 +339,7 @@ def observations(request, pk):
 @login_required
 def delete_site_image(request, site, number):
     siteObj = get_object_or_404(Site, pk=site)
-    if (siteObj.owner == request.user):
+    if siteObj.owner == request.user:
         siteObj.primaryImage.delete()
         siteObj.save()
         return redirect(site_edit, pk=site)
@@ -627,8 +628,10 @@ def create_statistics(site, year=None, month=None, from_date=None, to_date=None,
             if RawManualData.objects.filter(siteId=site).count():
                 fd2 = RawManualData.objects.filter(siteId=site).order_by('year').order_by('month').order_by('day')[0]
                 ld2 = RawManualData.objects.filter(siteId=site).order_by('-year').order_by('-month').order_by('-day')[0]
-                firstDate2 = datetime.datetime(fd2.year, fd2.month, fd2.day, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
-                lastDate2 = datetime.datetime(ld2.year, ld2.month, ld2.day, 23, 59, tzinfo=pytz.timezone("Europe/Budapest"))
+                firstDate2 = datetime.datetime(fd2.year, fd2.month, fd2.day, 0, 0,
+                                               tzinfo=pytz.timezone("Europe/Budapest"))
+                lastDate2 = datetime.datetime(ld2.year, ld2.month, ld2.day, 23, 59,
+                                              tzinfo=pytz.timezone("Europe/Budapest"))
             if RawData.objects.filter(siteId=site).count() and RawManualData.objects.filter(siteId=site).count():
                 firstDate = min(firstDate1, firstDate2)
                 lastDate = max(lastDate1, lastDate2)
@@ -663,7 +666,7 @@ class UploadHandler(APIView):
             from_date = datetime.datetime.fromtimestamp(data[0].get('date') / 1000,
                                                         tz=pytz.timezone("Europe/Budapest"))
             to_date = datetime.datetime.fromtimestamp(data[-1].get('date') / 1000,
-                                                        tz=pytz.timezone("Europe/Budapest"))
+                                                      tz=pytz.timezone("Europe/Budapest"))
             logger.error(from_date)
             logger.error(to_date)
             create_statistics(site=site, from_date=from_date, to_date=to_date)
@@ -766,4 +769,3 @@ def handle_uploaded_data(site, data):
         if datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
                                            tz=pytz.timezone("Europe/Budapest")) not in existing_dates
     )
-

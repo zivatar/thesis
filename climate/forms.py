@@ -1,8 +1,14 @@
 from django import forms
-from .models import Site, RawObservation, Weather, RawManualData, Instrument
+
+from climate.classes.weather import Weather
 from django.contrib.auth.forms import UserCreationForm
 from captcha.fields import ReCaptchaField
 from django.contrib.auth.models import User
+
+from climate.models.Instrument import Instrument
+from climate.models.RawManualData import RawManualData
+from climate.models.RawObservation import RawObservation
+from climate.models.Site import Site
 
 
 class SiteForm(forms.ModelForm):
