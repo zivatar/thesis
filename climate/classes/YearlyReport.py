@@ -134,4 +134,4 @@ class YearlyReport(Report):
         self.tmax = Climate.avg(self.collectData('tempMax'))
         self.tavg = Climate.avg2(self.collectData('tempMin'), self.collectData('tempMax'))
         self.dataAvailable = self.calculateDataAvailable()
-        self.snowDays = self.getNrOfSnowDays()
+        self.snowDays = self.get_nr_of_snow_days()

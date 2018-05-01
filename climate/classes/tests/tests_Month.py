@@ -23,8 +23,6 @@ class MonthTestCase(unittest.TestCase):
     # Init and get month, day
 
     def test_init_get_valid(self):
-
-
         month = Month()
         now = timezone.now()
         self.assertEqual(month.get_date_readable(), str(now.year) + "." + str(now.month) + ".")

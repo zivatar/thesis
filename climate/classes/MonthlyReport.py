@@ -168,5 +168,5 @@ class MonthlyReport(Report):
         self.tempAvgs = json.dumps(self.tempAvgs)
         self.tempMaxs = json.dumps(self.tempMaxs)
         self.snowDepths = json.dumps(self.getSnowDepth())
-        self.snowDays = self.getNrOfSnowDays()
+        self.snowDays = self.get_nr_of_snow_days()
         self.comments = self.getComments()
