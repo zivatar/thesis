@@ -13,10 +13,10 @@ from climate.classes.Month import Month
 from climate.models.RawData import RawData
 from climate.models.RawManualData import RawManualData
 from climate.models.Site import Site
-from climate.views import handle_uploaded_data
 from climate.views.create_daily_statistics import create_daily_statistics
 from climate.views.create_monthly_statistics import create_monthly_statistics
 from climate.views.create_yearly_statistics import create_yearly_statistics
+from climate.views.handle_uploaded_data import handle_uploaded_data
 
 logger = logging.getLogger(__name__)
 
@@ -65,38 +65,38 @@ def create_statistics(site, year=None, month=None, from_date=None, to_date=None,
 
 
 class UploadHandler(APIView):
+    @staticmethod
+    def _save_to_database(request, site):
+        data = request.data.get('data', None)
+        site = request.data.get('site', None)
+        if data is None or site is None:
+            raise Exception("try to save empty data or empty site")
+        logger.error("try to save data from {} to {}".format(data[0], data[-1]))
+        site_obj = get_object_or_404(Site, pk=site)
+        inserted_lines = handle_uploaded_data(site=site_obj, data=data)
+        UploadHandler._calculate_statistics(site=site_obj, data=data)
+
+    @staticmethod
+    def _calculate_statistics(site, data):
+        from_date = datetime.datetime.fromtimestamp(data[0].get('date') / 1000,
+                                                    tz=pytz.timezone("Europe/Budapest"))
+        to_date = datetime.datetime.fromtimestamp(data[-1].get('date') / 1000,
+                                                  tz=pytz.timezone("Europe/Budapest"))
+        logger.error("calculate statistics for site {} from {} to {}".format(site, from_date, to_date))
+        create_statistics(site=site, from_date=from_date, to_date=to_date)
+
     def post(self, request, *args, **kw):
         logger.error("POST request on UploadHandler")
+        try:
+            if request.data is None or 'site' not in request.data or 'data' not in request.data:
+                raise Exception("Empty data or site")
+            site = get_object_or_404(Site, pk=request.data.get('site', None))
+            if request.user is None or not request.user.profile.canUpload or not site.isActive:
+                raise Exception("Unauthorized")
 
-        def _saveToDb():
-            if request.data.get('data', None) is None:
-                logger.error("try to save empty data")
-            else:
-                data = request.data.get('data', None)
-                logger.error("try to save data from {} to {}".format(data[0], data[-1]))
-            handle_uploaded_data(site, request.data.get('data', None))
-            _calculateStatistics()
-
-        def _calculateStatistics():
-            logger.error("calculate statistics for site {}".format(site))
-            data = request.data.get('data', None)
-            from_date = datetime.datetime.fromtimestamp(data[0].get('date') / 1000,
-                                                        tz=pytz.timezone("Europe/Budapest"))
-            to_date = datetime.datetime.fromtimestamp(data[-1].get('date') / 1000,
-                                                      tz=pytz.timezone("Europe/Budapest"))
-            logger.error(from_date)
-            logger.error(to_date)
-            create_statistics(site=site, from_date=from_date, to_date=to_date)
-
-        if request.user is not None and request.user.profile.canUpload:
-            if request.data is not None and 'site' in request.data:
-                site = get_object_or_404(Site, pk=request.data.get('site', None))
-                logger.error('POST request at UploadHandler for site {}'.format(site))
-                if site.isActive and 'data' in request.data:
-                    response = Response(None, status=status.HTTP_204_NO_CONTENT)
-                    t = Timer(0, _saveToDb)
-                    t.start()
-                    # if 'isLastPart' in request.data and request.data.get('isLastPart', None):
-                    #     t = Timer(WAIT_BEFORE_CALCULATE_STATISTICS, _calculateStatistics)
-                    #     t.start()
-        return response
+            logger.error('POST request at UploadHandler for site {}'.format(site))
+            t = Timer(0, lambda: UploadHandler._save_to_database(request, site))
+            t.start()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except Exception as ex:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=ex.strerror)

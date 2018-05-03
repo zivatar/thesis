@@ -19,7 +19,7 @@ def handle_uploaded_data(site, data):
     #                                                      tz=pytz.timezone("Europe/Budapest")))
     #         logger.debug(line)
 
-    RawData.objects.bulk_create(
+    bulk = RawData.objects.bulk_create(
         RawData(siteId=site,
                 createdDate=datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
                                                             tz=pytz.timezone("Europe/Budapest")),
@@ -40,3 +40,4 @@ def handle_uploaded_data(site, data):
         if datetime.datetime.fromtimestamp(line.get('date', None) / 1000,
                                            tz=pytz.timezone("Europe/Budapest")) not in existing_dates
     )
+    return len(bulk)
