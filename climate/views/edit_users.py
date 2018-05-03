@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.shortcuts import render
 
+from climate.models.Profile import Profile # DO NOT REMOVE IT
 from climate.utils import is_admin
 
 
