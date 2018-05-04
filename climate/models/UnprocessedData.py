@@ -3,20 +3,18 @@ from datetime import datetime
 from django.db import models
 
 
-class DataWithoutStatistics(models.Model):
+class UnprocessedData(models.Model):
 
     EXPIRATION_TIME_IN_SEC = 60
 
-    siteId = models.ForeignKey('climate.Site')
-    fromYear = models.IntegerField()
-    fromMonth = models.IntegerField()
-    toYear = models.IntegerField()
-    toMonth = models.IntegerField()
-    uploadedAt = models.DateTimeField()
+    site_id = models.ForeignKey('climate.Site')
+    from_date = models.DateTimeField()
+    to_date = models.DateTimeField()
+    uploaded_at = models.DateTimeField()
 
     @property
     def is_expired(self):
-        return (self.uploadedAt - datetime.now()).seconds >= DataWithoutStatistics.EXPIRATION_TIME_IN_SEC
+        return (self.uploaded_at - datetime.now()).seconds >= UnprocessedData.EXPIRATION_TIME_IN_SEC
 
 
 """

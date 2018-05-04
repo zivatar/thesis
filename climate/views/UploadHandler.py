@@ -9,7 +9,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from climate.classes.BadRequestException import BadRequestException
 from climate.classes.Month import Month
+from climate.models.UnprocessedData import UnprocessedData
 from climate.models.RawData import RawData
 from climate.models.RawManualData import RawManualData
 from climate.models.Site import Site
@@ -65,6 +67,10 @@ def create_statistics(site, year=None, month=None, from_date=None, to_date=None,
 
 
 class UploadHandler(APIView):
+    INTERVAL = 10.0
+    EXPIRATION_TIME_IN_SECONDS = 60
+    is_interval_running = False
+
     @staticmethod
     def _save_to_database(request, site):
         data = request.data.get('data', None)
@@ -73,8 +79,40 @@ class UploadHandler(APIView):
             raise Exception("try to save empty data or empty site")
         logger.error("try to save data from {} to {}".format(data[0], data[-1]))
         site_obj = get_object_or_404(Site, pk=site)
-        inserted_lines = handle_uploaded_data(site=site_obj, data=data)
-        UploadHandler._calculate_statistics(site=site_obj, data=data)
+        number_of_inserted_lines = handle_uploaded_data(site=site_obj, data=data)
+        if number_of_inserted_lines:
+            UploadHandler._calculate_statistics(site=site_obj, data=data)
+
+
+    @staticmethod
+    def _check_if_statistics_calculation_is_needed():
+        expiration_date = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(
+            seconds=UploadHandler.EXPIRATION_TIME_IN_SECONDS)
+        not_expired_data = UnprocessedData.objects.filter(uploaded_at__gte=expiration_date)
+        sites_of_not_expired_data = not_expired_data.values_list('site_id', flat=True).distinct()
+        all_sites = UnprocessedData.objects.filter(uploaded_at__lte=expiration_date).values_list('site_id',
+                                                                                                 flat=True).distinct()
+        for s in all_sites:
+            if s not in sites_of_not_expired_data:
+                from_date = UnprocessedData.objects.filter(site_id_id=s).order_by('from_date')[0].from_date
+                to_date = UnprocessedData.objects.filter(site_id_id=s).order_by('-to_date')[0].to_date
+                print("should create stats for {} from {} to {}".format(s, from_date, to_date))
+                site_obj = get_object_or_404(Site, pk=s)
+                create_statistics(site=site_obj, from_date=from_date, to_date=to_date)
+                UnprocessedData.objects.filter(site_id_id=s).delete()
+
+        if len(sites_of_not_expired_data):
+            Timer(UploadHandler.INTERVAL, UploadHandler._check_if_statistics_calculation_is_needed).start()
+        else:
+            UploadHandler.is_interval_running = False
+
+    @staticmethod
+    def _create_temporary_data(from_date, to_date, site):
+        UnprocessedData.objects.create(site_id=site, from_date=from_date, to_date=to_date,
+                                       uploaded_at=datetime.datetime.now(tz=datetime.timezone.utc))
+        if not UploadHandler.is_interval_running:
+            Timer(UploadHandler.INTERVAL, UploadHandler._check_if_statistics_calculation_is_needed).start()
+            UploadHandler.is_interval_running = True
 
     @staticmethod
     def _calculate_statistics(site, data):
@@ -82,21 +120,24 @@ class UploadHandler(APIView):
                                                     tz=pytz.timezone("Europe/Budapest"))
         to_date = datetime.datetime.fromtimestamp(data[-1].get('date') / 1000,
                                                   tz=pytz.timezone("Europe/Budapest"))
-        logger.error("calculate statistics for site {} from {} to {}".format(site, from_date, to_date))
-        create_statistics(site=site, from_date=from_date, to_date=to_date)
+        logger.debug("calculate statistics for site {} from {} to {}".format(site, from_date, to_date))
+        UploadHandler._create_temporary_data(site=site, from_date=from_date, to_date=to_date)
+        # create_statistics(site=site, from_date=from_date, to_date=to_date)
 
     def post(self, request, *args, **kw):
-        logger.error("POST request on UploadHandler")
+        logger.debug("POST request on UploadHandler")
         try:
             if request.data is None or 'site' not in request.data or 'data' not in request.data:
-                raise Exception("Empty data or site")
+                raise BadRequestException("Empty data or site")
             site = get_object_or_404(Site, pk=request.data.get('site', None))
-            if request.user is None or not request.user.profile.canUpload or not site.isActive:
-                raise Exception("Unauthorized")
-
             logger.error('POST request at UploadHandler for site {}'.format(site))
-            t = Timer(0, lambda: UploadHandler._save_to_database(request, site))
-            t.start()
+            if request.user is None or not request.user.profile.canUpload or not site.isActive:
+                raise BadRequestException("Unauthorized")
+            Timer(0, lambda: UploadHandler._save_to_database(request, site)).start()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except Exception as ex:
+        except BadRequestException as ex:
+            logger.debug(ex)
             return Response(status=status.HTTP_400_BAD_REQUEST, data=ex.strerror)
+        except Exception as ex:
+            logger.error(ex)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data=ex.strerror)
