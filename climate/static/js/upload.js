@@ -20,6 +20,7 @@ var weatherParameters = [
   { id: "dewpoint", name: "Harmatpont (°C)" },
   { id: "windChill", name: "Hőérzet (°C)" },
   { id: "windSpeed", name: "Szélsebesség (m/s)" },
+  { id: "windSpeedKMH", name: "Szélsebesség (km/h)"},
   { id: "windDirection", name: "Szélirány (°)" },
   { id: "windGustSpeed", name: "Széllökés sebesség (m/s)" },
   { id: "precipitation", name: "Csapadékmennyiség (mm)" }
@@ -212,12 +213,14 @@ function sendData(allParams, dateFormat) {
         var line = {};
         for (var j = 0; j < allParams.length; j++) {
           if (!!allParams[j] && fileData.data[l][j] != undefined && fileData.data[l][j] != "---" && fileData.data[l][j] !== "") {
-            if (allParams[j] == "date") {
-              line[allParams[j]] = moment(fileData.data[l][j], dateFormat).valueOf();
-            } else {
-              line[allParams[j]] = fileData.data[l][j];
-            }
-            
+                console.log(allParams[j])
+                if (allParams[j] == "date") {
+                  line[allParams[j]] = moment(fileData.data[l][j], dateFormat).valueOf();
+                } else if (allParams[j] == "windSpeedKMH") {
+                    line.windSpeed = fileData.data[l][j] / 3.6; // transform km/h to m/s
+                } else {
+                    line[allParams[j]] = fileData.data[l][j];
+                }
             }
           }
         if (!!Object.keys(line).length) {
