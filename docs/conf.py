@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# thesis documentation build configuration file, created by
-# sphinx-quickstart on Sun Dec 17 20:15:16 2017.
+# lelovics-thesis documentation build configuration file, created by
+# sphinx-quickstart on Wed May  9 21:32:48 2018.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -17,12 +17,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
-import django
-sys.path.insert(0, os.path.abspath('..'))
-os.environ['DJANGO_SETTINGS_MODULE'] = 'zivatar.settings'
-django.setup()
+# import os
+# import sys
+# sys.path.insert(0, os.path.abspath('.'))
+
 
 # -- General configuration ------------------------------------------------
 
@@ -33,8 +31,7 @@ django.setup()
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.coverage']
+extensions = ['sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -49,9 +46,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'thesis'
-copyright = '2017, elelovics'
-author = 'elelovics'
+project = 'lelovics-thesis'
+copyright = '2018, Eniko Lelovics'
+author = 'Eniko Lelovics'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -115,7 +112,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'thesisdoc'
+htmlhelp_basename = 'lelovics-thesisdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -136,23 +133,23 @@ latex_elements = {
     # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
-    'classoptions': ',openany,oneside'
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'thesis.tex', 'thesis Documentation',
-     'elelovics', 'manual'),
+    (master_doc, 'lelovics-thesis.tex', 'lelovics-thesis Documentation',
+     'Eniko Lelovics', 'manual'),
 ]
+
 
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'thesis', 'thesis Documentation',
+    (master_doc, 'lelovics-thesis', 'lelovics-thesis Documentation',
      [author], 1)
 ]
 
@@ -163,8 +160,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'thesis', 'thesis Documentation',
-     author, 'thesis', 'One line description of project.',
+    (master_doc, 'lelovics-thesis', 'lelovics-thesis Documentation',
+     author, 'lelovics-thesis', 'One line description of project.',
      'Miscellaneous'),
 ]
 
