@@ -1,4 +1,7 @@
 class Weather:
+    """
+    | Weather constants and their helper methods
+    """
     WEATHER_CODE = (
         (1, 'füst'), (2, 'homály'), (3, 'párásság'), (4, 'köd'), (19, 'nyílt köd'), (13, 'homokvihar'),
         (14, 'porforgatag'),
@@ -22,6 +25,13 @@ class Weather:
 
     @staticmethod
     def get_weather_code_text(ndx=None):
+        """
+        Get weather text of weather code fit to given ID
+
+        :param ndx: index of weather code
+        :type ndx: number
+        :return: name of weather code
+        """
         if ndx is None or ndx == '':
             return
         if type(ndx) == str:

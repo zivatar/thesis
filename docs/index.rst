@@ -1,20 +1,24 @@
-.. lelovics-thesis documentation master file, created by
-   sphinx-quickstart on Wed May  9 21:32:48 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to lelovics-thesis's documentation!
-===========================================
+Standalone classes
+==================
+
+.. automodule:: climate.classes.BadRequestException
+   :members:
+
+.. automodule:: climate.classes.Climate
+   :members:
+
+.. automodule:: climate.classes.Gravatar
+   :members:
+
+//.. automodule:: climate.classes.Month
+//   :members:
+
+.. automodule:: climate.classes.Weather
+   :members:
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
