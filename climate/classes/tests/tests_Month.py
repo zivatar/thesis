@@ -5,7 +5,6 @@ from datetime import datetime
 
 import django
 import os
-from django.utils import timezone
 
 from climate.classes.Month import Month
 
@@ -24,7 +23,7 @@ class MonthTestCase(unittest.TestCase):
 
     def test_init_get_valid(self):
         month = Month()
-        now = timezone.now()
+        now = datetime.now()
         self.assertEqual(month.get_date_readable(), str(now.year) + "." + str(now.month) + ".")
         self.assertEqual(month.get_month_two_digits(), str(now.month).zfill(2))
 
@@ -40,7 +39,7 @@ class MonthTestCase(unittest.TestCase):
 
     def test_init_invalid_values(self):
         month = Month(year=0, month=0)
-        now = timezone.now()
+        now = datetime.now()
         self.assertEqual(month.get_date_readable(), str(now.year) + "." + str(now.month) + ".")
         self.assertEqual(month.get_month_two_digits(), str(now.month).zfill(2))
 
@@ -65,25 +64,25 @@ class MonthTestCase(unittest.TestCase):
 
     def test_days_of_jan(self):
         month = Month(year=2017, month=1)
-        self.assertEqual(month.days_of_month(), list(range(1, 32)))
+        self.assertEqual(month.get_days_of_month(), list(range(1, 32)))
 
     def test_days_of_feb_leaping(self):
         month = Month(year=2016, month=2)
-        self.assertEqual(month.days_of_month(), list(range(1, 30)))
+        self.assertEqual(month.get_days_of_month(), list(range(1, 30)))
 
     def test_days_of_feb_non_leaping(self):
         month = Month(year=2017, month=2)
-        self.assertEqual(month.days_of_month(), list(range(1, 29)))
+        self.assertEqual(month.get_days_of_month(), list(range(1, 29)))
 
     # Return past days of current month in array
 
     def test_days_of_month_till_today(self):
-        today = timezone.now().day
-        self.assertEqual(Month().days_of_month_till_today(), list(range(1, today + 1)))
+        today = datetime.now().day
+        self.assertEqual(Month().get_days_of_month_till_today(), list(range(1, today + 1)))
 
     def test_days_of_month_till_other_day(self):
         other_day = Month(year=2017, month=1)
-        self.assertEqual(other_day.days_of_month_till_today(), list(range(1, 32)))
+        self.assertEqual(other_day.get_days_of_month_till_today(), list(range(1, 32)))
 
     # Next, prev
 

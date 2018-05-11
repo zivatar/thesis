@@ -6,6 +6,10 @@ from climate.classes.Year import Year
 
 
 class YearlyReport(Report):
+    """
+    TODO
+    """
+
     class Meta:
         managed = False
 
@@ -107,7 +111,7 @@ class YearlyReport(Report):
         self.yearObj = yearObj
         self.dayObjs = dayObjs
         self.manualDayObjs = manualDayObjs
-        self.months = Year.months_of_year()
+        self.months = Year.get_months_of_year()
         self.temps = {
             'mins': json.dumps(self.collectData('tempMin')),
             'minAvgs': json.dumps(self.collectData('tempMinAvg')),

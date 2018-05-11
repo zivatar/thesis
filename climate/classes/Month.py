@@ -1,9 +1,12 @@
-from django.utils import timezone
 import calendar
+from datetime import datetime
 
 
 class Month:
-    def __init__(self, now=timezone.now(), year=0, month=0):
+    """
+    | Utilities for handling months
+    """
+    def __init__(self, now=datetime.now(), year=0, month=0):
         if year == 0 or month == 0:
             self.year = now.year
             self.month = now.month
@@ -14,23 +17,50 @@ class Month:
             self._currentMonth = False
 
     def get_date_readable(self):
+        """
+        | Get date in readable format
+
+        :return: YYYY.MM.
+        """
         return str(self.year) + "." + str(self.month).zfill(2) + "."
 
-    def is_in_month(self, dt):
-        return self.year == dt.year and self.month == dt.month
+    def is_in_month(self, timestamp):
+        """
+        | Is a given timestamp in this month
 
-    def last_day(self):
+        :param timestamp: datetime
+        :return: boolean
+        """
+        return self.year == timestamp.year and self.month == timestamp.month
+
+    def get_last_day(self):
+        """
+        | Get the last day of this month
+
+        :return: index of the last day
+        """
         return calendar.monthrange(self.year, self.month)[1]
 
-    def days_of_month(self):
+    def get_days_of_month(self):
+        """
+        | Get a list with the days of this month
+
+        :return: indices of the days of month
+        """
         last_day = calendar.monthrange(self.year, self.month)[1]
         a = []
         [a.append(i) for i in range(1, last_day + 1)]
         return a
 
-    def days_of_month_till_today(self):
+    def get_days_of_month_till_today(self):
+        """
+        | Get a list with the days of this month
+        | Does not return days in the real-time future
+
+        :return: indices of the days of month
+        """
         if self._currentMonth:
-            last_day = timezone.now().day
+            last_day = datetime.now().day
         else:
             last_day = calendar.monthrange(self.year, self.month)[1]
         a = []
@@ -38,16 +68,9 @@ class Month:
         return a
 
     def get_month_two_digits(self):
+        """
+        | Get the number of the month in human readable format
+
+        :return: index of the month
+        """
         return str(self.month).zfill(2)
-
-    def next_month(self):
-        if self.month != 12:
-            return Month(year=self.year, month=self.month+1)
-        else:
-            return Month(year=self.year+1, month=1)
-
-    def previous_month(self):
-        if self.month != 1:
-            return Month(year=self.year, month=self.month-1)
-        else:
-            return Month(year=self.year-1, month=12)

@@ -23,7 +23,7 @@ def climate(request, pk, year=None, month=None):
     else:
         this_month = Month()
     actualDataJson = []
-    for i in this_month.days_of_month_till_today():
+    for i in this_month.get_days_of_month_till_today():
         actualData = RawManualData.objects.filter(year=this_month.year, month=this_month.month, siteId=pk, day=i)
         if len(actualData) > 0:
             actualDataJson.append({

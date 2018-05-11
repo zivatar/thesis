@@ -6,6 +6,8 @@ from climate.classes.Month import Month
 
 
 class MonthlyReport(Report):
+    """TODO"""
+
     class Meta:
         managed = False
 
@@ -150,7 +152,7 @@ class MonthlyReport(Report):
         self.dayObjs = dayObjs
         self.manualDayObjs = manualDayObjs
         self.monthObj = Month(year=self.year, month=self.month)
-        self.days = Month(year=self.year, month=self.month).days_of_month()
+        self.days = Month(year=self.year, month=self.month).get_days_of_month()
         self.tempMins, self.tempAvgs, self.tempMaxs = self.generateTemperatures()
         self.indices = self.calculateIndices()
         self.tempDist = json.dumps(self.generateTempDistribution())

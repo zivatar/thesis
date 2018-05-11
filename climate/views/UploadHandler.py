@@ -36,7 +36,7 @@ def create_statistics(site, year=None, month=None, from_date=None, to_date=None,
                 RawManualData.objects.filter(siteId=site, year=year, month=month).count() > 0:
             hasData = True
             firstDate = datetime.datetime(year, month, 1, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
-            lastDate = datetime.datetime(year, month, Month(year=year, month=month).last_day(), 23, 59,
+            lastDate = datetime.datetime(year, month, Month(year=year, month=month).get_last_day(), 23, 59,
                                          tzinfo=pytz.timezone("Europe/Budapest"))
     else:
         if RawData.objects.filter(siteId=site).count() or RawManualData.objects.filter(siteId=site).count():
