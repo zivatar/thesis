@@ -7,13 +7,20 @@ from climate.classes.Year import Year
 
 class YearlyReport(Report):
     """
-    TODO
+    | Yearly report
+    | managed: False
     """
 
     class Meta:
         managed = False
 
-    def collectData(self, prop):
+    def collect_monthly_data(self, prop):
+        """
+        | Collect monthly data of year
+
+        :param prop: 'tempMin', 'tempMax', 'precipitation', 'summerDays', ...
+        :return: list of collected data
+        """
         dataset = []
         for i in self.months:
             hasData = False
@@ -25,13 +32,24 @@ class YearlyReport(Report):
                 dataset.append(None)
         return dataset
 
-    def collectDailyData(self, prop):
+    def collect_daily_data(self, prop):
+        """
+        | Collect daily data of year
+
+        :param prop: 'precipitation'
+        :return: list of collected data
+        """
         dataset = []
         for i in self.dayObjs:
             dataset.append(getattr(i, prop))
         return dataset
 
-    def generateTempDistribution(self):
+    def generate_temperature_distribution(self):
+        """
+        | Generate temperature distribution
+
+        :return: distribution list
+        """
         dist = []
         for l in range(len(Climate.TEMP_DISTRIBUTION_LIMITS)):
             sublist = []
@@ -48,7 +66,12 @@ class YearlyReport(Report):
             dist.append(sublist)
         return dist
 
-    def generateRhDistribution(self):
+    def generate_rh_distribution(self):
+        """
+        | Generate relative humidity distribution
+
+        :return: distribution list
+        """
         dist = []
         for l in range(len(Climate.RH_DISTRIBUTION_LIMITS)):
             sublist = []
@@ -65,7 +88,12 @@ class YearlyReport(Report):
             dist.append(sublist)
         return dist
 
-    def generateWindDistribution(self):
+    def generate_wind_distribution(self):
+        """
+        | Generate wind distribution
+
+        :return: distribution list
+        """
         dist = []
         for l in range(len(Climate.WIND_DIRECTION_LIMITS)):
             sublist = []
@@ -82,13 +110,18 @@ class YearlyReport(Report):
             dist.append(sublist)
         return dist
 
-    def calculateDataAvailable(self):
-        temp = Climate.number(self.collectData('tempMin')) > 0 and Climate.number(self.collectData('tempMinAvg')) > 0
-        tempDist = Climate.number2(self.generateTempDistribution(), strict=True) > 0
-        rhDist = Climate.number2(self.generateRhDistribution(), strict=True) > 0
-        prec = Climate.number(self.collectData('precipitation')) > 0 and Climate.sum(
-            self.collectData('precipitation')) > 0
-        windDist = Climate.number2(self.generateWindDistribution(), strict=True) > 0
+    def calculate_number_of_available_data(self):
+        """
+        | Calculate number of available data for every months
+
+        :return: {"temp": temp, "tempDist": tempDist, "rhDist": rhDist, "prec": prec, "windDist": windDist, "sign": sign }
+        """
+        temp = Climate.number(self.collect_monthly_data('tempMin')) > 0 and Climate.number(self.collect_monthly_data('tempMinAvg')) > 0
+        tempDist = Climate.number2(self.generate_temperature_distribution(), strict=True) > 0
+        rhDist = Climate.number2(self.generate_rh_distribution(), strict=True) > 0
+        prec = Climate.number(self.collect_monthly_data('precipitation')) > 0 and Climate.sum(
+            self.collect_monthly_data('precipitation')) > 0
+        windDist = Climate.number2(self.generate_wind_distribution(), strict=True) > 0
         sign = False
         for m in self.monthObjs:
             if Climate.sum([self.monthObjs[0].significants.get(i) for i in self.monthObjs[0].significants]) > 0:
@@ -113,29 +146,29 @@ class YearlyReport(Report):
         self.manualDayObjs = manualDayObjs
         self.months = Year.get_months_of_year()
         self.temps = {
-            'mins': json.dumps(self.collectData('tempMin')),
-            'minAvgs': json.dumps(self.collectData('tempMinAvg')),
-            'avgs': json.dumps(self.collectData('tempAvg')),
-            'maxAvgs': json.dumps(self.collectData('tempMaxAvg')),
-            'maxs': json.dumps(self.collectData('tempMax'))
+            'mins': json.dumps(self.collect_monthly_data('tempMin')),
+            'minAvgs': json.dumps(self.collect_monthly_data('tempMinAvg')),
+            'avgs': json.dumps(self.collect_monthly_data('tempAvg')),
+            'maxAvgs': json.dumps(self.collect_monthly_data('tempMaxAvg')),
+            'maxs': json.dumps(self.collect_monthly_data('tempMax'))
         }
         self.tempIndices = {
-            'summerDays': json.dumps(self.collectData('summerDays')),
-            'frostDays': json.dumps(self.collectData('frostDays')),
-            'winterDays': json.dumps(self.collectData('winterDays')),
-            'coldDays': json.dumps(self.collectData('coldDays')),
-            'warmNights': json.dumps(self.collectData('warmNights')),
-            'warmDays': json.dumps(self.collectData('warmDays')),
-            'hotDays': json.dumps(self.collectData('hotDays'))
+            'summerDays': json.dumps(self.collect_monthly_data('summerDays')),
+            'frostDays': json.dumps(self.collect_monthly_data('frostDays')),
+            'winterDays': json.dumps(self.collect_monthly_data('winterDays')),
+            'coldDays': json.dumps(self.collect_monthly_data('coldDays')),
+            'warmNights': json.dumps(self.collect_monthly_data('warmNights')),
+            'warmDays': json.dumps(self.collect_monthly_data('warmDays')),
+            'hotDays': json.dumps(self.collect_monthly_data('hotDays'))
         }
-        self.prec = json.dumps(self.collectData('precipitation'))
-        self.tempDist = json.dumps(self.generateTempDistribution())
-        self.rhDist = json.dumps(self.generateRhDistribution())
-        self.windDist = json.dumps(self.generateWindDistribution())
-        self.precipitation = Climate.sum(self.collectData('precipitation'))
-        self.precDist = Climate.get_precipitation_over_limits(self.collectDailyData('precipitation'))
-        self.tmin = Climate.avg(self.collectData('tempMin'))
-        self.tmax = Climate.avg(self.collectData('tempMax'))
-        self.tavg = Climate.avg2(self.collectData('tempMin'), self.collectData('tempMax'))
-        self.dataAvailable = self.calculateDataAvailable()
+        self.prec = json.dumps(self.collect_monthly_data('precipitation'))
+        self.tempDist = json.dumps(self.generate_temperature_distribution())
+        self.rhDist = json.dumps(self.generate_rh_distribution())
+        self.windDist = json.dumps(self.generate_wind_distribution())
+        self.precipitation = Climate.sum(self.collect_monthly_data('precipitation'))
+        self.precDist = Climate.get_precipitation_over_limits(self.collect_daily_data('precipitation'))
+        self.tmin = Climate.avg(self.collect_monthly_data('tempMin'))
+        self.tmax = Climate.avg(self.collect_monthly_data('tempMax'))
+        self.tavg = Climate.avg2(self.collect_monthly_data('tempMin'), self.collect_monthly_data('tempMax'))
+        self.dataAvailable = self.calculate_number_of_available_data()
         self.snowDays = self.get_nr_of_snow_days()

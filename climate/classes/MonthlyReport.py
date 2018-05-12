@@ -6,12 +6,20 @@ from climate.classes.Month import Month
 
 
 class MonthlyReport(Report):
-    """TODO"""
+    """
+    | Monthly report
+    | managed: False
+    """
 
     class Meta:
         managed = False
 
-    def generateTemperatures(self):
+    def collect_daily_temperature(self):
+        """
+        | Collect daily average, minimum and maximum temperature values
+
+        :return: minimum temperature list, average temperature list, maximum temperature list
+        """
         Tavg = []
         Tmin = []
         Tmax = []
@@ -29,7 +37,12 @@ class MonthlyReport(Report):
                 Tavg.append(None)
         return Tmin, Tavg, Tmax
 
-    def getPrecipitation(self):
+    def collect_daily_precipitation(self):
+        """
+        | Collect daily precipitation values
+
+        :return: precipitation list
+        """
         prec = []
         for i in self.days:
             hasData = False
@@ -41,7 +54,12 @@ class MonthlyReport(Report):
                 prec.append(None)
         return prec
 
-    def getSnowDepth(self):
+    def collect_snow_depth(self):
+        """
+        | Collect every morning snow depth data
+
+        :return: snow depth list
+        """
         s = []
         for i in self.days:
             hasData = False
@@ -53,7 +71,12 @@ class MonthlyReport(Report):
                 s.append(None)
         return s
 
-    def generateTempDistribution(self):
+    def generate_temp_distribution(self):
+        """
+        | Generate temperature distribution
+
+        :return: temperature distribution list
+        """
         dist = []
         for l in range(len(Climate.TEMP_DISTRIBUTION_LIMITS)):
             sublist = []
@@ -70,7 +93,12 @@ class MonthlyReport(Report):
             dist.append(sublist)
         return dist
 
-    def generateRhDistribution(self):
+    def generate_rh_distribution(self):
+        """
+        | Generate relative humidity distribution
+
+        :return: relative humidity distribution list
+        """
         dist = []
         for l in range(len(Climate.RH_DISTRIBUTION_LIMITS)):
             sublist = []
@@ -87,7 +115,12 @@ class MonthlyReport(Report):
             dist.append(sublist)
         return dist
 
-    def generateWindDistribution(self):
+    def generate_wind_distribution(self):
+        """
+        | Generate wind direction distribution
+
+        :return: wind direction distribution list
+        """
         dist = []
         for l in range(len(Climate.WIND_DIRECTION_LIMITS)):
             sublist = []
@@ -104,7 +137,12 @@ class MonthlyReport(Report):
             dist.append(sublist)
         return dist
 
-    def calculateIndices(self):
+    def calculate_climate_index_days(self):
+        """
+        | Calculate climate index days
+
+        :return: {'frostDays': fd, 'winterDays': wd, 'coldDays': cd, 'warmNights': wn, 'summerDays': sd, 'warmDays': wwd, 'hotDays': hd}
+        """
         return ({
             'frostDays': Climate.get_nr_frost_days(self.tempMins),
             'winterDays': Climate.get_nr_winter_days(self.tempMaxs),
@@ -115,14 +153,20 @@ class MonthlyReport(Report):
             'hotDays': Climate.get_nr_hot_days(self.tempMins)
         })
 
-    def calculateDataAvailable(self):
+    def calculate_number_of_available_data(self):
+        """
+        | Calculate number of available data
+
+        :return: {"temp": temp, "tempDist": tempDist, "rhDist": rhDist, "prec": prec, "windDist": windDist, "sign": sign, "snowDepth": snowDepth}
+        """
         temp = Climate.number(self.tempMins) > 0 and Climate.number(self.tempMaxs) > 0
-        tempDist = Climate.number2(self.generateTempDistribution()) > 0
-        rhDist = Climate.number2(self.generateRhDistribution()) > 0
-        prec = Climate.number(self.getPrecipitation()) > 0 and Climate.sum(self.getPrecipitation()) > 0
-        windDist = Climate.number2(self.generateWindDistribution(), True) > 0
+        tempDist = Climate.number2(self.generate_temp_distribution()) > 0
+        rhDist = Climate.number2(self.generate_rh_distribution()) > 0
+        prec = Climate.number(self.collect_daily_precipitation()) > 0 and Climate.sum(
+            self.collect_daily_precipitation()) > 0
+        windDist = Climate.number2(self.generate_wind_distribution(), True) > 0
         sign = Climate.sum([self.monthObjs[0].significants.get(i) for i in self.monthObjs[0].significants]) > 0
-        snowDepth = Climate.number(self.getSnowDepth()) > 0 and Climate.sum(self.getSnowDepth()) > 0
+        snowDepth = Climate.number(self.collect_snow_depth()) > 0 and Climate.sum(self.collect_snow_depth()) > 0
         return {
             "temp": temp,
             "tempDist": tempDist,
@@ -133,7 +177,12 @@ class MonthlyReport(Report):
             "snowDepth": snowDepth,
         }
 
-    def getComments(self):
+    def get_comments(self):
+        """
+        Get comments of manual raw data
+
+        :return: list of { "day": d, "comment": c }
+        """
         s = []
         for d in self.manualDayObjs:
             if d.comment and d.comment != "":
@@ -153,22 +202,22 @@ class MonthlyReport(Report):
         self.manualDayObjs = manualDayObjs
         self.monthObj = Month(year=self.year, month=self.month)
         self.days = Month(year=self.year, month=self.month).get_days_of_month()
-        self.tempMins, self.tempAvgs, self.tempMaxs = self.generateTemperatures()
-        self.indices = self.calculateIndices()
-        self.tempDist = json.dumps(self.generateTempDistribution())
-        self.rhDist = json.dumps(self.generateRhDistribution())
-        self.prec = json.dumps(self.getPrecipitation())
-        self.precDist = Climate.get_precipitation_over_limits(self.getPrecipitation())
-        self.windDist = json.dumps(self.generateWindDistribution())
+        self.tempMins, self.tempAvgs, self.tempMaxs = self.collect_daily_temperature()
+        self.indices = self.calculate_climate_index_days()
+        self.tempDist = json.dumps(self.generate_temp_distribution())
+        self.rhDist = json.dumps(self.generate_rh_distribution())
+        self.prec = json.dumps(self.collect_daily_precipitation())
+        self.precDist = Climate.get_precipitation_over_limits(self.collect_daily_precipitation())
+        self.windDist = json.dumps(self.generate_wind_distribution())
         self.significants = json.dumps(monthObjs[0].significants)
-        self.precipitation = Climate.sum(self.getPrecipitation())
+        self.precipitation = Climate.sum(self.collect_daily_precipitation())
         self.tmin = Climate.avg(self.tempMins)
         self.tmax = Climate.avg(self.tempMaxs)
         self.tavg = Climate.avg2(self.tempMins, self.tempMaxs)
-        self.dataAvailable = self.calculateDataAvailable()
+        self.dataAvailable = self.calculate_number_of_available_data()
         self.tempMins = json.dumps(self.tempMins)
         self.tempAvgs = json.dumps(self.tempAvgs)
         self.tempMaxs = json.dumps(self.tempMaxs)
-        self.snowDepths = json.dumps(self.getSnowDepth())
+        self.snowDepths = json.dumps(self.collect_snow_depth())
         self.snowDays = self.get_nr_of_snow_days()
-        self.comments = self.getComments()
+        self.comments = self.get_comments()

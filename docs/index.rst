@@ -1,6 +1,8 @@
 Code documentation
 ******************
 
+Generated from the docstrings of the Django application
+
 Standalone classes
 ==================
 
@@ -54,6 +56,8 @@ Views
 
 Templates
 ---------
+
+
 
 Forms
 -----
