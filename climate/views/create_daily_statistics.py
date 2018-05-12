@@ -12,6 +12,15 @@ from climate.models.RawManualData import RawManualData
 
 
 def create_daily_statistics(fromDate, toDate, siteId, limitInMins=3):
+    """
+    | Create daily stat
+
+    :param fromDate: start date of calculation
+    :param toDate: end date of calculation
+    :param siteId: site
+    :param limitInMins: limit before calculation
+    :return: None
+    """
     logger = logging.getLogger(__name__)
     logger.error("create daily stat from {} to {}".format(fromDate, toDate))
 
@@ -118,4 +127,3 @@ def create_daily_statistics(fromDate, toDate, siteId, limitInMins=3):
                 )
     logger.error("daily stat finished")
 
-    return 1

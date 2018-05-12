@@ -3,10 +3,6 @@ from django.db import models
 
 
 def get_image_path_instrument1(instance):
-    """
-    Get image file path of the instrument
-    :return: path string
-    """
     return os.path.join('uploads', 'instrument', str(instance.siteId.pk))
 
 

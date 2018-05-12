@@ -3,6 +3,10 @@ from picklefield.fields import PickledObjectField
 
 
 class MonthlyStatistics(models.Model):
+    """
+    | Yearly statistics
+    | Unique: year, month, siteId
+    """
     class Meta:
         unique_together = (('year', 'month', 'siteId'),)
 

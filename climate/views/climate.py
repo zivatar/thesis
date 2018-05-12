@@ -12,6 +12,17 @@ from climate.views.main import main
 
 @login_required
 def climate(request, pk, year=None, month=None):
+    """
+    | Climate diary of a site for a specific month
+    | It contains earlier saved climate observations
+    | And a form to record new ones
+
+    :param request: HTTP request
+    :param pk: primary key of site
+    :param year: year
+    :param month: month
+    :return: renders ``climate/climate.html`` with appropriate data
+    """
     site = get_object_or_404(Site, pk=pk)
     if year and month:
         real_month = Month()

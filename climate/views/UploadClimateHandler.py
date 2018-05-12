@@ -36,7 +36,7 @@ class UploadClimateHandler(APIView):
                     if Number.is_number(data[i].get('prec', None)):
                         d.precAmount = float(data[i].get('prec'))
                     if data[i].get('obs') is not None:
-                        d.populateWeatherCode(data[i].get('obs'))
+                        d.populate_weather_code(data[i].get('obs'))
                     if data[i].get('comment') is not None:
                         d.comment = data[i].get('comment')
                     if data[i].get('isSnow') is not None:

@@ -2,6 +2,10 @@ from django.db import models
 
 
 class DailyStatistics(models.Model):
+    """
+    | Daily statistics
+    | Unique: siteId, year, month, day
+    """
     class Meta:
         unique_together = (('siteId', 'year', 'month', 'day'),)
 

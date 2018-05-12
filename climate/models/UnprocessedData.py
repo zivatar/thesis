@@ -4,16 +4,26 @@ from django.db import models
 
 
 class UnprocessedData(models.Model):
+    """
+    | Temporary storage of arrived raw data
+    | We wait a minute before process data
+    | To make sure calculate statistics only when everything is inserted and to avoid race conditions
+    """
 
     EXPIRATION_TIME_IN_SEC = 60
 
-    site_id = models.ForeignKey('climate.Site')
-    from_date = models.DateTimeField()
-    to_date = models.DateTimeField()
-    uploaded_at = models.DateTimeField()
+    site_id = models.ForeignKey('climate.Site', help_text='foreign key for Site table')
+    from_date = models.DateTimeField(help_text='starting date of data pack')
+    to_date = models.DateTimeField(help_text='finishing date of data pack')
+    uploaded_at = models.DateTimeField(help_text='datetime of upload')
 
     @property
     def is_expired(self):
+        """
+        | Is this line old enough to calculate statistics
+
+        :return: boolean
+        """
         return (self.uploaded_at - datetime.now()).seconds >= UnprocessedData.EXPIRATION_TIME_IN_SEC
 
 

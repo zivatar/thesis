@@ -16,7 +16,7 @@ def new_observation(request):
         if form.is_valid():
             obs = form.save()
             weather_codes = form.cleaned_data.get('weatherCode')
-            obs.populateWeatherCode(weather_codes)
+            obs.populate_weather_code(weather_codes)
             daily_data, created = RawManualData.objects.update_or_create(year=obs.createdDate.year,
                                                                          month=obs.createdDate.month,
                                                                          siteId=obs.siteId,
