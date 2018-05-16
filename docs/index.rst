@@ -78,8 +78,39 @@ Views
 .. automodule:: climate.views.climate
    :members:
 
-.. automodule:: climate.views.create_daily_statistics
+.. automodule:: climate.views.delete_instrument
    :members:
+
+.. automodule:: climate.views.delete_site_image
+   :members:
+
+.. automodule:: climate.views.edit_site
+   :members:
+
+.. automodule:: climate.views.edit_user
+   :members:
+
+.. automodule:: climate.views.edit_users
+   :members:
+
+.. automodule:: climate.views.guide
+   :members:
+
+.. automodule:: climate.views.instrument_details
+   :members:
+
+.. automodule:: climate.views.main
+   :members:
+
+.. automodule:: climate.views.monthly_report
+   :members:
+
+.. automodule:: climate.views.my_instrument_list
+   :members:
+
+.. automodule:: climate.views.my_site_list
+   :members:
+
 
 Templates
 ---------

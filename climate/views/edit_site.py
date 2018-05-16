@@ -7,6 +7,15 @@ from climate.models.Site import Site
 
 @login_required
 def edit_site(request, pk):
+    """
+    | Edit metadata of a site
+    | Login required
+
+    :param request: HTTP request
+    :param pk: primary key of site
+    :return: for the owner it renders a SiteForm using ``climate/site_edit.html``, \
+    for others it renders the main page
+    """
     site = get_object_or_404(Site, pk=pk)
     if site.owner == request.user:
         if request.method == "POST":

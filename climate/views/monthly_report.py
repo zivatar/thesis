@@ -12,12 +12,13 @@ from climate.models.YearlyStatistics import YearlyStatistics
 
 def monthly_report(request, site, year, month):
     """
-    Monthly view
+    | Monthly climate report of a site
+
     :param request: HTTP request
-    :param site:
-    :param year:
-    :param month:
-    :return: html page
+    :param site: primary key of a site
+    :param year: year
+    :param month: month
+    :return: for a public or an own site renders ``climate/monthly_view.html``, else renders main page
     """
     siteObj = get_object_or_404(Site, pk=site)
     yearly = YearlyStatistics.objects.filter(siteId=siteObj).filter(year=year)

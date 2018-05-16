@@ -16,6 +16,7 @@ def climate(request, pk, year=None, month=None):
     | Climate diary of a site for a specific month
     | It contains earlier saved climate observations
     | And a form to record new ones
+    | Login required
 
     :param request: HTTP request
     :param pk: primary key of site

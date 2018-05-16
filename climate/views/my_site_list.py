@@ -6,5 +6,12 @@ from climate.models.Site import Site
 
 @login_required
 def my_site_list(request):
+    """
+    | List of all non-deleted sites of a user
+    | Login is required
+
+    :param request: HTTP request
+    :return: renders ``climate/site_list.html``
+    """
     sites = Site.objects.filter(owner=request.user).filter(isDeleted=False).order_by('title')
     return render(request, 'climate/site_list.html', {'sites': sites})

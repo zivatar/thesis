@@ -11,6 +11,14 @@ from climate.views.edit_users import edit_users
 @login_required
 @user_passes_test(is_admin, login_url='/accounts/login/')
 def edit_user(request, user):
+    """
+    | Edit the permissions of a user
+    | Login and admin permission is required
+
+    :param request: HTTP request
+    :param user: primary key of the user to modify
+    :return: renders a UserForm using ``climate/edit_user.html``
+    """
     user_obj = get_object_or_404(User, pk=user)
     gravatar = Gravatar.get_gravatar_url(user_obj.email)
     if request.method == "POST":
