@@ -378,6 +378,6 @@ class CountSignificants(unittest.TestCase):
             with self.subTest():
                 significant = Climate.count_significants(significant={}, daily=p[0])
                 for k in significant.keys():
-                    expected_value = p[1].get(k, 0)
+                    expected_value = p[1].get(k, default=0)
                     self.assertEqual(significant[k], expected_value)
                     self.assertIsNotNone(Weather.get_weather_code_text(k))

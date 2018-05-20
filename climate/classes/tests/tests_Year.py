@@ -10,5 +10,3 @@ class YearTestCase(unittest.TestCase):
 
     def test_get_month(self):
         self.assertEqual(Year.get_months_of_year(), list(range(1, 13)))
-
-

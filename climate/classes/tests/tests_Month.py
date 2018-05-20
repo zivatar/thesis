@@ -1,9 +1,6 @@
 import unittest
 import datetime
 
-import django
-import os
-
 from climate.classes.Month import Month
 
 if __name__ == '__main__':
@@ -11,14 +8,6 @@ if __name__ == '__main__':
 
 
 class MonthTestCase(unittest.TestCase):
-
-    # def setUpClass(self, cls):
-    #     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zivatar.settings")
-    #     django.setup()
-    #
-    # def setUp(self):
-    #     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zivatar.settings")
-    #     django.setup()
 
     # Init and get month, day
 
@@ -84,5 +73,3 @@ class MonthTestCase(unittest.TestCase):
     def test_days_of_month_till_other_day(self):
         other_day = Month(year=2017, month=1)
         self.assertEqual(other_day.get_days_of_month_till_today(), list(range(1, 32)))
-
-    # Next, prev

@@ -15,7 +15,6 @@ class Climate(object):
         Calculate number of frost days
 
         :param min_temperature_list: daily minimum temperature values in Celsius
-        :type min_temperature_list: list of numbers
         :return: number of days
         """
         return len([x for x in min_temperature_list if x is not None and x < 0])
@@ -26,7 +25,6 @@ class Climate(object):
         Calculate number of winter days
 
         :param max_temperature_list: daily maximum temperature values in Celsius
-        :type max_temperature_list: list of numbers
         :return: number of days
         """
         return len([x for x in max_temperature_list if x is not None and x <= 0])
@@ -37,7 +35,6 @@ class Climate(object):
         Calculate number of cold days
 
         :param min_temperature_list: daily minimum temperature values in Celsius
-        :type min_temperature_list: list of numbers
         :return: number of days
         """
         return len([x for x in min_temperature_list if x is not None and x < -10])
@@ -48,7 +45,6 @@ class Climate(object):
         Calculate number of warm nights
 
         :param min_temperature_list: daily minimum temperature values in Celsius
-        :type min_temperature_list: list of numbers
         :return: number of days
         """
         return len([x for x in min_temperature_list if x is not None and x > 20])
@@ -59,7 +55,6 @@ class Climate(object):
         Calculate number of summer days
 
         :param max_temperature_list: daily maximum temperature values in Celsius
-        :type max_temperature_list: list of numbers
         :return: number of days
         """
         return len([x for x in max_temperature_list if x is not None and x > 25])
@@ -70,7 +65,6 @@ class Climate(object):
         Calculate number of warm days
 
         :param max_temperature_list: daily maximum temperature values in Celsius
-        :type max_temperature_list: list of numbers
         :return: number of days
         """
         return len([x for x in max_temperature_list if x is not None and x >= 30])
@@ -81,7 +75,6 @@ class Climate(object):
         Calculate number of hot days
 
         :param max_temperature_list: daily maxiumum temperature values in Celsius
-        :type max_temperature_list: list of numbers
         :return: number of days
         """
         return len([x for x in max_temperature_list if x is not None and x >= 35])
@@ -92,7 +85,6 @@ class Climate(object):
         Calculate number of days exceeding important precipitation amount limits
 
         :param daily_precipitation_list: daily precipitation amount in mm
-        :type daily_precipitation_list: list of numbers
         :return: number of days in a dictionary {0: d0, 10: d10, 30: d30, 50: d50}
         """
         d0 = len([j for j in daily_precipitation_list if j is not None and j > 0])
@@ -107,7 +99,6 @@ class Climate(object):
         Summarize the elements of a list
 
         :param input_list: numbers
-        :type input_list: list
         :return: summary
         """
         summary = 0.0
@@ -122,7 +113,6 @@ class Climate(object):
         Count not None elements of a list
 
         :param input_list: numbers
-        :type input_list: list
         :return: count of elements
         """
         num = 0
@@ -137,9 +127,7 @@ class Climate(object):
         Count not None elements of a list containing lists
 
         :param input_list: numbers
-        :type input_list: list of list
         :param strict: if zero number does not count
-        :type strict: boolean
         :return: count of elements
         """
         num = 0
@@ -155,7 +143,6 @@ class Climate(object):
         Calculate the average of the not None elements of a list
 
         :param input_list:
-        :type input_list: list of numbers
         :return: average value
         """
         summary = 0.0
@@ -173,10 +160,8 @@ class Climate(object):
         """
         Calculate average of two lists where neither of the adjacent elements is None
 
-        :param list1:
-        :type list1: list of numbers
-        :param list2:
-        :type list2: list of numbers
+        :param list1: list of numbers
+        :param list2: other list of numbers
         :return: average value
         """
         if len(list1) != len(list2):
@@ -197,9 +182,7 @@ class Climate(object):
         Calculate the distribution of some data against given limits
 
         :param data:
-        :type data: list of numbers
         :param limits: limits of categories
-        :type limits: list of numbers
         :return: number of elements between [i]th and [i+1]th element
         """
         if data is None or limits is None:
@@ -225,7 +208,6 @@ class Climate(object):
         Calculate the distribution of temperature data
 
         :param temps: temperature data
-        :type temps: list of numbers
         :return: number of elements between [i]th and [i+1]th element of Climate.TEMP_DISTRIBUTION_LIMITS
         """
         data = Climate.calculate_distribution(temps, Climate.TEMP_DISTRIBUTION_LIMITS)
@@ -237,7 +219,6 @@ class Climate(object):
         Calculate the distribution of relative humidity data
 
         :param rhs: relative humidity data
-        :type rhs: list of numbers
         :return: number of elements between [i]th and [i+1]th element of Climate.RH_DISTRIBUTION_LIMITS
         """
         data = Climate.calculate_distribution(rhs, Climate.RH_DISTRIBUTION_LIMITS)
@@ -249,7 +230,6 @@ class Climate(object):
         Calculate the distribution of wind direction data
 
         :param rhs: wind direction data
-        :type rhs: list of numbers
         :return: number of elements between [i]th and [i+1]th element of Climate.WIND_DIRECTION_LIMITS
         """
         data = Climate.calculate_distribution(winds, Climate.WIND_DIRECTION_LIMITS)
