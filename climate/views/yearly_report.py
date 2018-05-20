@@ -12,6 +12,14 @@ from climate.models.YearlyStatistics import YearlyStatistics
 
 
 def yearly_report(request, pk, year):
+    """
+    Yearly report of a site
+
+    :param request: HTTP request
+    :param pk: primary key of a site
+    :param year: year
+    :return: renders ``climate/yearly_view.html``
+    """
     site = get_object_or_404(Site, pk=pk)
     yearlyList = YearlyStatistics.objects.filter(siteId=site).filter(year=year)
     if len(yearlyList) > 0:

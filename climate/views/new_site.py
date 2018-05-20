@@ -8,6 +8,12 @@ from climate.views.my_site_list import my_site_list
 
 @login_required
 def new_site(request):
+    """
+    Renders SiteForm for creating a new site
+
+    :param request: HTTP request
+    :return: renders ``climate/new_site.html``
+    """
     if request.method == "POST":
         form = SiteForm(request.POST)
         if form.is_valid():

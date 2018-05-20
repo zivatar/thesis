@@ -8,6 +8,13 @@ from climate.views import my_instrument_list
 
 @login_required
 def new_instrument(request):
+    """
+    | Form for creating a new instrument
+    | ``@login_required``
+
+    :param request: HTTP request
+    :return: renders ``climate/new_instrument.html``
+    """
     sites = Site.objects.filter(owner=request.user)
     if request.method == "POST":
         form = InstrumentForm(request.POST, request.FILES)

@@ -6,6 +6,12 @@ from climate.views.main import main
 
 
 def register(request):
+    """
+    RegistrationForm
+
+    :param request: HTTP request
+    :return: renders ``registration/signup.html``
+    """
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():

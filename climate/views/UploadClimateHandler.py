@@ -8,12 +8,23 @@ from rest_framework.views import APIView
 from climate.classes.Number import Number
 from climate.models.RawManualData import RawManualData
 from climate.models.Site import Site
-from climate.views.UploadHandler import create_statistics
+from climate.views.UploadHandler import UploadHandler
 
 
 class UploadClimateHandler(APIView):
+    """
+    Handler for manual climate data
+    """
 
     def post(self, request, *args, **kw):
+        """
+        HTTP POST request handler
+
+        :param request: HTTP request
+        :param args: arguments
+        :param kw: keyword arguments
+        :return: HTTP response
+        """
         site = get_object_or_404(Site, pk=request.data.get('site'))
         dataset = request.data["data"]
         year = dataset.get('year')
@@ -21,6 +32,10 @@ class UploadClimateHandler(APIView):
         data = dataset.get('data')
 
         def _saveToDb():
+            """
+            Save data to DB
+            :return: None
+            """
             for i in range(len(data)):
                 if data[i] is not None:
                     d, created = RawManualData.objects.update_or_create(
@@ -46,7 +61,12 @@ class UploadClimateHandler(APIView):
                     d.save()
 
         def _calculateStatistics():
-            create_statistics(site=site, year=year, month=month)
+            """
+            Start statistics generation from manual data
+
+            :return: None
+            """
+            UploadHandler.create_statistics(site=site, year=year, month=month)
 
         if request.user != None:  # and request.user.can_upload:
             if request.data != None and 'site' in request.data:

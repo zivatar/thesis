@@ -111,6 +111,43 @@ Views
 .. automodule:: climate.views.my_site_list
    :members:
 
+.. automodule:: climate.views.my_user
+   :members:
+
+.. automodule:: climate.views.new_instrument
+   :members:
+
+.. automodule:: climate.views.new_observation
+   :members:
+
+.. automodule:: climate.views.new_site
+   :members:
+
+.. automodule:: climate.views.observations
+   :members:
+
+.. automodule:: climate.views.public_site_list
+   :members:
+
+.. automodule:: climate.views.register
+   :members:
+
+.. automodule:: climate.views.site_details
+   :members:
+
+.. automodule:: climate.views.upload_data
+   :members:
+
+.. automodule:: climate.views.UploadClimateHandler
+   :members:
+
+.. automodule:: climate.views.UploadHandler
+   :members:
+
+.. automodule:: climate.views.yearly_report
+   :members:
+
+
 
 Templates
 ---------

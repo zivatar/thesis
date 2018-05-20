@@ -5,11 +5,18 @@ from climate.classes.Weather import Weather
 from climate.forms import ObservationForm
 from climate.models.RawManualData import RawManualData
 from climate.models.Site import Site
+from climate.views.UploadHandler import UploadHandler
 from climate.views.main import main
 
 
 @login_required
 def new_observation(request):
+    """
+    ObservationForm for creating new observation
+
+    :param request: HTTP request
+    :return: renders ``climate/new_observation.html``
+    """
     sites = Site.objects.filter(owner=request.user)
     if request.method == "POST":
         form = ObservationForm(request.POST)
@@ -24,7 +31,8 @@ def new_observation(request):
             for code in weather_codes:
                 daily_data.addWeatherCode(code)
                 daily_data.save()
-            create_statistics(site=obs.siteId, year=obs.createdDate.year, month=obs.createdDate.month)
+            UploadHandler.create_statistics(site=obs.siteId, year=obs.createdDate.year,
+                                            month=obs.createdDate.month)
             return redirect(main)
     else:
         form = ObservationForm()
