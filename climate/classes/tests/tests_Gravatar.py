@@ -2,6 +2,9 @@ import unittest
 
 from climate.classes.Gravatar import Gravatar
 
+if __name__ == '__main__':
+    unittest.main()
+
 
 class GravatarTestCase(unittest.TestCase):
     def test_empty_email(self):
@@ -35,7 +38,3 @@ class GravatarTestCase(unittest.TestCase):
             Gravatar.get_gravatar_url('rendeles10@gmail.com', 512) ==
             'https://www.gravatar.com/avatar/63f5e37aadce48600a133c88d4b89fe8?s=512&d=identicon'
         )
-
-
-if __name__ == '__main__':
-    unittest.main()

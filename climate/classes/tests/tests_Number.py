@@ -2,6 +2,9 @@ import unittest
 
 from climate.classes.Number import Number
 
+if __name__ == '__main__':
+    unittest.main()
+
 
 class TestNumber(unittest.TestCase):
     parametrize = [
@@ -29,7 +32,3 @@ class TestNumber(unittest.TestCase):
         for p in TestNumber.parametrize:
             with self.subTest():
                 self.assertEqual(Number.to_int(p[0]), p[3])
-
-
-if __name__ == '__main__':
-    unittest.main()

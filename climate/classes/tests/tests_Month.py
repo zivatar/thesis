@@ -1,46 +1,47 @@
-# TODO MEG NEM MUKODIK PYCHARMBOL
-
 import unittest
-from datetime import datetime
+import datetime
 
 import django
 import os
 
 from climate.classes.Month import Month
 
+if __name__ == '__main__':
+    unittest.main()
+
 
 class MonthTestCase(unittest.TestCase):
 
-    def setUpClass(self, cls):
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zivatar.settings")
-        django.setup()
-
-    def setUp(self):
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zivatar.settings")
-        django.setup()
+    # def setUpClass(self, cls):
+    #     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zivatar.settings")
+    #     django.setup()
+    #
+    # def setUp(self):
+    #     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zivatar.settings")
+    #     django.setup()
 
     # Init and get month, day
 
     def test_init_get_valid(self):
         month = Month()
-        now = datetime.now()
-        self.assertEqual(month.get_date_readable(), str(now.year) + "." + str(now.month) + ".")
+        now = datetime.datetime.now()
+        self.assertEqual(month.get_date_readable(), str(now.year) + "." + str(now.month).zfill(2) + ".")
         self.assertEqual(month.get_month_two_digits(), str(now.month).zfill(2))
 
     def test_init_numbers(self):
         month = Month(year=2017, month=8)
-        self.assertEqual(month.get_date_readable(), str(2017) + "." + str(8) + ".")
+        self.assertEqual(month.get_date_readable(), "2017.08.")
         self.assertEqual(month.get_month_two_digits(), '08')
 
     def test_init_strings(self):
         month = Month(year="2017", month="08")
-        self.assertEqual(month.get_date_readable(), str(2017) + "." + str(8) + ".")
+        self.assertEqual(month.get_date_readable(), "2017.08.")
         self.assertEqual(month.get_month_two_digits(), '08')
 
     def test_init_invalid_values(self):
         month = Month(year=0, month=0)
-        now = datetime.now()
-        self.assertEqual(month.get_date_readable(), str(now.year) + "." + str(now.month) + ".")
+        now = datetime.datetime.now()
+        self.assertEqual(month.get_date_readable(), str(now.year) + "." + str(now.month).zfill(2) + ".")
         self.assertEqual(month.get_month_two_digits(), str(now.month).zfill(2))
 
     # Date is in month
@@ -52,7 +53,7 @@ class MonthTestCase(unittest.TestCase):
 
     def test_bad_month(self):
         month = Month(year=2017, month=10)
-        test_date = datetime.date(2017, 12, 11)
+        test_date = datetime.datetime(2017, 12, 11)
         self.assertFalse(month.is_in_month(test_date))
 
     def test_bad_year(self):
@@ -77,7 +78,7 @@ class MonthTestCase(unittest.TestCase):
     # Return past days of current month in array
 
     def test_days_of_month_till_today(self):
-        today = datetime.now().day
+        today = datetime.datetime.now().day
         self.assertEqual(Month().get_days_of_month_till_today(), list(range(1, today + 1)))
 
     def test_days_of_month_till_other_day(self):
@@ -85,7 +86,3 @@ class MonthTestCase(unittest.TestCase):
         self.assertEqual(other_day.get_days_of_month_till_today(), list(range(1, 32)))
 
     # Next, prev
-
-
-if __name__ == '__main__':
-    unittest.main()

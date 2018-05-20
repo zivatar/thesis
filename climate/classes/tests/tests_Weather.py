@@ -2,6 +2,8 @@ import unittest
 
 from climate.classes.Weather import Weather
 
+if __name__ == '__main__':
+    unittest.main()
 
 class WeatherTestCase(unittest.TestCase):
 
@@ -29,5 +31,4 @@ class WeatherTestCase(unittest.TestCase):
         self.assertEqual(Weather.get_weather_code_text(), None)
 
 
-if __name__ == '__main__':
-    unittest.main()
+

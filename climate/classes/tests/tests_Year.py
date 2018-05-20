@@ -2,6 +2,9 @@ import unittest
 
 from climate.classes.Year import Year
 
+if __name__ == '__main__':
+    unittest.main()
+
 
 class YearTestCase(unittest.TestCase):
 
@@ -9,5 +12,3 @@ class YearTestCase(unittest.TestCase):
         self.assertEqual(Year.get_months_of_year(), list(range(1, 13)))
 
 
-if __name__ == '__main__':
-    unittest.main()

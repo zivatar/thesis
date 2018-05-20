@@ -5,6 +5,9 @@ from random import random
 from climate.classes.Climate import Climate
 from climate.classes.Weather import Weather
 
+if __name__ == '__main__':
+    unittest.main()
+
 
 class FrostDays(unittest.TestCase):
     """
@@ -356,7 +359,7 @@ class WindDirectionDistributions(unittest.TestCase):
     def test_wind_distribution(self):
         for p in self.params:
             with self.subTest():
-                self.assertEqual(Climate.calculate_wind_distribution(rhs=p),
+                self.assertEqual(Climate.calculate_wind_distribution(winds=p),
                                  Climate.calculate_distribution(data=p,
                                                                 limits=Climate.WIND_DIRECTION_LIMITS))
 
@@ -378,7 +381,3 @@ class CountSignificants(unittest.TestCase):
                     expected_value = p[1].get(k, 0)
                     self.assertEqual(significant[k], expected_value)
                     self.assertIsNotNone(Weather.get_weather_code_text(k))
-
-
-if __name__ == '__main__':
-    unittest.main()
