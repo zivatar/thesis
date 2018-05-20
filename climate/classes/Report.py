@@ -3,6 +3,8 @@ class Report:
     Report class to create report to display from raw and aggregated data
     """
 
+    manualDayObjs = []
+
     def get_nr_of_snow_days(self):
         """
         | Get the number of days with snow coverage
@@ -14,5 +16,3 @@ class Report:
             if j.isSnow:
                 s = s + 1
         return s
-
-
