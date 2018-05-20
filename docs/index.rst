@@ -1,5 +1,5 @@
-Code documentation
-******************
+Appendix I -- Code documentation
+********************************
 
 Generated from the docstrings of the Django application with Sphinx
 
@@ -147,25 +147,57 @@ Views
 .. automodule:: climate.views.yearly_report
    :members:
 
-
-
 Templates
 ---------
 
+``/climate``
 
+Files of the web app excluding user handling
+(registration, login and reset password templates are in ``/registration``).
+Each .html file depends on base.html.
+
+* climate.html
+* edit_user.html
+* edit_users.html
+* guide.html
+* instrument_details.html
+* instrument_list.html
+* main.html
+* monthly_view.html
+* my_sites.html
+* my_user.html
+* new_instrument.html
+* new_site.html
+* site_details.html
+* site_edit.html
+* site_list.html
+* site_observations.html
+* upload.html
+* yearly_view.html
+
+``/registration``
+
+Template files of user handling.
+
+* login.html
+* password_reset.html
+* password_reset_complete.html
+* password_reset_confirm.html
+* password_reset_done.html
+* signup.html
 
 Forms
 -----
 
+.. automodule:: climate.forms
+   :members:
+
 Other files
 -----------
 
-hiányik még:
+.. automodule:: climate.utils
+   :members:
 
-* unit tests
-* views
-* forms
-* other files
 
 .. toctree::
    :maxdepth: 2

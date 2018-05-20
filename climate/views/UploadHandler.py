@@ -27,6 +27,10 @@ logger = logging.getLogger(__name__)
 
 
 class UploadHandler(APIView):
+    """
+    Handler for automatic data
+    """
+
     INTERVAL = 10
     """Frequency of checking if statistics calculation needs to be started (seconds)"""
 

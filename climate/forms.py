@@ -13,15 +13,23 @@ from climate.models.Site import Site
 
 class SiteForm(forms.ModelForm):
     """
-    siteform
+    | ModelForm for creating or updating Site
+    | fields = ('title', 'comment', 'narrowArea', 'wideArea', 'lat', 'lon', 'isActive', \
+                  'isPublic', 'primaryImage')
     """
     class Meta:
         model = Site
-        fields = ('title', 'comment', 'narrowArea', 'wideArea', 'lat', 'lon', 'isActive', 'isPublic', 'primaryImage')
+        fields = ('title', 'comment', 'narrowArea', 'wideArea', 'lat', 'lon', 'isActive',
+                  'isPublic', 'primaryImage')
 
 
 class ObservationForm(forms.ModelForm):
-    weatherCode = forms.MultipleChoiceField(choices=Weather.WEATHER_CODE, widget=forms.CheckboxSelectMultiple(),
+    """
+    | ModelForm for creating Observation
+    | fields = ('siteId', 'windSpeed', 'comment') + MultipleChoiceField from Weather.WEATHER_CODE
+    """
+    weatherCode = forms.MultipleChoiceField(choices=Weather.WEATHER_CODE,
+                                            widget=forms.CheckboxSelectMultiple(),
                                             required=False)
 
     class Meta:
@@ -29,15 +37,21 @@ class ObservationForm(forms.ModelForm):
         fields = ('siteId', 'windSpeed', 'comment')
 
 
-# my_field = forms.MultipleChoiceField(choices=Weather.WEATHER_CODE, widget=forms.CheckboxSelectMultiple())
-
 class DiaryForm(forms.ModelForm):
+    """
+    | ModelForm for creating RawManualData
+    | fields = {'tMin', 'tMax', 'precAmount', 'day'}
+    """
     class Meta:
         model = RawManualData
         fields = {'tMin', 'tMax', 'precAmount', 'day'}
 
 
 class RegistrationForm(UserCreationForm):
+    """
+    | UserCreationForm for user registration
+    | fields = ('username', 'email', 'password1', 'password2') + ReCaptchaField
+    """
     captcha = ReCaptchaField(attrs={
         'theme': 'white',
     })
@@ -49,12 +63,20 @@ class RegistrationForm(UserCreationForm):
 
 
 class UserForm(forms.Form):
+    """
+    | Form for editing user permissions
+    | Fields: isAdmin, isActive, canUpload
+    """
     isAdmin = forms.BooleanField(required=False, label='Admin')
     isActive = forms.BooleanField(required=False, label='Aktív')
     canUpload = forms.BooleanField(required=False, label='Tölthet fel adatfájlokat')
 
 
 class InstrumentForm(forms.ModelForm):
+    """
+    | ModelForm for creating and updating Instrument
+    | fields = ('title', 'comment', 'siteId', 'type', 'isActive', 'primaryImage')
+    """
     class Meta:
         model = Instrument
         fields = ('title', 'comment', 'siteId', 'type', 'isActive', 'primaryImage')
