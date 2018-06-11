@@ -34,6 +34,7 @@ def site_details(request, pk):
     :param pk: primary key of site
     :return: if public or own site of the user, renders ``climate/site_details.html``, else renders main page
     """
+    print("site details")
     site = get_object_or_404(Site, pk=pk)
     if site.isPublic and site.owner.is_active or site.owner == request.user:
         observations = RawObservation.objects.filter(siteId=site).order_by('-createdDate')[:3]
