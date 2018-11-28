@@ -36,7 +36,7 @@ class RawManualData(models.Model):
         if not code in weatherCodes:
             self._weatherCode = self._weatherCode + code + ','
 
-    def populateWeatherCode(self, arr):
+    def populate_weather_code(self, arr):
         """
         | Parses a list containing weather codes into its weather code property
 
