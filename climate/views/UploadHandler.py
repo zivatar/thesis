@@ -225,9 +225,13 @@ class UploadHandler(APIView):
         for i in range(delta.days + 1):
             f = fromDate + datetime.timedelta(days=i)
             t = fromDate + datetime.timedelta(days=i + 1)
+            logger.error(RawData.objects)
+            logger.error("current:")
             rawDataSet = RawData.objects.filter(siteId=siteId, createdDate__year=f.year,
                                                 createdDate__month=f.month, createdDate__day=f.day)
             manualDataSet = RawManualData.objects.filter(siteId=siteId, year=f.year, month=f.month, day=f.day)
+            logger.error(rawDataSet)
+
             precipitation = None
             if rawDataSet.count() or manualDataSet.count():
                 d = {'year': f.year, 'month': f.month, 'day': f.day, 'siteId': siteId}
@@ -275,6 +279,7 @@ class UploadHandler(APIView):
                 if manualDataSet[0].precAmount is not None:
                     d['precipitation'] = manualDataSet[0].precAmount
 
+        logger.error(daily_data)
         logger.error("bulk create")
         for d in daily_data:
             logger.error(d)
