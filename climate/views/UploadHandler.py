@@ -214,7 +214,8 @@ class UploadHandler(APIView):
 
         existing = DailyStatistics.objects.filter(year__range=(fromDate.year, toDate.year), siteId=siteId).values()
         existing_dates = []
-        logger.error("existing:", existing_dates)
+        logger.error("existing:")
+        logger.error(existing_dates)
         for i in existing:
             existing_dates.append(datetime.date(year=i.get('year'),
                                                 month=i.get('month'),
@@ -276,8 +277,7 @@ class UploadHandler(APIView):
 
         logger.error("bulk create")
         for d in daily_data:
-            if not d.get('existing'):
-                logger.error(d)
+            logger.error(d)
         DailyStatistics.objects.bulk_create(
             DailyStatistics(
                 year=d.get('year'),
