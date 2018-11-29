@@ -225,8 +225,11 @@ class UploadHandler(APIView):
         for i in range(delta.days + 1):
             f = fromDate + datetime.timedelta(days=i)
             t = fromDate + datetime.timedelta(days=i + 1)
-            logger.error(RawData.objects)
+            logger.error(RawData.objects.all())
             logger.error("current:")
+            logger.error(f.year)
+            logger.error(f.month)
+            logger.error(f.day)
             rawDataSet = RawData.objects.filter(siteId=siteId, createdDate__year=f.year,
                                                 createdDate__month=f.month, createdDate__day=f.day)
             manualDataSet = RawManualData.objects.filter(siteId=siteId, year=f.year, month=f.month, day=f.day)
