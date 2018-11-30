@@ -9,6 +9,12 @@ class RawData(models.Model):
     class Meta:
         unique_together = (('siteId', 'createdDate'),)
 
+    def __str__(self):
+        return "RawData [siteId: {}, createdDate: {}]".format(self.siteId, self.createdDate)
+
+    def __repr__(self):
+        return self.__str__()
+
     siteId = models.ForeignKey('climate.Site', help_text='foreign key for Site table')
     createdDate = models.DateTimeField(help_text='timestamp')
     pressure = models.DecimalField(blank=True, null=True,
