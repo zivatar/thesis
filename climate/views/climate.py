@@ -1,3 +1,5 @@
+import logging
+
 import simplejson as json
 
 from django.contrib.auth.decorators import login_required
@@ -9,6 +11,7 @@ from climate.models.RawManualData import RawManualData
 from climate.models.Site import Site
 from climate.views.main import main
 
+logger = logging.getLogger(__name__)
 
 @login_required
 def climate(request, pk, year=None, month=None):
@@ -34,6 +37,7 @@ def climate(request, pk, year=None, month=None):
             this_month = real_month
     else:
         this_month = Month()
+        logger.error(this_month)
     actualDataJson = []
     for i in this_month.get_days_of_month_till_today():
         actualData = RawManualData.objects.filter(year=this_month.year, month=this_month.month, siteId=pk, day=i)

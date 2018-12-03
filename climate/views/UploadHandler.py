@@ -25,7 +25,6 @@ from climate.models.YearlyStatistics import YearlyStatistics
 
 logger = logging.getLogger(__name__)
 
-
 class UploadHandler(APIView):
     """
     Handler for automatic data
@@ -205,17 +204,12 @@ class UploadHandler(APIView):
         :param limitInMins: limit before calculation
         :return: None
         """
-        logger = logging.getLogger(__name__)
-        logger.error("create daily stat from {} to {}".format(fromDate, toDate))
-
         limit = datetime.timedelta(minutes=(limitInMins))
         fromDate = fromDate.replace(hour=0, minute=0, second=0)
         delta = toDate - fromDate
 
         existing = DailyStatistics.objects.filter(year__range=(fromDate.year, toDate.year), siteId=siteId).values()
         existing_dates = []
-        logger.error("existing:")
-        logger.error(existing_dates)
         for i in existing:
             existing_dates.append(datetime.date(year=i.get('year'),
                                                 month=i.get('month'),
@@ -225,21 +219,8 @@ class UploadHandler(APIView):
         for i in range(delta.days + 1):
             f = fromDate + datetime.timedelta(days=i)
             t = fromDate + datetime.timedelta(days=i + 1)
-            logger.error(RawData.objects.all())
-            logger.error("current:")
-            logger.error(f.year)
-            logger.error(f.month)
-            logger.error(f.day)
-            logger.error(siteId)
-            # TODO check with 1-2 filter parameter
-            # TODO install the same mysql version to pi
-            rawDataSet = RawData.objects.filter(
-                siteId=siteId,
-                createdDate__range=(f, t))
-            print("+++++")
-            print(rawDataSet.query)
+            rawDataSet = RawData.objects.filter(siteId=siteId, createdDate__range=(f, t))
             manualDataSet = RawManualData.objects.filter(siteId=siteId, year=f.year, month=f.month, day=f.day)
-            logger.error(rawDataSet)
 
             precipitation = None
             if rawDataSet.count() or manualDataSet.count():
