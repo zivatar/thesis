@@ -76,6 +76,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'climate.context_processors.ctx',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -131,7 +132,6 @@ LOGIN_REDIRECT_URL = 'main'
 RECAPTCHA_PUBLIC_KEY = config('RECAPTCHA_PUBLIC_KEY')
 RECAPTCHA_PRIVATE_KEY = config('RECAPTCHA_PRIVATE_KEY')
 NOCAPTCHA = True
-GOOGLE_API_KEY = config('GOOGLE_API_KEY')
 
 LOGGING = {
     'version': 1,
