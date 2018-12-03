@@ -231,8 +231,12 @@ class UploadHandler(APIView):
             logger.error(f.month)
             logger.error(f.day)
             logger.error(siteId)
+            # TODO check with 1-2 filter parameter
+            # TODO install the same mysql version to pi
             rawDataSet = RawData.objects.filter(siteId=siteId, createdDate__year=f.year,
                                                 createdDate__month=f.month, createdDate__day=f.day)
+            print("+++++")
+            print(rawDataSet.query)
             manualDataSet = RawManualData.objects.filter(siteId=siteId, year=f.year, month=f.month, day=f.day)
             logger.error(rawDataSet)
 
