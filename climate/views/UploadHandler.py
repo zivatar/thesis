@@ -414,7 +414,7 @@ class UploadHandler(APIView):
             if s not in sites_of_not_expired_data:
                 from_date = UnprocessedData.objects.filter(site_id_id=s).order_by('from_date')[0].from_date
                 to_date = UnprocessedData.objects.filter(site_id_id=s).order_by('-to_date')[0].to_date
-                print("should create stats for {} from {} to {}".format(s, from_date, to_date))
+                logger.info("should create stats for {} from {} to {}".format(s, from_date, to_date))
                 site_obj = get_object_or_404(Site, pk=s)
                 UploadHandler.create_statistics(site=site_obj, from_date=from_date, to_date=to_date)
                 UnprocessedData.objects.filter(site_id_id=s).delete()
