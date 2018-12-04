@@ -15,6 +15,7 @@ from climate.classes.BadRequestException import BadRequestException
 from climate.classes.Climate import Climate
 from climate.classes.Month import Month
 from climate.classes.Number import Number
+from climate.constant import UPLOAD_DATA_LIMITS
 from climate.models.DailyStatistics import DailyStatistics
 from climate.models.MonthlyStatistics import MonthlyStatistics
 from climate.models.UnprocessedData import UnprocessedData
@@ -128,7 +129,6 @@ class UploadHandler(APIView):
         f = fromDate
         while f < toDate:
             rawDataSet = DailyStatistics.objects.filter(year=f.year, month=f.month).filter(siteId=siteId)
-            logger.error("dailystat number: {}".format(rawDataSet.count()))
             if rawDataSet.count():
                 d, created = MonthlyStatistics.objects.update_or_create(siteId=siteId, month=f.month, year=f.year)
                 d.dataAvailable = rawDataSet.count()
@@ -269,10 +269,6 @@ class UploadHandler(APIView):
                 if manualDataSet[0].precAmount is not None:
                     d['precipitation'] = manualDataSet[0].precAmount
 
-        logger.error(daily_data)
-        logger.error("bulk create")
-        for d in daily_data:
-            logger.error(d)
         DailyStatistics.objects.bulk_create(
             DailyStatistics(
                 year=d.get('year'),
@@ -292,7 +288,6 @@ class UploadHandler(APIView):
             if not d.get('existing')
         )
 
-        logger.error("almost bulk update")
         with transaction.atomic():
             for d in daily_data:
                 if d.get(existing):
@@ -369,6 +364,21 @@ class UploadHandler(APIView):
             UploadHandler.create_yearly_statistics(firstDate, lastDate, site)
 
     @staticmethod
+    def filter_invalid_uploaded_data(data):
+        filtered_data = []
+        for line in data:
+            is_valid = True
+            for limit in UPLOAD_DATA_LIMITS:
+                d = line.get(limit[0], None)
+                if d is not None and (d < limit[1] or d > limit[2]):
+                    logger.info("INVALID DATA {} : {}".format(limit[0], str(d)))
+                    is_valid = False
+                    break
+            if is_valid:
+                filtered_data.append(line)
+        return filtered_data
+
+    @staticmethod
     def _save_to_database(request):
         """
         Save to DB and start calculation
@@ -382,9 +392,10 @@ class UploadHandler(APIView):
             raise Exception("try to save empty data or empty site")
         logger.error("try to save data from {} to {}".format(data[0], data[-1]))
         site_obj = get_object_or_404(Site, pk=site)
-        number_of_inserted_lines = UploadHandler.handle_uploaded_data(site=site_obj, data=data)
+        filtered_data = UploadHandler.filter_invalid_uploaded_data(data)
+        number_of_inserted_lines = UploadHandler.handle_uploaded_data(site=site_obj, data=filtered_data)
         if number_of_inserted_lines:
-            UploadHandler._calculate_statistics(site=site_obj, data=data)
+            UploadHandler._calculate_statistics(site=site_obj, data=filtered_data)
 
     @staticmethod
     def _check_if_statistics_calculation_is_needed():
