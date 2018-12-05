@@ -25,7 +25,7 @@ def edit_site(request, pk):
                 site.save()
                 return redirect(edit_site, pk=site.pk)
         else:
-            form = SiteForm()
+            form = SiteForm(initial=site.get_json_for_form())
             sites = Site.objects.filter(owner=request.user)
         return render(request, 'climate/site_edit.html',
                       {'sites': sites, 'wide_area': Site.WIDE_AREA, 'narrow_area': Site.NARROW_AREA,

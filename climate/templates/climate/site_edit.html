@@ -47,9 +47,9 @@
 						
 				<div class="form-group col-sm-2">
 					{{ form.lat.errors }}
-					{% render_field form.lat class+="form-control" placeholder="47°" required=true id="new_site_lat" value=site.lat %}
+					{% render_field form.lat class+="form-control" placeholder="47°" required=true id="new_site_lat"%}
 					{{ form.lon.errors }}
-					{% render_field form.lon class+="form-control" placeholder="19°" required=true id="new_site_lon" value=site.lon %}
+					{% render_field form.lon class+="form-control" placeholder="19°" required=true id="new_site_lon" %}
 						
 					{{ form.isActive.errors }}
 					<label for="{{ form.isActive.id_for_label }}">Aktív:</label>
@@ -63,7 +63,7 @@
 					<div class="form-group">
 						{{ form.title.errors }}
 						<label for="{{ form.title.id_for_label }}">Megnevezés:</label>
-						{% render_field form.title class+="form-control" placeholder="Pl. Kékestető, kilátó" value=site.title required=true %}
+						{% render_field form.title class+="form-control" placeholder="Pl. Kékestető, kilátó" required=true %}
 					</div>
 					<div class="form-group">
 						{{ form.wideArea.errors }}
@@ -82,7 +82,7 @@
 				<div class="col-12 margin-h-2em">
 					{{ form.comment.errors }}
 					<label for="{{ form.comment.id_for_label }}">Megjegyzés:</label>
-					{% render_field form.comment class+="form-control" placeholder="Pl. 3 emeletes ház lapos tetején találhatóak a műszerek. A kilátás kiváló a Budai-hegység irányában." value=site.comment %}
+					{% render_field form.comment class+="form-control" placeholder="Pl. 3 emeletes ház lapos tetején találhatóak a műszerek. A kilátás kiváló a Budai-hegység irányában." %}
 				</div>
 
 				<div class="clearfix"></div>
@@ -90,7 +90,7 @@
 				<div class="col-12 margin-h-2em">
 					{{ form.comment.errors }}
 					<label for="{{ form.primaryImage.id_for_label }}">Kép módosítása:</label>
-					{% render_field form.primaryImage class+="form-control" value=site.primaryImage %}
+					{% render_field form.primaryImage class+="form-control" %}
 				</div>
 
 				<div class="clearfix"></div>

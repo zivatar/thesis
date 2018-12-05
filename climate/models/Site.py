@@ -44,6 +44,19 @@ class Site(models.Model):
     primaryImage = models.ImageField(upload_to=get_image_path_site1, blank=True, null=True,
                                      help_text='representative image of the site')
 
+    def get_json_for_form(self):
+        return {
+            'title': self.title,
+            'comment': self.comment,
+            'isActive': self.isActive,
+            'isPublic': self.isPublic,
+            'lat': self.lat,
+            'lon': self.lon,
+            'narrowArea': self.narrowArea,
+            'wideArea': self.wideArea,
+            'primaryImage:': self.primaryImage
+        }
+
     def __str__(self):
         return self.title
 
