@@ -2,7 +2,7 @@ import os
 from django.db import models
 
 
-def get_image_path_instrument1(instance):
+def get_image_path_instrument1(instance, filename):
     return os.path.join('uploads', 'instrument', str(instance.siteId.pk))
 
 
