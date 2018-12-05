@@ -22,8 +22,8 @@
 					</p>
 					<p>Mérőhely: <a href="{% url 'site_details' pk=instrument.siteId.pk %}">{{ instrument.siteId }}</a></p>
 					<p>Megjegyzések:
-						{% if instrument.comments %}
-							{{ instrument.comments }}
+						{% if instrument.comment %}
+							{{ instrument.comment }}
 						{% else %}
 							-
 						{% endif %}
