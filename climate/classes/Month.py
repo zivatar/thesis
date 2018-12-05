@@ -10,12 +10,10 @@ class Month:
     """
     def __init__(self, now=datetime.now(), year=0, month=0):
         if year == 0 or month == 0:
-            logger.error("create month from datetime {}".format(datetime.now()))
             self.year = now.year
             self.month = now.month
             self._currentMonth = True
         else:
-            logger.error("create month from {}-{}".format(year, month))
             self.year = int(year)
             self.month = int(month)
             self._currentMonth = False
