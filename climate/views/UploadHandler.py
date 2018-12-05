@@ -5,6 +5,7 @@ import datetime
 from threading import Timer
 
 import pytz
+from dateutil.relativedelta import relativedelta
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -94,7 +95,11 @@ class UploadHandler(APIView):
         while f < toDate:
 
             manual_data_set = RawManualData.objects.filter(siteId=siteId).filter(year=f.year)
-            automatic_data_set = RawData.objects.filter(siteId=siteId).filter(createdDate__year=f.year)
+
+            start_of_current_year = datetime.datetime(year=f.year, month=1, day=1, hour=0, minute=0)
+            start_of_next_year = datetime.datetime(year=f.year+1, month=1, day=1)
+            automatic_data_set = RawData.objects.filter(siteId=siteId).filter(
+                createdDate__range=(start_of_current_year, start_of_next_year))
 
             if len(manual_data_set) or len(automatic_data_set):
                 d, created = YearlyStatistics.objects.update_or_create(siteId=siteId, year=f.year)
@@ -154,8 +159,14 @@ class UploadHandler(APIView):
                     d.tempMaxAvg = sum(tempmaxs) / len(tempmaxs)
                 if len(tempavgs) > 0:
                     d.tempAvg = sum(tempavgs) / len(tempavgs)
-                rawDataSet = RawData.objects.filter(createdDate__year=f.year,
-                                                    createdDate__month=f.month).filter(siteId=siteId)
+
+
+                start_of_current_month = datetime.datetime(
+                    year=f.year, month=f.month, day=1, hour=0, minute=0)
+                start_of_next_month = start_of_current_month + relativedelta(months=1)
+                rawDataSet = RawData.objects\
+                    .filter(createdDate__range=(start_of_current_month, start_of_next_month))\
+                    .filter(siteId=siteId)
                 temps = []
                 rhs = []
                 winds = []
@@ -325,15 +336,11 @@ class UploadHandler(APIView):
             lastDate = to_date
             hasData = True
         elif year is not None and month is not None:
-            if RawData.objects.filter(siteId=site,
-                                      createdDate__year=year,
-                                      createdDate__month=month).count() > 0 or \
-                    RawManualData.objects.filter(siteId=site, year=year, month=month).count() > 0:
-                hasData = True
-                firstDate = datetime.datetime(year, month, 1, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
-                lastDate = datetime.datetime(year, month, Month(year=year, month=month).get_last_day(), 23, 59,
-                                             tzinfo=pytz.timezone("Europe/Budapest"))
-        else:
+            firstDate = datetime.datetime(year, month, 1, 0, 0, tzinfo=pytz.timezone("Europe/Budapest"))
+            lastDate = datetime.datetime(year, month, Month(year=year, month=month).get_last_day(), 23, 59,
+                                         tzinfo=pytz.timezone("Europe/Budapest"))
+            hasData = True
+        else: # calculate with all existing dataset
             if RawData.objects.filter(siteId=site).count() or RawManualData.objects.filter(siteId=site).count():
                 hasData = True
                 if RawData.objects.filter(siteId=site).count():
