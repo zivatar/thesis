@@ -219,7 +219,8 @@ class UploadHandler(APIView):
         fromDate = fromDate.replace(hour=0, minute=0, second=0)
         delta = toDate - fromDate
 
-        existing = DailyStatistics.objects.filter(year__range=(fromDate.year, toDate.year), siteId=siteId).values()
+        existing = DailyStatistics.objects.filter(
+            year__range=(fromDate.year, toDate.year), siteId=siteId).values()
         existing_dates = []
         for i in existing:
             existing_dates.append(datetime.date(year=i.get('year'),
@@ -231,7 +232,8 @@ class UploadHandler(APIView):
             f = fromDate + datetime.timedelta(days=i)
             t = fromDate + datetime.timedelta(days=i + 1)
             rawDataSet = RawData.objects.filter(siteId=siteId, createdDate__range=(f, t))
-            manualDataSet = RawManualData.objects.filter(siteId=siteId, year=f.year, month=f.month, day=f.day)
+            manualDataSet = RawManualData.objects.filter(
+                siteId=siteId, year=f.year, month=f.month, day=f.day)
 
             precipitation = None
             if rawDataSet.count() or manualDataSet.count():
@@ -301,8 +303,8 @@ class UploadHandler(APIView):
 
         with transaction.atomic():
             for d in daily_data:
-                if d.get(existing):
-                    DailyStatistics.objects.filter(siteID=d.get('siteId'), year=d.get('year'),
+                if d.get('existing'):
+                    DailyStatistics.objects.filter(siteId=d.get('siteId'), year=d.get('year'),
                                                    month=d.get('month'), day=d.get('day')).update(
                         dataAvailable=d.get('dataAvailable'),
                         tempMin=d.get('tempMin'),
