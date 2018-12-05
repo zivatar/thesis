@@ -2,57 +2,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
 
-	<link rel="apple-touch-icon" sizes="180x180" href="{%  static 'apple-touch-icon.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{%  static 'apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{%  static 'favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{%  static 'favicon-16x16.png' %}">
     <link rel="manifest" href="{%  static 'manifest.json' %}">
     <link rel="mask-icon" href="{%  static 'safari-pinned-tab.svg' %}" color="#2d89ef">
     <meta name="theme-color" content="#286090">
 
-	<!-- BOOTSTRAP +++++++++++++++++++++++++++++ -->
+    <!-- BOOTSTRAP +++++++++++++++++++++++++++++ -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="{%  static 'lib/bootstrap.3.3.7.min.css' %}">
-	<link rel="stylesheet" href="{% static 'lib/bootstrap.3.3.7.theme.min.css' %}">
-	<script src="{% static 'lib/jquery.3.3.1.min.js' %}"></script>
-	<script src="{% static 'lib/bootstrap.3.3.7.min.js' %}"></script>
-	<script src="{% static 'lib/moment-with-locales.2.18.1.min.js' %}"></script>
-	<link href="{%static 'css/jumbotron-narrow.css' %}" rel="stylesheet">
-	<!-- /BOOTSTRAP +++++++++++++++++++++++++++++ -->
-	
-	<!-- FONTS ++++++++++++++++++++++++++++++++++ -->
-	<link rel="stylesheet" href="{%  static 'lib/Roboto.css' %}">
-	<link rel="stylesheet" href="{%  static 'lib/Saira.css' %}">
-	<link rel="stylesheet" href="{%  static 'lib/SairaSemiCondensed.css' %}">
-	<link rel="stylesheet" href="{%  static 'lib/Quicksand.css' %}">
-	<!-- /FONTS +++++++++++++++++++++++++++++++++ -->
-	
-	<!-- CSS FILES ++++++++++++++++++++++++++++++ -->
-	<!--<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" /> <!-- https://ghinda.net/css-toggle-switch/bootstrap.html -->
-	
-	<link href="{%static 'css/weather-icons.min.css' %}" rel="stylesheet">
-	<link href="{% static 'css/weather-icons-wind.min.css' %}" rel="stylesheet">
-	<!-- /CSS FILES +++++++++++++++++++++++++++++ -->
-	
-	<script src="{% static 'js/gmaps.js' %}"></script>
-	<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+    <link rel="stylesheet" href="{%  static 'lib/bootstrap.3.3.7.min.css' %}">
+    <link rel="stylesheet" href="{% static 'lib/bootstrap.3.3.7.theme.min.css' %}">
+    <script src="{% static 'lib/jquery.3.3.1.min.js' %}"></script>
+    <script src="{% static 'lib/bootstrap.3.3.7.min.js' %}"></script>
+    <script src="{% static 'lib/moment-with-locales.2.18.1.min.js' %}"></script>
+    <link href="{%static 'css/jumbotron-narrow.css' %}" rel="stylesheet">
+    <!-- /BOOTSTRAP +++++++++++++++++++++++++++++ -->
 
-	<script src="{% static 'lib/Chart.2.6.0.bundle.min.js' %}"></script>
-	<script src="{% static 'js/chart.js' %}"></script>
+    <!-- FONTS ++++++++++++++++++++++++++++++++++ -->
+    <link rel="stylesheet" href="{%  static 'lib/Roboto.css' %}">
+    <link rel="stylesheet" href="{%  static 'lib/Saira.css' %}">
+    <link rel="stylesheet" href="{%  static 'lib/SairaSemiCondensed.css' %}">
+    <link rel="stylesheet" href="{%  static 'lib/Quicksand.css' %}">
+    <!-- /FONTS +++++++++++++++++++++++++++++++++ -->
 
-	<link href="{%static 'css/bootstrap-theme.css' %}" rel="stylesheet">
-	<link href="{%static 'css/bootstrap-datepicker3.min.css' %}" rel="stylesheet">
-	<link rel="stylesheet" href="{% static 'css/klimaadat.css' %}">
+    <!-- CSS FILES ++++++++++++++++++++++++++++++ -->
+    <!--<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" /> <!-- https://ghinda.net/css-toggle-switch/bootstrap.html -->
 
-	<title>
-		{% block title %}{% endblock %}
-	</title>
-	
-	<!--script src="{% static 'js/charts.js' %}"></script-->
+    <link href="{%static 'css/weather-icons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/weather-icons-wind.min.css' %}" rel="stylesheet">
+    <!-- /CSS FILES +++++++++++++++++++++++++++++ -->
 
-	
+    <script src="{% static 'js/gmaps.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+
+    <script src="{% static 'lib/Chart.2.6.0.bundle.min.js' %}"></script>
+    <script src="{% static 'js/chart.js' %}"></script>
+
+    <link href="{%static 'css/bootstrap-theme.css' %}" rel="stylesheet">
+    <link href="{%static 'css/bootstrap-datepicker3.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/klimaadat.css' %}">
+
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+
+    <!--script src="{% static 'js/charts.js' %}"></script-->
+
+
 </head>
 
 <body>
@@ -60,39 +60,51 @@
 {% block before-header%}{% endblock %}
 
 <nav id="navbar" class="navbar navbar-inverse noradius">
-	<div class="container-fluid">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        		<span class="icon-bar"></span>
-        		<span class="icon-bar"></span>
-        		<span class="icon-bar"></span>                        
-      		</button>
-			<a class="navbar-brand" href="{% url 'main' %}">Zivatar.hu Klímaív</a>
-		</div>
-		<div class="collapse navbar-collapse" id="myNavbar">
-			<ul class="nav navbar-nav">
-				<li><a href="{% url 'site_list' %}"><span class="glyphicon glyphicon-map-marker"></span> Mérőhelyek</a></li>
-				<li><a href="{% url 'guide' %}"><span class="glyphicon glyphicon-book"></span> Tankönyv</a></li>
-			</ul>
-			
-			{% if user.is_authenticated %}
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="{% url 'my_user' %}"><span class="glyphicon glyphicon-user"></span> {{user}}</a></li>
-                    <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-off"></span> Kilépés</a></li>
-				</ul>
-			{% else %}
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="{% url 'register' %}">Regisztráció</a></li>
-					<li><a href="{% url 'login' %}">Belépés</a></li>	
-				</ul>
-			{% endif %}
-		</div>
-	</div>
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'main' %}">Zivatar.hu Klímaív</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="{% url 'new_observation' %}">
+                        <span class="glyphicon glyphicon-camera"></span> Észlelés
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'site_list' %}">
+                        <span class="glyphicon glyphicon-map-marker"></span> Mérőhelyek
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'guide' %}">
+                        <span class="glyphicon glyphicon-book"></span> Tankönyv</a>
+                </li>
+            </ul>
+
+            {% if user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'my_user' %}"><span class="glyphicon glyphicon-user"></span> {{user}}</a></li>
+                <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-off"></span> Kilépés</a></li>
+            </ul>
+            {% else %}
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'register' %}">Regisztráció</a></li>
+                <li><a href="{% url 'login' %}">Belépés</a></li>
+            </ul>
+            {% endif %}
+        </div>
+    </div>
 </nav>
-	
+
 <div class="container">
-	{% block content %}
-	{% endblock %}
+    {% block content %}
+    {% endblock %}
 </div> <!-- / narrow container -->
 
 </body>
