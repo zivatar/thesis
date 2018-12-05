@@ -13,5 +13,5 @@ def my_instrument_list(request):
     :param request: HTTP request
     :return: renders ``climate/instrument_list.html``
     """
-    instruments = Instrument.objects.filter(siteId__owner=request.user).filter(isDeleted=False).order_by('title')
+    instruments = Instrument.objects.filter(siteId__owner=request.user).order_by('title')
     return render(request, 'climate/instrument_list.html', {'instruments': instruments})
