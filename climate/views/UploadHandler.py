@@ -25,6 +25,8 @@ from climate.models.RawManualData import RawManualData
 from climate.models.Site import Site
 from climate.models.YearlyStatistics import YearlyStatistics
 
+from climate.dtos import DailyStatisticsDTO
+
 logger = logging.getLogger(__name__)
 
 class UploadHandler(APIView):
@@ -237,11 +239,11 @@ class UploadHandler(APIView):
 
             precipitation = None
             if rawDataSet.count() or manualDataSet.count():
-                d = {'year': f.year, 'month': f.month, 'day': f.day, 'siteId': siteId}
-                d['existing'] = datetime.date(year=f.year, month=f.month, day=f.day) in existing_dates
+                d = DailyStatisticsDTO(year=f.year, month=f.month, day=f.day, siteId=siteId)
+                d.existing = datetime.date(year=f.year, month=f.month, day=f.day) in existing_dates
                 daily_data.append(d)
             if rawDataSet.count():
-                d['dataAvailable'] = rawDataSet.count()
+                d = DailyStatisticsDTO(dataAvailable=rawDataSet.count(), siteId=siteId)
                 temps = []
                 rhs = []
                 winds = []
@@ -262,60 +264,59 @@ class UploadHandler(APIView):
                             winds.append(j.windDir)
                         last_timestamp = current_timestamp
                 tempDistribution = Climate.calculate_temperature_distribution(temps)
-                d['tempDistribution'] = ''.join(str(e) + ',' for e in tempDistribution)[:-1]
+                d.tempDistribution = ''.join(str(e) + ',' for e in tempDistribution)[:-1]
                 rhDistribution = Climate.calculate_rh_distribution(rhs)
-                d['rhDistribution'] = ''.join(str(e) + ',' for e in rhDistribution)[:-1]
+                d.rhDistribution = ''.join(str(e) + ',' for e in rhDistribution)[:-1]
                 windDistribution = Climate.calculate_wind_distribution(winds)
-                d['windDistribution'] = ''.join(str(e) + ',' for e in windDistribution)[:-1]
+                d.windDistribution = ''.join(str(e) + ',' for e in windDistribution)[:-1]
                 if len(temps) > 0:
-                    d['tempMin'] = min(temps)
-                    d['tempMax'] = max(temps)
-                    d['tempAvg'] = sum(temps) / len(temps)
+                    d.tempMin = min(temps)
+                    d.tempMax = max(temps)
+                    d.tempAvg = sum(temps) / len(temps)
                 if precipitation is not None:
-                    d['precipitation'] = precipitation
+                    d.precipitation = precipitation
             if manualDataSet.count():
-                d['dataAvailable'] = d.get('dataAvailable', 0)
                 if manualDataSet[0].tMin is not None:
-                    d['tempMin'] = manualDataSet[0].tMin
+                    d.tempMin = manualDataSet[0].tMin
                 if manualDataSet[0].tMax is not None:
-                    d['tempMax'] = manualDataSet[0].tMax
+                    d.tempMax = manualDataSet[0].tMax
                 if manualDataSet[0].precAmount is not None:
-                    d['precipitation'] = manualDataSet[0].precAmount
+                    d.precipitation = manualDataSet[0].precAmount
 
         DailyStatistics.objects.bulk_create(
             DailyStatistics(
-                year=d.get('year'),
-                month=d.get('month'),
-                day=d.get('day'),
-                siteId=d.get('siteId'),
-                dataAvailable=d.get('dataAvailable'),
-                tempMin=d.get('tempMin'),
-                tempMax=d.get('tempMax'),
-                tempAvg=d.get('tempAvg'),
-                precipitation=d.get('precipitation'),
-                tempDistribution=d.get('tempDistribution', ''),
-                rhDistribution=d.get('rhDistribution', ''),
-                windDistribution=d.get('windDistribution', '')
+                year=d.year,
+                month=d.month,
+                day=d.day,
+                siteId=d.siteId,
+                dataAvailable=d.dataAvailable or 0,
+                tempMin=d.tempMin,
+                tempMax=d.tempMax,
+                tempAvg=d.tempAvg,
+                precipitation=d.precipitation,
+                tempDistribution=d.tempDistribution or '',
+                rhDistribution=d.rhDistribution or '',
+                windDistribution=d.windDistribution or ''
             )
             for d in daily_data
-            if not d.get('existing')
+            if not d.existing
         )
 
         with transaction.atomic():
             for d in daily_data:
-                if d.get('existing'):
-                    DailyStatistics.objects.filter(siteId=d.get('siteId'), year=d.get('year'),
-                                                   month=d.get('month'), day=d.get('day')).update(
-                        dataAvailable=d.get('dataAvailable'),
-                        tempMin=d.get('tempMin'),
-                        tempMax=d.get('tempMax'),
-                        tempAvg=d.get('tempAvg'),
-                        precipitation=d.get('precipitation'),
-                        tempDistribution=d.get('tempDistribution', ''),
-                        rhDistribution=d.get('rhDistribution', ''),
-                        windDistribution=d.get('windDistribution', '')
+                if d.existing:
+                    DailyStatistics.objects.filter(siteId=d.siteId, year=d.year,
+                                                   month=d.month, day=d.day).update(
+                        dataAvailable=d.dataAvailable or 0,
+                        tempMin=d.tempMin,
+                        tempMax=d.tempMax,
+                        tempAvg=d.tempAvg,
+                        precipitation=d.precipitation,
+                        tempDistribution=d.tempDistribution or '',
+                        rhDistribution=d.rhDistribution or '',
+                        windDistribution=d.windDistribution or ''
                     )
-        logger.error("daily stat finished")
+        logger.info("daily stat finished")
 
     @staticmethod
     def create_statistics(site, year=None, month=None, from_date=None, to_date=None, limitInMins=5):
