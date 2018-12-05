@@ -24,6 +24,12 @@ class RawManualData(models.Model):
                                                      blank=True,
                                                      help_text='list of existing significant events')
 
+    def __str__(self):
+        return "RawManualData [{}: {}-{}-{}]".format(self.siteId, self.year, self.month, self.day)
+
+    def __repr__(self):
+        return self.__str__()
+
     def addWeatherCode(self, code):
         """
         | Add weather observation code to its list

@@ -22,3 +22,10 @@ class DailyStatistics(models.Model):
     tempDistribution = models.CommaSeparatedIntegerField(max_length=200, blank=True)
     rhDistribution = models.CommaSeparatedIntegerField(max_length=200, blank=True)
     windDistribution = models.CommaSeparatedIntegerField(max_length=200, blank=True)
+
+    def __str__(self):
+        return "DailyStatistics [{}: {}-{}-{}]".format(self.siteId, self.year,
+                                                       self.month, self.day)
+
+    def __repr__(self):
+        return self.__str__()
