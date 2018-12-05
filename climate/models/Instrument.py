@@ -14,6 +14,5 @@ class Instrument(models.Model):
     type = models.CharField(max_length=50,
                             help_text='manufacturer and type of the instrument (e.g. LaCrosse WS-3600)')
     isActive = models.BooleanField(default=True, help_text='is active')
-    isDeleted = models.BooleanField(default=False, help_text='is_deleted')
     primaryImage = models.ImageField(upload_to=get_image_path_instrument1, blank=True, null=True,
                                      help_text='representative image of the instrument')
