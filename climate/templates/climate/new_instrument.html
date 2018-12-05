@@ -4,56 +4,92 @@
 {% block content %}
 
 <div class="panel panel-primary">
-	<div class="panel-heading">
-		<span class="glyphicon glyphicon-map-marker"></span> Új mérőműszer rögzítése
-	</div>
-	<div class="panel-body">
-				
-			<div id="add_new" class="tab-pane fade in active">						
-				<form class="pull-left" action="" method="POST" enctype="multipart/form-data">
-				{% csrf_token %}
+    <div class="panel-heading">
+        <span class="glyphicon glyphicon-map-marker"></span> Új mérőműszer rögzítése
+    </div>
+    <div class="panel-body">
+
+        <div id="add_new" class="tab-pane fade in active">
+            <form class="full-width" action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <table class="full-width">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <div class="col-12 margin-h-1em">
+                                <label for="{{ form.primaryImage.id_for_label }}">Megnevezés:</label>
+                            </div>
+                        </td>
+                        <td>
+                            {% render_field form.title class+="form-control" required=true %}
+                            {{ form.title.errors }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="col-12 margin-h-1em">
+                                <label for="{{ form.siteId.id_for_label }}">Mérőhely:</label>
+                            </div>
+                        </td>
+                        <td>
+                            <select class="form-control" id="id_siteId" name="siteId" required="">
+                                {% for s in sites %}
+                                <option value="{{s.id}}">{{s.title}}</option>
+                                {% endfor %}
+                            </select>
+                            {{ form.siteId.errors }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="col-12 margin-h-1em">
+                                <label for="{{ form.type.id_for_label }}">Típus megnevezése:</label>
+                            </div>
+                        </td>
+                        <td>
+                            {% render_field form.type class+="form-control" required=true %}
+                            {{ form.type.errors }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="col-12 margin-h-1em">
+                                <label for="{{ form.isActive.id_for_label }}">Aktív-e:</label>
+                            </div>
+                        </td>
+                        <td>
+                            {% render_field form.isActive class+="form-control" %}
+                            {{ form.isActive.errors }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="col-12 margin-h-1em">
+                                <label for="{{ form.primaryImage.id_for_label }}">Kép hozzáadása:</label>
+                            </div>
+                        </td>
+                        <td>
+                            {% render_field form.primaryImage class+="form-control" %}
+                            {{ form.primaryImage.errors }}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
 
-	    		<div class="col-12 margin-h-2em">
-					{{ form.title.errors }}
-					<label for="{{ form.primaryImage.id_for_label }}">Megnevezés:</label>
-					{% render_field form.title class+="form-control" required=true %}
-				</div>
+                <div class="col-12 margin-h-1em">
+                    {{ form.title.errors }}
+                    <label for="{{ form.primaryImage.id_for_label }}">Szöveges leírás:</label>
+                    {% render_field form.comment class+="form-control" %}
+                </div>
 
-				<div class="col-12 margin-h-2em">
-					{{ form.siteId.errors }}
-					<label for="{{ form.siteId.id_for_label }}">Mérőhely:</label>
-					<select class="form-control" id="id_siteId" name="siteId" required="">
-						{% for s in sites %}
-							<option value="{{s.id}}">{{s.title}}</option>
-						{% endfor %}
-					</select>
-				</div>
-
-				<div class="col-12 margin-h-2em">
-					{{ form.type.errors }}
-					<label for="{{ form.type.id_for_label }}">Típus megnevezése:</label>
-					{% render_field form.type class+="form-control" required=true %}
-				</div>
-
-				<div class="col-12 margin-h-2em">
-					{{ form.isActive.errors }}
-					<label for="{{ form.isActive.id_for_label }}">Aktív-e:</label>
-					{% render_field form.isActive class+="form-control" %}
-				</div>
-
-	    		<div class="col-12 margin-h-2em">
-					{{ form.primaryImage.errors }}
-					<label for="{{ form.primaryImage.id_for_label }}">Kép módosítása:</label>
-					{% render_field form.primaryImage class+="form-control" %}
-				</div>
-
-	    		<button type="submit" class="btn btn-success">Rögzítés</button>
-				</form>
-			</div>
+                <button type="submit" class="btn btn-success">Rögzítés</button>
+            </form>
+        </div>
 
 
-	</div>
+    </div>
 </div>
 
 {% endblock content %}
