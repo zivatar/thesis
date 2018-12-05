@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 
 from climate.forms import InstrumentForm
 from climate.models.Site import Site
-from climate.views import my_instrument_list
+from climate.views.my_instrument_list import my_instrument_list
 
 
 @login_required
