@@ -18,8 +18,7 @@ def delete_instrument(request, pk):
     """
     instrument = get_object_or_404(Instrument, pk=pk)
     if request.user == instrument.siteId.owner:
-        instrument.isDeleted = True
-        instrument.save()
+        instrument.delete()
         return redirect(my_instrument_list)
     else:
         return render(request, 'climate/main.html', {})
