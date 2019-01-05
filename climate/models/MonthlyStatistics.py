@@ -6,6 +6,7 @@ class MonthlyStatistics(models.Model):
     """
     | Yearly statistics
     | Unique: year, month, siteId
+    | Foreign key to Site objects
     """
     class Meta:
         unique_together = (('year', 'month', 'siteId'),)

@@ -77,7 +77,7 @@ class Month:
 
     def get_month_two_digits(self):
         """
-        | Get the number of the month in human readable format
+        | Get the number of the month in human readable format with two digits
 
         :return: index of the month
         """

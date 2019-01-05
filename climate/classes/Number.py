@@ -7,6 +7,7 @@ class Number:
     def is_number(string):
         """
         check a string if it contains a number
+
         :param string: input e.g. '1', 'n2kj34', '9.99'
         :return: True or False
         """
@@ -22,6 +23,7 @@ class Number:
     def to_float(string):
         """
         parse a string to float
+
         :param string:
         :return: number
         """
@@ -36,6 +38,7 @@ class Number:
     def to_int(string):
         """
         parse a string to integer
+
         :param string:
         :return:
         """

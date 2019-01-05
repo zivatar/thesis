@@ -5,6 +5,7 @@ from climate.classes.Weather import Weather
 if __name__ == '__main__':
     unittest.main()
 
+
 class WeatherTestCase(unittest.TestCase):
 
     # Constants should exist and have valid values

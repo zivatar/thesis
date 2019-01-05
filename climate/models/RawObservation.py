@@ -5,7 +5,8 @@ from climate.classes.Weather import Weather
 
 class RawObservation(models.Model):
     """
-    Raw observation created by a human individual
+    | Raw observation created by a human individual
+    | Foreign key to Site objects
     """
 
     siteId = models.ForeignKey('climate.Site', help_text='foreign key to Site table')
