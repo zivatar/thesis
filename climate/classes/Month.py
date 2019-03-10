@@ -8,8 +8,9 @@ class Month:
     """
     | Utilities for handling months
     """
-    def __init__(self, now=datetime.now(), year=0, month=0):
+    def __init__(self, year=0, month=0):
         if year == 0 or month == 0:
+            now = datetime.now()
             self.year = now.year
             self.month = now.month
             self._currentMonth = True
