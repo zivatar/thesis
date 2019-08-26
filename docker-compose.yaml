@@ -1,0 +1,16 @@
+version: '3'
+services:
+  app:
+    build: .
+    container_name: django_app
+    volumes:
+      - ./media:/app/media
+      - ./.env:/app/.env:ro
+  nginx:
+    image: nginx
+    container_name: django_nginx
+    expose:
+      - "80"
+    volumes:
+      - ./climate/static:/app/static
+      - ./nginx_site.conf:/etc/nginx/conf.d/zivatar.conf

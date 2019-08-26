@@ -3,3 +3,5 @@ _build/
 media/
 .idea/
 debug.log
+__pycache__
+*.pyc
