@@ -19,8 +19,8 @@ services:
       - "./mysql_config:/config"
     restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=0
+      - PGID=0
       - MYSQL_ROOT_PASSWORD=secret123
       - MYSQL_DATABASE=django
       - MYSQL_USER=django
