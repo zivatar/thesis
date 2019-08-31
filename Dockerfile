@@ -12,6 +12,7 @@ ADD zivatar zivatar
 ADD start.sh .
 ADD start0.sh .
 ADD manage.py .
+ADD .env .
 RUN mkdir run && chown django run
 RUN touch debug.log && chown django debug.log
 
