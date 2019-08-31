@@ -31,6 +31,8 @@ services:
     volumes:
       - ./climate/static:/app/static
       - ./nginx2.conf:/etc/nginx/conf.d/zivatar.conf
+    depends_on:
+      - app
 
 volumes:
   static-volume:
