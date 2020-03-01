@@ -5,6 +5,7 @@ services:
     user: django
     #command: "./start0.sh"
     command: "gunicorn --timeout=30 --workers=2 --bind 0.0.0.0:8000 zivatar.wsgi:application"
+    restart: unless-stopped
     volumes:
       - ./media:/app/media
       - ./.env:/app/.env:ro
@@ -32,6 +33,7 @@ services:
     volumes:
       - ./climate/static:/app/static
       - ./nginx2.conf:/etc/nginx/conf.d/zivatar.conf
+    restart: unless-stopped
     depends_on:
       - app
 
