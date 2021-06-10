@@ -3,7 +3,7 @@ Babel==2.5.1
 certifi==2017.11.5
 chardet==3.0.4
 coverage==4.4.1
-Django==1.9
+Django==2.2.24
 django-cleanup==2.1.0
 django-nose==1.4.5
 django-picklefield==1.0.0
